@@ -1,6 +1,8 @@
 #include "memory.h"
 #include "chunk.h"
 
+
+
 void initChunk(Chunk* chunk)
 {
     chunk->count = 0;
@@ -13,6 +15,7 @@ void initChunk(Chunk* chunk)
 
 void writeChunk(Chunk* chunk, uint8_t byte, int line)
 {
+
     // Grow the array if we don't have enough space
     if (chunk->capacity < chunk->count + 1)
     {

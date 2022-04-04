@@ -54,7 +54,8 @@ static void repl()
 {
     char line[1024];
 
-    for (;;) {
+    for (;;)
+    {
         printf("> ");
 
         if (!fgets(line, sizeof(line), stdin))
@@ -62,6 +63,8 @@ static void repl()
             printf("\n");
             break;
         }
+
+        line[strlen(line)-1] = '\0';
 
         interpret(line);
     }
@@ -79,7 +82,7 @@ int main(int argc, const char* argv[])
         runFile(argv[1]);
     } else
     {
-        fprintf(stderr, "Usage: clox [path]\n");
+        fprintf(stderr, "Usage: Wally [path]\n");
         exit(64);
     }
 

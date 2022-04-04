@@ -101,7 +101,7 @@ static InterpretResult run()
 }
 
 
-InterpretResult interpret(Chunk* chunk)
+InterpretResult interpret(const char* source)
 {
     compile(source);
     return INTERPRET_OK;
