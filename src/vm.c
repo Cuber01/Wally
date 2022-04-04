@@ -1,7 +1,9 @@
 #include <stdio.h>
+
 #include "common.h"
 #include "vm.h"
 #include "debug.h"
+#include "compiler.h"
 
 VM vm;
 
@@ -30,11 +32,6 @@ Value pop()
 {
     vm.stackTop--;
     return *vm.stackTop;
-}
-
-void foo(char x)
-{
-
 }
 
 static InterpretResult run()
@@ -106,7 +103,6 @@ static InterpretResult run()
 
 InterpretResult interpret(Chunk* chunk)
 {
-    vm.chunk = chunk;
-    vm.ip = vm.chunk->code;
-    return run();
+    compile(source);
+    return INTERPRET_OK;
 }

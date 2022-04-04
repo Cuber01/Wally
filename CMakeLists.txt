@@ -6,4 +6,4 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(Wally PRIVATE include/)
 add_executable(Wally src/main.c src/memory.c
                      src/chunk.c src/debug.c
-                     src/value.c src/vm.c)
+                     src/value.c src/vm.c src/compiler.c src/scanner.c src/scanner.h)
