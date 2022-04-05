@@ -80,7 +80,26 @@ static void skipWhitespace()
                 {
                     // A comment goes until the end of the line.
                     while (peek() != '\n' && !isAtEnd()) advance();
-                } else {
+                }
+                else if (peekNext() == '*')
+                {
+                    advance();
+
+                    while (!isAtEnd())
+                    {
+                        // If we don't find a '*', we can continue safely
+                        if (advance() != '*') continue;
+
+                        // If we find */, stop the comment
+                        if (match('/'))
+                        {
+                            break;
+                        }
+
+                    }
+                }
+                else
+                {
                     return;
                 }
                 break;
