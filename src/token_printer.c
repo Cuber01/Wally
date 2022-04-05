@@ -1,4 +1,4 @@
-#include "pretty_printer.h"
+#include "token_printer.h"
 #include "scanner.h"
 #include "colors.h"
 
