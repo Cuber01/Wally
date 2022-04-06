@@ -34,6 +34,6 @@ void freeValueArray(ValueArray* array)
 void printValue(Value value)
 {
     printf(BOLD_YELLOW);
-    printf("%g", value);
+    printf("%g", AS_NUMBER(value));
     printf(COLOR_CLEAR);
 }
