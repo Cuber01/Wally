@@ -2,6 +2,7 @@
 
 #include "memory.h"
 #include "value.h"
+#include "colors.h"
 
 void initValueArray(ValueArray* array)
 {
@@ -32,5 +33,7 @@ void freeValueArray(ValueArray* array)
 
 void printValue(Value value)
 {
+    printf(BOLD_YELLOW);
     printf("%g", value);
+    printf(COLOR_CLEAR);
 }

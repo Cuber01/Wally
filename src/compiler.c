@@ -17,6 +17,8 @@ Parser parser;
 Chunk* compilingChunk;
 ParseRule rules[];
 
+// ---------- ERROR ----------
+
 static void errorAt(Token* token, const char* message)
 {
     if (parser.panicMode) return;
@@ -49,6 +51,8 @@ static void error(const char* message)
     errorAt(&parser.previous, message);
 }
 
+// ---------- UTIL ----------
+
 static void advance()
 {
     parser.previous = parser.current;
@@ -73,11 +77,12 @@ static void consume(TokenType type, const char* message)
     errorAtCurrent(message);
 }
 
-
 static Chunk* currentChunk()
 {
     return compilingChunk;
 }
+
+// ---------- PRECEDENCE ----------
 
 static ParseRule* getRule(TokenType type)
 {
@@ -105,11 +110,12 @@ static void parsePrecedence(Precedence precedence)
     }
 }
 
-
 static void expression()
 {
     parsePrecedence(PREC_ASSIGNMENT);
 }
+
+// ---------- EMITTING BYTES ----------
 
 static void emitByte(uint8_t byte)
 {
@@ -139,6 +145,13 @@ static void emitConstant(Value value)
     emitBytes(OP_CONSTANT, makeConstant(value));
 }
 
+
+static void emitReturn()
+{
+    emitByte(OP_RETURN);
+}
+
+// ---------- EXPRESSIONS ----------
 
 static void binary()
 {
@@ -184,10 +197,7 @@ static void grouping()
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
 }
 
-static void emitReturn()
-{
-    emitByte(OP_RETURN);
-}
+// ---------- MAIN ----------
 
 static void endCompiler()
 {
@@ -225,6 +235,14 @@ bool compile(const char* source, Chunk* chunk)
 
 ParseRule rules[] =
 {
+        // Prefix vs Infix
+        // Prefix examples: -1, (1, 1, "str"
+        // In prefix the expression token is on the left of the rest of the expression or is the expression itself (1, "str")
+        //
+        // Infix examples: 1 + 1, 2 * 2,
+        // In prefix the expression token is in the middle of other two expressions
+
+        //                           prefix    infix   precedence
         [TOKEN_LEFT_PAREN]    = {grouping, NULL,   PREC_NONE},
         [TOKEN_RIGHT_PAREN]   = {NULL,     NULL,   PREC_NONE},
         [TOKEN_LEFT_BRACE]    = {NULL,     NULL,   PREC_NONE},
