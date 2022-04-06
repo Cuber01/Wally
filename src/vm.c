@@ -149,6 +149,7 @@ static InterpretResult run()
             case OP_NOT:
             {
                 push(BOOL_VAL(isFalsey(pop())));
+                break;
             }
 
             case OP_ADD:      BINARY_OP(NUMBER_VAL, +); break;
