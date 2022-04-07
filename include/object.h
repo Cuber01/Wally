@@ -7,8 +7,11 @@
 // Objects are kept on the heap, and we just keep a pointer to them in Value.
 // This allows us to make objects as big, or as small, as we want (in theory).
 
-ObjString* copyString(const char* chars, int length);
-void printObject(Value value);
+#define ALLOCATE_OBJ(type, objectType) \
+    (type*)allocateObject(sizeof(type), objectType)
+
+#define ALLOCATE(type, count) \
+    (type*)reallocate(NULL, 0, sizeof(type) * (count))
 
 #define OBJ_TYPE(value)        (AS_OBJ(value)->type)
 
@@ -23,6 +26,7 @@ typedef enum {
 
 struct Obj {
     ObjType type;
+    struct Obj* next;
 };
 
 // "Struct Inheritance"
@@ -38,5 +42,10 @@ static inline bool isObjType(Value value, ObjType type)
 {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
+
+ObjString* copyString(const char* chars, int length);
+ObjString* takeString(char* chars, int length);
+
+void printObject(Value value);
 
 #endif //WALLY_OBJECT_H
