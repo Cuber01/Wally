@@ -51,5 +51,6 @@ void freeValueArray(ValueArray* array);
 
 void printValue(Value value);
 bool valuesEqual(Value a, Value b);
+ObjString* valueToString(Value value);
 
 #endif //WALLY_VALUE_H

@@ -55,3 +55,12 @@ void printObject(Value value)
     }
 }
 
+ObjString* objectToString(Value value)
+{
+    switch (OBJ_TYPE(value))
+    {
+        case OBJ_STRING:
+            return AS_STRING(value);
+    }
+}
+

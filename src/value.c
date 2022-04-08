@@ -90,3 +90,26 @@ void printValue(Value value)
     }
     printf(COLOR_CLEAR);
 }
+
+// To String
+ObjString* valueToString(Value value)
+{
+    switch (value.type)
+    {
+        case VAL_BOOL:
+
+            break;
+        case VAL_NIL:
+        {
+            return copyString("nil", 3);
+        }
+
+        case VAL_NUMBER:
+
+            break;
+        case VAL_OBJ:
+
+            break;
+    }
+
+}

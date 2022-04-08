@@ -63,10 +63,22 @@ static bool isFalsey(Value value)
     return IS_NIL(value) || (IS_BOOL(value) && !AS_BOOL(value));
 }
 
+static inline ObjString* toString(Value value)
+{
+    if(IS_OBJ(value))
+    {
+        return objectToString(value);
+    }
+    else
+    {
+        return valueToString(value);
+    }
+}
+
 static void concatenate()
 {
-    ObjString* b = AS_STRING(pop());
-    ObjString* a = AS_STRING(pop());
+    ObjString* b = toString(pop());
+    ObjString* a = toString(pop());
 
     int length = a->length + b->length;
     char* chars = ALLOCATE(char, length + 1);
@@ -174,8 +186,9 @@ static InterpretResult run()
                 break;
             }
 
-            case OP_ADD: {
-                if (IS_STRING(peek(0)) && IS_STRING(peek(1)))
+            case OP_ADD:
+            {
+                if (IS_STRING(peek(0)) || IS_STRING(peek(1)))
                 {
                     concatenate();
                 }

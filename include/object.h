@@ -17,8 +17,8 @@
 
 #define IS_STRING(value)       isObjType(value, OBJ_STRING)
 
-#define AS_STRING(value)       ((ObjString*)AS_OBJ(value))
-#define AS_CSTRING(value)      (((ObjString*)AS_OBJ(value))->chars)
+#define AS_STRING(value)        ((ObjString*)AS_OBJ(value))
+#define AS_CSTRING(value)       (((ObjString*)AS_OBJ(value))->chars)
 
 typedef enum {
     OBJ_STRING,
@@ -47,5 +47,6 @@ ObjString* copyString(const char* chars, int length);
 ObjString* takeString(char* chars, int length);
 
 void printObject(Value value);
+ObjString* objectToString(Value value);
 
 #endif //WALLY_OBJECT_H
