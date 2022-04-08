@@ -91,7 +91,6 @@ void printValue(Value value)
     printf(COLOR_CLEAR);
 }
 
-// To String
 ObjString* valueToString(Value value)
 {
     switch (value.type)
