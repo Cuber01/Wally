@@ -197,10 +197,10 @@ static void number()
 
 static char* escapeSequences(char source[], int length)
 {
-    #define REMOVE_AND_REPLACE(index, char) \
+    #define REMOVE_AND_REPLACE(index, c ) \
     do { \
         memmove(&source[(index)], &source[(index) + 1], length - (index)); \
-        source[(index)] = (char); \
+        source[(index)] = ( c ); \
     } while(false) \
 
     for(int i = 0; i <= length; i++)
@@ -208,8 +208,8 @@ static char* escapeSequences(char source[], int length)
         if(source[i] == '\\')
         {
             int nextCharIndex = i+1;
-
-            switch (source[nextCharIndex])
+            char c = source[nextCharIndex];
+            switch (c)
             {
                 case 'n': REMOVE_AND_REPLACE(i, '\n'); break;
                 case 'f': REMOVE_AND_REPLACE(i, '\f'); break;
@@ -228,18 +228,23 @@ static char* escapeSequences(char source[], int length)
     return source;
 }
 
-static void string() {
+static void string()
+{
     // Math is for trimming ""
     int length = parser.previous.length;
     char str[length];
 
     strcpy( str, parser.previous.start + 1 );
-    str[length - 1] = 0;
+    str[length-2] = 0;
 
     length = strlen(str);
     strcpy(str, escapeSequences(str, length));
+    length = strlen(str);
+    emitConstant(OBJ_VAL(copyString(str, length)));
+}
 
-    //
+
+//
 //    char *p1=str;
 //    char *p2=parser.previous.start;
 //state
@@ -254,9 +259,6 @@ static void string() {
 
 //    snprintf(str, length, "%s", parser.previous.start + 1);
 //
-
-    emitConstant(OBJ_VAL(copyString(str, length - 2)));
-}
 
 static void unary()
 {

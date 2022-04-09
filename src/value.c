@@ -92,6 +92,13 @@ void printValue(Value value)
     printf(COLOR_CLEAR);
 }
 
+// 1.100000 => 1.1
+char* removeTrailingZeros(char source[])
+{
+
+}
+
+
 ObjString* valueToString(Value value)
 {
     switch (value.type)
@@ -115,10 +122,9 @@ ObjString* valueToString(Value value)
 
         case VAL_NUMBER:
         {
-            // TODO
-            char output[9];
-            snprintf(output, 9, "%f", AS_NUMBER(value));
-            return copyString(output, 9);
+            char output[UINT8_MAX];
+            snprintf(output, UINT8_MAX, "%.2lf", AS_NUMBER(value));
+            return copyString(output, strlen(output));
         }
 
         default:
