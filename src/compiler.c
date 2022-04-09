@@ -324,7 +324,7 @@ static void endCompiler()
 }
 
 #ifdef DEBUG_PRINT_TOKENS
-void printTokens()
+void printTokens();
 #endif
 bool compile(const char* source, Chunk* chunk)
 {
@@ -336,7 +336,7 @@ bool compile(const char* source, Chunk* chunk)
 
     #ifdef DEBUG_PRINT_TOKENS
     printTokens();
-    return;
+    return false;
     #endif
 
     advance();
