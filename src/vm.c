@@ -116,6 +116,7 @@ static InterpretResult run()
     {
         #ifdef DEBUG_TRACE_EXECUTION
         disassembleInstruction(vm.chunk,(int)(vm.ip - vm.chunk->code));
+        bool printedStack = false;
 
         // Print the whole stack
         printf("          ");
@@ -124,27 +125,21 @@ static InterpretResult run()
             printf("[ ");
             printValue(*slot);
             printf(" ]");
+
+            printedStack = true;
         }
-        printf("\n");
+        putchar('\n');
 
         #endif
 
         uint8_t instruction;
         switch (instruction = READ_BYTE())
         {
-            case OP_RETURN:
-            {
-                printValue(pop());
-                printf("\n");
-                return INTERPRET_OK;
-            }
 
             case OP_CONSTANT:
             {
                 Value constant = READ_CONSTANT();
                 push(constant);
-                printValue(constant);
-                printf("\n");
                 break;
             }
 
@@ -211,6 +206,20 @@ static InterpretResult run()
             case OP_SUBTRACT: BINARY_OP(NUMBER_VAL, -); break;
             case OP_MULTIPLY: BINARY_OP(NUMBER_VAL, *); break;
             case OP_DIVIDE:   BINARY_OP(NUMBER_VAL, /); break;
+
+            case OP_PRINT:
+            {
+                printRawValue(pop());
+                putchar('\n');
+                break;
+            }
+
+            case OP_RETURN:
+            {
+                // printValue(pop());
+                // printf("\n");
+                return INTERPRET_OK;
+            }
         }
     }
 

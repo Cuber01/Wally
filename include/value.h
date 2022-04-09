@@ -50,6 +50,7 @@ void writeValueArray(ValueArray* array, Value value);
 void freeValueArray(ValueArray* array);
 
 void printValue(Value value);
+void printRawValue(Value value);
 bool valuesEqual(Value a, Value b);
 ObjString* valueToString(Value value);
 
