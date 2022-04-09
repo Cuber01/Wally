@@ -228,14 +228,32 @@ static char* escapeSequences(char source[], int length)
     return source;
 }
 
-static void string()
-{
+static void string() {
     // Math is for trimming ""
     int length = parser.previous.length;
     char str[length];
 
-    snprintf(str, length - 1, "%s", parser.previous.start + 1);
+    strcpy( str, parser.previous.start + 1 );
+    str[length - 1] = 0;
+
+    length = strlen(str);
     strcpy(str, escapeSequences(str, length));
+
+    //
+//    char *p1=str;
+//    char *p2=parser.previous.start;
+//state
+////    while(*p2) {
+//    if(*p="\"){
+//
+////    *p1++ = p2++;
+//    }
+//    *p2=0;
+
+//
+
+//    snprintf(str, length, "%s", parser.previous.start + 1);
+//
 
     emitConstant(OBJ_VAL(copyString(str, length - 2)));
 }
