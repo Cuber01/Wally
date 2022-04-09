@@ -93,30 +93,23 @@ void printValue(Value value)
 }
 
 // 1.100000 => 1.1
-char* removeTrailingZeros(char source[])
+void removeTrailingZeros(char* source)
 {
     uint16_t length = strlen(source);
 
-    for(int i = length; i > 0; i--)
+    for(int i = length-1; i > 0; i--)
     {
-        if(source[i] == '0')
+        if(source[i] == '0' || source[i] == '.' )
         {
             source[i] = 0;
         }
-        else if(source[i] == '.')
+        else
         {
-            if(source[i+1] == 0)
-            {
-                source[i] = 0;
-            }
-
             break;
         }
     }
 
-    return source;
 }
-
 
 ObjString* valueToString(Value value)
 {
@@ -142,8 +135,8 @@ ObjString* valueToString(Value value)
         case VAL_NUMBER:
         {
             char output[UINT8_MAX];
-            snprintf(output, UINT8_MAX, "%.2lf", AS_NUMBER(value));
-            strcpy(output, removeTrailingZeros(output));
+            snprintf(output, UINT8_MAX, "%.5lf", AS_NUMBER(value));
+            removeTrailingZeros(output);
 
             return copyString(output, strlen(output));
         }
