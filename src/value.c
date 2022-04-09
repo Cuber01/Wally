@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "memory.h"
 #include "value.h"
@@ -96,19 +97,33 @@ ObjString* valueToString(Value value)
     switch (value.type)
     {
         case VAL_BOOL:
+        {
+            if (AS_BOOL(value))
+            {
+                return copyString("true", 4);
+            }
+            else
+            {
+                return copyString("false", 5);
+            }
+        }
 
-            break;
         case VAL_NIL:
         {
             return copyString("nil", 3);
         }
 
         case VAL_NUMBER:
+        {
+            char output[9];
+            snprintf(output, 9, "%f", AS_NUMBER(value));
+            return copyString(output, 9);
+        }
 
-            break;
-        case VAL_OBJ:
-
-            break;
+        default:
+        {
+            printf("Reached unreachable.");
+        }
     }
 
 }
