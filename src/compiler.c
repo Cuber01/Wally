@@ -92,6 +92,32 @@ static bool match(TokenType type)
 }
 
 
+static void synchronize()
+{
+    parser.panicMode = false;
+
+    while (parser.current.type != TOKEN_EOF)
+    {
+        // Go until we find something that looks like a new statement boundary
+        if (parser.previous.type == TOKEN_SEMICOLON) return;
+        switch (parser.current.type)
+        {
+            case TOKEN_CLASS:
+            case TOKEN_FUN:
+            case TOKEN_VAR:
+            case TOKEN_FOR:
+            case TOKEN_IF:
+            case TOKEN_WHILE:
+            case TOKEN_PRINT:
+            case TOKEN_RETURN:
+                return;
+
+            default: ; // Nothing.
+        }
+
+        advance();
+    }
+}
 
 static Chunk* currentChunk()
 {
@@ -289,6 +315,13 @@ static void grouping()
 
 // ---------- STATEMENTS ------------
 
+static void expressionStatement()
+{
+    expression();
+    consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
+    emitByte(OP_POP);
+}
+
 static void printStatement()
 {
     expression();
@@ -302,11 +335,73 @@ static void statement()
     {
         printStatement();
     }
+    else
+    {
+        expressionStatement();
+    }
+}
+
+static uint8_t identifierConstant(Token* name)
+{
+    return makeConstant(
+            OBJ_VAL(copyString(name->start,name->length)));
+}
+
+static void namedVariable(Token name)
+{
+    uint8_t arg = identifierConstant(&name);
+    emitBytes(OP_GET_GLOBAL, arg);
+}
+
+static void variable()
+{
+    namedVariable(parser.previous);
+}
+
+static uint8_t parseVariable(const char* errorMessage)
+{
+    consume(TOKEN_IDENTIFIER, errorMessage);
+    return identifierConstant(&parser.previous);
+}
+
+static void defineVariable(uint8_t global)
+{
+    emitBytes(OP_DEFINE_GLOBAL, global);
+}
+
+static void varDeclaration()
+{
+    // Get name
+    uint8_t global = parseVariable("Expect variable name.");
+
+    // Get initializer
+    if (match(TOKEN_EQUAL))
+    {
+        expression();
+    }
+    else
+    {
+        // Else default to nil
+        emitByte(OP_NIL);
+    }
+
+    consume(TOKEN_SEMICOLON, "Expect ';' after variable declaration.");
+
+    defineVariable(global);
 }
 
 static void declaration()
 {
-    statement();
+    if (match(TOKEN_VAR))
+    {
+        varDeclaration();
+    }
+    else
+    {
+        statement();
+    }
+
+    if (parser.panicMode) synchronize();
 }
 
 // ---------- MAIN ----------
@@ -381,7 +476,7 @@ ParseRule rules[] =
         [TOKEN_GREATER_EQUAL] = {NULL,                 binary, PREC_COMPARISON},
         [TOKEN_LESS]          = {NULL,                 binary, PREC_COMPARISON},
         [TOKEN_LESS_EQUAL]    = {NULL,                 binary, PREC_COMPARISON},
-        [TOKEN_IDENTIFIER]    = {NULL,                 NULL,   PREC_NONE},
+        [TOKEN_IDENTIFIER]    = {variable,             NULL,   PREC_NONE},
         [TOKEN_DOLLAR]        = {interpolatedString,   NULL,   PREC_NONE},
         [TOKEN_STRING]        = {string,               NULL,   PREC_NONE},
         [TOKEN_NUMBER]        = {number,               NULL,   PREC_NONE},

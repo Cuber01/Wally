@@ -122,7 +122,28 @@ ObjString* tableFindString(Table* table, const char* chars, int length, uint32_t
     }
 }
 
+bool tableSetNoOverwrite(Table* table, ObjString* key, Value value)
+{
+    // Grow the table if it is at least 75% full
+    if (table->count + 1 > table->capacity * TABLE_MAX_LOAD)
+    {
+        int capacity = GROW_CAPACITY(table->capacity);
+        adjustCapacity(table, capacity);
+    }
 
+    // See if an entry already exists, if not, make a new one and increase table count,
+    // if yes, set the existing one
+    Entry* entry = findEntry(table->entries, table->capacity, key);
+    bool isNewKey = entry->key == NULL;
+    // IS_NIL check makes sure that we're not examining a tombstone
+    if (!isNewKey || !IS_NIL(entry->value)) return false;
+
+    table->count++;
+
+    entry->key = key;
+    entry->value = value;
+    return isNewKey;
+}
 
 bool tableSet(Table* table, ObjString* key, Value value)
 {

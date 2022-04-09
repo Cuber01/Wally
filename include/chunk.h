@@ -33,6 +33,13 @@ typedef enum {
     OP_SUBTRACT,
     OP_MULTIPLY,
     OP_DIVIDE,
+
+    // Variables
+    OP_DEFINE_GLOBAL,
+    OP_GET_GLOBAL,
+
+    // Misc
+    OP_POP,
 } OpCode;
 
 typedef struct {

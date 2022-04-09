@@ -33,12 +33,14 @@ static void runtimeError(const char* format, ...)
 void initVM()
 {
     resetStack();
+    initTable(&vm.globals);
     initTable(&vm.strings);
     vm.objects = NULL;
 }
 
 void freeVM()
 {
+    freeTable(&vm.globals);
     freeTable(&vm.strings);
     freeObjects();
 }
@@ -93,8 +95,6 @@ static void concatenate()
     push(OBJ_VAL(result));
 }
 
-
-
 static InterpretResult run()
 {
     #define READ_BYTE() (*vm.ip++)
@@ -111,6 +111,7 @@ static InterpretResult run()
             double a = AS_NUMBER(pop()); \
             push(valueType(a op b)); \
         } while (false)
+    #define READ_STRING() AS_STRING(READ_CONSTANT())
 
     for (;;)
     {
@@ -146,6 +147,8 @@ static InterpretResult run()
             case OP_NIL:   push(NIL_VAL);         break;
             case OP_TRUE:  push(BOOL_VAL(true));  break;
             case OP_FALSE: push(BOOL_VAL(false)); break;
+
+            case OP_POP: pop(); break;
 
             case OP_EQUAL:
             {
@@ -214,16 +217,45 @@ static InterpretResult run()
                 break;
             }
 
+            case OP_DEFINE_GLOBAL:
+            {
+                ObjString *name = READ_STRING();
+                bool success = tableSetNoOverwrite(&vm.globals, name, peek(0));
+                if (!success)
+                {
+                    runtimeError("Tried to redefine variable '%s'.", name->chars); //TODO
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                pop();
+                break;
+            }
+
+            case OP_GET_GLOBAL:
+            {
+                ObjString* name = READ_STRING();
+                Value value;
+
+                if (!tableGet(&vm.globals, name, &value))
+                {
+                    runtimeError("Undefined variable '%s'.", name->chars);
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+
+                push(value);
+                break;
+            }
+
+
             case OP_RETURN:
             {
                 // printValue(pop());
-                // printf("\n");
+                // putchar('\n');
                 return INTERPRET_OK;
             }
         }
     }
 
-
+    #undef READ_STRING
     #undef BINARY_OP
     #undef READ_CONSTANT
     #undef READ_BYTE
