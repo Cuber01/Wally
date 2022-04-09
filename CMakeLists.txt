@@ -8,4 +8,4 @@ add_executable(Wally src/main.c src/memory.c
                      src/chunk.c src/debug.c
                      src/value.c src/vm.c
                      src/scanner.c src/compiler.c
-        src/token_printer.c src/object.c src/object.h)
+        src/token_printer.c src/object.c src/table.c)

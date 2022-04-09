@@ -2,6 +2,7 @@
 #define WALLY_VM_H
 
 #include "chunk.h"
+#include "table.h"
 #define STACK_MAX 256
 
 
@@ -12,6 +13,7 @@ typedef struct {
     Value stack[STACK_MAX];
     Value* stackTop; // Points towards where the next pushed value will go, a.k.a. an empty place in the stack array.
 
+    Table strings;
     Obj* objects;
 } VM;
 
