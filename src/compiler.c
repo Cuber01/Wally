@@ -207,9 +207,8 @@ static char* escapeSequences(char source[], int length)
     {
         if(source[i] == '\\')
         {
-            int nextCharIndex = i+1;
-            char c = source[nextCharIndex];
-            switch (c)
+
+            switch (source[i+1])
             {
                 case 'n': REMOVE_AND_REPLACE(i, '\n'); break;
                 case 'f': REMOVE_AND_REPLACE(i, '\f'); break;
@@ -240,6 +239,7 @@ static void string()
     length = strlen(str);
     strcpy(str, escapeSequences(str, length));
     length = strlen(str);
+
     emitConstant(OBJ_VAL(copyString(str, length)));
 }
 
