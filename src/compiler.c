@@ -195,12 +195,49 @@ static void number()
     emitConstant(NUMBER_VAL(value));
 }
 
+static char* escapeSequences(char source[], int length)
+{
+    #define REMOVE_AND_REPLACE(index, char) \
+    do { \
+        memmove(&source[(index)], &source[(index) + 1], length - (index)); \
+        source[(index)] = (char); \
+    } while(false) \
+
+    for(int i = 0; i <= length; i++)
+    {
+        if(source[i] == '\\')
+        {
+            int nextCharIndex = i+1;
+
+            switch (source[nextCharIndex])
+            {
+                case 'n': REMOVE_AND_REPLACE(i, '\n'); break;
+                case 'f': REMOVE_AND_REPLACE(i, '\f'); break;
+                case 'r': REMOVE_AND_REPLACE(i, '\r'); break;
+                case 'b': REMOVE_AND_REPLACE(i, '\b'); break;
+                case 't': REMOVE_AND_REPLACE(i, '\t'); break;
+                case 'v': REMOVE_AND_REPLACE(i, '\v'); break;
+                case '"': REMOVE_AND_REPLACE(i, '\"'); break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    return source;
+}
+
 static void string()
 {
-    // Extract string from the lexeme (trim "" with +1 and -2)
-    // TODO Escape sequences
-    emitConstant(OBJ_VAL(copyString(parser.previous.start + 1,
-                                    parser.previous.length - 2)));
+    // Math is for trimming ""
+    int length = parser.previous.length;
+    char str[length];
+
+    snprintf(str, length - 1, "%s", parser.previous.start + 1);
+    strcpy(str, escapeSequences(str, length));
+
+    emitConstant(OBJ_VAL(copyString(str, length - 2)));
 }
 
 static void unary()
