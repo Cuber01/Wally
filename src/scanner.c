@@ -63,7 +63,8 @@ static void skipWhitespace()
     for (;;)
     {
         char c = peek();
-        switch (c) {
+        switch (c)
+        {
             case ' ':
             case '\r':
             case '\t':
@@ -138,7 +139,6 @@ static Token number()
     return makeToken(TOKEN_NUMBER);
 }
 
-
 static Token string()
 {
     while (peek() != '"' && !isAtEnd())
@@ -159,6 +159,11 @@ static Token string()
     // Advance through the closing quote.
     advance();
     return makeToken(TOKEN_STRING);
+}
+
+static Token stringInterpolation()
+{
+
 }
 
 static TokenType checkKeyword(int start, int length, const char* rest, TokenType type)
@@ -241,6 +246,7 @@ Token scanToken()
         case '+': return makeToken(TOKEN_PLUS);
         case '/': return makeToken(TOKEN_SLASH);
         case '*': return makeToken(TOKEN_STAR);
+        case '$': return makeToken(TOKEN_DOLLAR);
 
         case '!':
             return makeToken(
