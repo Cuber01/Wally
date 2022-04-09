@@ -37,6 +37,7 @@ typedef enum {
     // Variables
     OP_DEFINE_GLOBAL,
     OP_GET_GLOBAL,
+    OP_SET_GLOBAL,
 
     // Misc
     OP_POP,

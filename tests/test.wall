@@ -1,4 +1,4 @@
-var beverage = 2 + 3;
-var breakfast = 1 + 3;
-var breakfast = 8;
+var beverage = 2;
+var breakfast = 1;
+breakfast = breakfast + beverage;
 print breakfast;
