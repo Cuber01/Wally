@@ -3,6 +3,14 @@ project(Wally)
 
 set(CMAKE_CXX_STANDARD 14)
 
+if (DEBUG_ENABLED)
+    add_definitions(-DDEBUG_PRINT_BYTECODE=1 -DDEBUG_TRACE_EXECUTION=1)
+endif (DEBUG_ENABLED)
+
+if(TOKEN_PRINT_ENABLED)
+    add_definitions(-DEBUG_PRINT_TOKENS=1)
+endif(TOKEN_PRINT_ENABLED)
+
 include_directories(Wally PRIVATE include/ include/data/ include/misc/ include/debug/)
 add_executable(Wally src/main.c
                      src/memory.c

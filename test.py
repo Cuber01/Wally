@@ -253,7 +253,7 @@ class Test:
 
         index = 0
         for line in out_lines:
-            if sys.version_info < (3, 0): # TODO
+            if sys.version_info < (3, 0):
                 line = line.encode('utf-8')
 
             if index >= len(self.output):
