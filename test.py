@@ -13,7 +13,7 @@ import sys
 # Runs the tests.
 REPO_DIR = dirname(realpath(__file__))
 
-OUTPUT_EXPECT = re.compile(r'// Expected: ?(.*)')
+OUTPUT_EXPECT = re.compile(r'// Expect ?(.*)')
 ERROR_EXPECT = re.compile(r'// (Error.*)')
 ERROR_LINE_EXPECT = re.compile(r'// \[((java|c) )?line (\d+)\] (Error.*)')
 RUNTIME_ERROR_EXPECT = re.compile(r'// Expected Runtime Error: (.+)')
