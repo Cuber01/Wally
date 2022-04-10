@@ -1,3 +1,8 @@
 var a = 2;
 var b = a + 1;
 print a + b; // Expect: 5
+
+{
+    var a;
+    print a; // Expect: nil
+}

@@ -5,6 +5,18 @@
 #include "scanner.h"
 
 typedef struct {
+    Token name;
+    int depth;
+} Local;
+
+typedef struct {
+    Local locals[UINT8_COUNT];
+
+    int localCount;
+    int scopeDepth;
+} Compiler;
+
+typedef struct {
     bool hadError;
     bool panicMode;
 

@@ -1,1 +1,5 @@
-print "a\ta" ;
+var a = 2;
+{
+    var a;
+    print a;
+}
