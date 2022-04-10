@@ -1,4 +1,1 @@
-var beverage = 2;
-var breakfast = 1;
-breakfast = breakfast + beverage;
-print breakfast;
+print "str" + 32.4;
