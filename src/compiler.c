@@ -298,8 +298,6 @@ static void escapeSequences(char* destination, char* source)
 
 }
 
-
-
 static void string(bool canAssign)
 {
     // Math is for trimming ""
@@ -307,7 +305,7 @@ static void string(bool canAssign)
     char str[length];
 
     strcpy( str, parser.previous.start + 1 );
-    str[length - 3] = 0;
+    str[parser.previous.length - 2] = 0;
 
     escapeSequences(str, str);
 
