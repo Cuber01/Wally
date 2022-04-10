@@ -242,54 +242,76 @@ static void number(bool canAssign)
     emitConstant(NUMBER_VAL(value));
 }
 
-static char* escapeSequences(char source[], int length)
+
+static void escapeSequences(char* destination, char* source)
 {
-    #define REMOVE_AND_REPLACE(index, c ) \
-    do { \
-        memmove(&source[(index)], &source[(index) + 1], length - (index)); \
-        source[(index)] = ( c ); \
-    } while(false) \
-
-    for(int i = 0; i <= length; i++)
+    typedef enum
     {
-        if(source[i] == '\\')
+        ST_COPY,
+        ST_REPLACE
+    } CopyType;
+
+    static CopyType state = ST_COPY;
+
+    while (*source != 0)
+    {
+
+        switch (state)
         {
+            case ST_COPY:
+                if(*source != '\\')
+                {
+                    *destination = *source;
+                    destination++;
+                }
+                else
+                {
+                    state = ST_REPLACE;
+                }
+                break;
 
-            switch (source[i+1])
-            {
-                case 'n': REMOVE_AND_REPLACE(i, '\n'); break;
-                case 'f': REMOVE_AND_REPLACE(i, '\f'); break;
-                case 'r': REMOVE_AND_REPLACE(i, '\r'); break;
-                case 'b': REMOVE_AND_REPLACE(i, '\b'); break;
-                case 't': REMOVE_AND_REPLACE(i, '\t'); break;
-                case 'v': REMOVE_AND_REPLACE(i, '\v'); break;
-                case '"': REMOVE_AND_REPLACE(i, '\"'); break;
+            case ST_REPLACE:
+                switch (*source)
+                {
+                    case 'n': *destination = '\n'; break;
+                    case 'f': *destination = '\f'; break;
+                    case 'r': *destination = '\r'; break;
+                    case 'b': *destination = '\b'; break;
+                    case 't': *destination = '\t'; break;
+                    case 'v': *destination = '\v'; break;
+                    case '"': *destination = '\"'; break;
 
-                default:
-                    break;
-            }
+                    default: *destination = *source;
+                }
+
+                destination++;
+
+                state = ST_COPY;
+                break;
         }
+
+        source++;
+
     }
 
-    #undef REMOVE_AND_REPLACE
+    *destination = 0;
 
-    return source;
 }
+
+
 
 static void string(bool canAssign)
 {
     // Math is for trimming ""
-    int length = parser.previous.length;
+    uint32_t length = strlen(parser.previous.start);
     char str[length];
 
     strcpy( str, parser.previous.start + 1 );
-    str[length-2] = 0;
+    str[length - 3] = 0;
 
-    length = strlen(str);
-    strcpy(str, escapeSequences(str, length));
-    length = strlen(str);
+    escapeSequences(str, str);
 
-    emitConstant(OBJ_VAL(copyString(str, length)));
+    emitConstant(OBJ_VAL(copyString(str, parser.previous.length - 2)));
 }
 
 static void interpolatedString(bool canAssign)
