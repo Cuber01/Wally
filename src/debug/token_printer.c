@@ -71,7 +71,7 @@ void printToken(Token token, bool isNewLine)
     {
         putchar(' ');
     }
-    printf(WHITE);
+    printf(COLOR_CLEAR);
 
     printf("'%.*s'\n", token.length, token.start);
 

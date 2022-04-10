@@ -6,7 +6,7 @@
 #include "object.h"
 
 #ifdef DEBUG_PRINT_BYTECODE
-#include "debug.h"
+#include "disassembler.h"
 #endif
 
 #ifdef DEBUG_PRINT_TOKENS

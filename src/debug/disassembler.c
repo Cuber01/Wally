@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "debug.h"
+#include "disassembler.h"
 #include "colors.h"
 
 void disassembleChunk(Chunk* chunk, const char* name)
@@ -28,9 +28,9 @@ static int constantInstruction(const char* name, Chunk* chunk, int offset)
     uint8_t constant = chunk->code[offset + 1];
 
     printf(BLUE);
-    printf("%-16s ", name);
+    printf("%-17s ", name);
     printf(COLOR_CLEAR);
-    printf("%d  '", constant);
+    printf("%d   '", constant);
 
     printf(BOLD_YELLOW);
     printValue(chunk->constants.values[constant]);

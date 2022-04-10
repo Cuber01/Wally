@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "chunk.h"
-#include "debug.h"
+#include "disassembler.h"
 #include "vm.h"
 
 

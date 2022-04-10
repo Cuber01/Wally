@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "vm.h"
-#include "debug.h"
+#include "disassembler.h"
 #include "compiler.h"
 #include "object.h"
 #include "memory.h"
