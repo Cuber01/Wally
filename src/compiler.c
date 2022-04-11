@@ -348,6 +348,7 @@ static void grouping(bool canAssign)
 
 // ---------- STATEMENTS ------------
 static void declaration();
+static void statement();
 
 static void expressionStatement()
 {
@@ -392,6 +393,75 @@ static void beginScope()
     current->scopeDepth++;
 }
 
+static int emitJump(uint8_t instruction)
+{
+    emitByte(instruction);
+
+    // Emit placeholder values we'll replace after compiling the body
+    emitByte(0xff);
+    emitByte(0xff);
+
+    return currentChunk()->count - 2;
+}
+
+static void patchJump(int offset)
+{
+    // -2 to adjust for the bytecode for the jump offset itself
+    int jump = currentChunk()->count - offset - 2;
+
+    if (jump > UINT16_MAX)
+    {
+        error("Too much code to jump over.");
+    }
+
+    currentChunk()->code[offset] = (jump >> 8) & 0xff;
+    currentChunk()->code[offset + 1] = jump & 0xff;
+}
+
+static void or(bool canAssign)
+{
+    // TODO
+    int elseJump = emitJump(OP_JUMP_IF_FALSE);
+    int endJump = emitJump(OP_JUMP);
+
+    patchJump(elseJump);
+    emitByte(OP_POP);
+
+    parsePrecedence(PREC_OR);
+    patchJump(endJump);
+}
+
+
+
+static void and(bool canAssign)
+{
+    int endJump = emitJump(OP_JUMP_IF_FALSE);
+
+    emitByte(OP_POP);
+    parsePrecedence(PREC_AND);
+
+    patchJump(endJump);
+}
+
+static void ifStatement()
+{
+    consume(TOKEN_LEFT_PAREN, "Expect '(' after 'if'.");
+    expression();
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
+
+    int thenJump = emitJump(OP_JUMP_IF_FALSE);
+    emitByte(OP_POP);
+    statement();
+
+    int elseJump = emitJump(OP_JUMP);
+
+    patchJump(thenJump);
+    emitByte(OP_POP);
+
+    if (match(TOKEN_ELSE)) statement();
+    patchJump(elseJump);
+}
+
 static void statement()
 {
     if (match(TOKEN_PRINT))
@@ -403,6 +473,10 @@ static void statement()
         beginScope();
         block();
         endScope();
+    }
+    else if (match(TOKEN_IF))
+    {
+        ifStatement();
     }
     else
     {
@@ -654,7 +728,7 @@ ParseRule rules[] =
         [TOKEN_DOLLAR]        = {interpolatedString,   NULL,   PREC_NONE},
         [TOKEN_STRING]        = {string,               NULL,   PREC_NONE},
         [TOKEN_NUMBER]        = {number,               NULL,   PREC_NONE},
-        [TOKEN_AND]           = {NULL,                 NULL,   PREC_NONE},
+        [TOKEN_AND]           = {NULL,                 and,   PREC_NONE},
         [TOKEN_CLASS]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_ELSE]          = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_FALSE]         = {literal,              NULL,   PREC_NONE},
@@ -662,7 +736,7 @@ ParseRule rules[] =
         [TOKEN_FUN]           = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_IF]            = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_NIL]           = {literal,              NULL,   PREC_NONE},
-        [TOKEN_OR]            = {NULL,                 NULL,   PREC_NONE},
+        [TOKEN_OR]            = {NULL,                 or,   PREC_NONE},
         [TOKEN_PRINT]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_RETURN]        = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_SUPER]         = {NULL,                 NULL,   PREC_NONE},

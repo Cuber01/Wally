@@ -41,6 +41,10 @@ typedef enum {
     OP_GET_LOCAL,
     OP_SET_LOCAL,
 
+    // Control flow
+    OP_JUMP_IF_FALSE,
+    OP_JUMP,
+
     // Misc
     OP_POP,
 } OpCode;

@@ -7,6 +7,6 @@ if(a == 3)
 }
 else if (b == 3)
 {
-    print "good";
+    print "good"; // Expect: good
 }
 
