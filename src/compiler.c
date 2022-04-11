@@ -422,14 +422,11 @@ static void patchJump(int offset)
 
 static void or(bool canAssign)
 {
-    // TODO
-    int elseJump = emitJump(OP_JUMP_IF_FALSE);
-    int endJump = emitJump(OP_JUMP);
+    int endJump = emitJump(OP_JUMP_IF_TRUE);
 
-    patchJump(elseJump);
     emitByte(OP_POP);
-
     parsePrecedence(PREC_OR);
+
     patchJump(endJump);
 }
 

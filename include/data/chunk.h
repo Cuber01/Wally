@@ -43,6 +43,7 @@ typedef enum {
 
     // Control flow
     OP_JUMP_IF_FALSE,
+    OP_JUMP_IF_TRUE,
     OP_JUMP,
 
     // Misc
