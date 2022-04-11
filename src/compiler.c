@@ -5,6 +5,8 @@
 #include "chunk.h"
 #include "object.h"
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedParameter"
 #ifdef DEBUG_PRINT_BYTECODE
 #include "disassembler.h"
 #endif
@@ -431,8 +433,6 @@ static void or(bool canAssign)
     patchJump(endJump);
 }
 
-
-
 static void and(bool canAssign)
 {
     int endJump = emitJump(OP_JUMP_IF_FALSE);
@@ -728,7 +728,7 @@ ParseRule rules[] =
         [TOKEN_DOLLAR]        = {interpolatedString,   NULL,   PREC_NONE},
         [TOKEN_STRING]        = {string,               NULL,   PREC_NONE},
         [TOKEN_NUMBER]        = {number,               NULL,   PREC_NONE},
-        [TOKEN_AND]           = {NULL,                 and,   PREC_NONE},
+        [TOKEN_AND]           = {NULL,                 and,    PREC_AND},
         [TOKEN_CLASS]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_ELSE]          = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_FALSE]         = {literal,              NULL,   PREC_NONE},
@@ -736,7 +736,7 @@ ParseRule rules[] =
         [TOKEN_FUN]           = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_IF]            = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_NIL]           = {literal,              NULL,   PREC_NONE},
-        [TOKEN_OR]            = {NULL,                 or,   PREC_NONE},
+        [TOKEN_OR]            = {NULL,                 or,     PREC_OR},
         [TOKEN_PRINT]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_RETURN]        = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_SUPER]         = {NULL,                 NULL,   PREC_NONE},
