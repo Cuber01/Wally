@@ -240,6 +240,7 @@ Token scanToken()
         case '{': return makeToken(TOKEN_LEFT_BRACE);
         case '}': return makeToken(TOKEN_RIGHT_BRACE);
         case ';': return makeToken(TOKEN_SEMICOLON);
+        case ':': return makeToken(TOKEN_COLON);
         case ',': return makeToken(TOKEN_COMMA);
         case '.': return makeToken(TOKEN_DOT);
         case '-': return makeToken(TOKEN_MINUS);
@@ -247,6 +248,7 @@ Token scanToken()
         case '/': return makeToken(TOKEN_SLASH);
         case '*': return makeToken(TOKEN_STAR);
         case '$': return makeToken(TOKEN_DOLLAR);
+        case '?': return makeToken(TOKEN_QUESTION_MARK);
 
         case '&':
             if(match('&'))

@@ -47,6 +47,8 @@ char* tokenEnumToChar(TokenType type)
         case TOKEN_RIGHT_PAREN: return "TOKEN_RIGHT_PAREN";
         case TOKEN_LESS: return "TOKEN_LESS";
         case TOKEN_DOLLAR: return "TOKEN_DOLLAR";
+        case TOKEN_COLON:  return "TOKEN_COLON";
+        case TOKEN_QUESTION_MARK: return "TOKEN_QUESTION_MARK";
     }
 }
 

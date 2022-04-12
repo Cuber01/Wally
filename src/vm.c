@@ -147,7 +147,7 @@ static InterpretResult run()
                 break;
             }
 
-            case OP_NULL:   push(NULL_VAL);         break;
+            case OP_NULL:   push(NULL_VAL);       break;
             case OP_TRUE:  push(BOOL_VAL(true));  break;
             case OP_FALSE: push(BOOL_VAL(false)); break;
 
@@ -302,6 +302,24 @@ static InterpretResult run()
             {
                 uint16_t offset = READ_SHORT();
                 vm.ip -= offset;
+                break;
+            }
+
+            case OP_TERNARY:
+            {
+                Value elseBranch = pop();
+                Value thenBranch = pop();
+                Value condition = pop();
+
+                if(isFalsey(condition))
+                {
+                    push(elseBranch);
+                }
+                else
+                {
+                    push(thenBranch);
+                }
+
                 break;
             }
 

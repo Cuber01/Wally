@@ -236,12 +236,20 @@ static void binary(bool canAssign)
     }
 }
 
+static void ternary(bool canAssign)
+{
+    parsePrecedence(PREC_TERNARY);
+    consume(TOKEN_COLON, "Expect ':' after first ternary branch.");
+    parsePrecedence(PREC_ASSIGNMENT);
+    emitByte(OP_TERNARY);
+}
+
 static void literal(bool canAssign)
 {
     switch (parser.previous.type)
     {
         case TOKEN_FALSE: emitByte(OP_FALSE); break;
-        case TOKEN_NULL:   emitByte(OP_NULL);   break;
+        case TOKEN_NULL:  emitByte(OP_NULL);   break;
         case TOKEN_TRUE:  emitByte(OP_TRUE);  break;
         default: return; // Unreachable.
     }
@@ -824,11 +832,13 @@ ParseRule rules[] =
         [TOKEN_AND]           = {NULL,                 and,    PREC_AND},
         [TOKEN_CLASS]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_ELSE]          = {NULL,                 NULL,   PREC_NONE},
+        [TOKEN_QUESTION_MARK] = {NULL,                 ternary,PREC_TERNARY},
+        [TOKEN_COLON]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_FALSE]         = {literal,              NULL,   PREC_NONE},
         [TOKEN_FOR]           = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_FUNCTION]           = {NULL, NULL, PREC_NONE},
+        [TOKEN_FUNCTION]      = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_IF]            = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_NULL]           = {literal,              NULL,   PREC_NONE},
+        [TOKEN_NULL]          = {literal,              NULL,   PREC_NONE},
         [TOKEN_OR]            = {NULL,                 or,     PREC_OR},
         [TOKEN_PRINT]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_RETURN]        = {NULL,                 NULL,   PREC_NONE},

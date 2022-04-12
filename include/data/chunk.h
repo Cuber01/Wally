@@ -49,6 +49,7 @@ typedef enum {
 
     // Misc
     OP_POP,
+    OP_TERNARY,
 } OpCode;
 
 typedef struct {
