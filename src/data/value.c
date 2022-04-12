@@ -160,7 +160,7 @@ ObjString* valueToString(Value value)
 
         case VAL_NULL:
         {
-            return copyString("null", 3);
+            return copyString("null", 4);
         }
 
         case VAL_NUMBER:
