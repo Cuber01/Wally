@@ -2,4 +2,4 @@ print "str" + 32.4;    // Expect: str32.4
 print "str" + "ing";   // Expect: string
 print "very " + true;  // Expect: very true
 print "very " + false; // Expect: very false
-print "very " + nil;   // Expect: very nil
+print "very " + null;   // Expect: very null

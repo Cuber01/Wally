@@ -4,5 +4,5 @@ print a + b; // Expect: 5
 
 {
     var a;
-    print a; // Expect: nil
+    print a; // Expect: null
 }

@@ -41,7 +41,7 @@ bool valuesEqual(Value a, Value b)
     switch (a.type)
     {
         case VAL_BOOL:   return AS_BOOL(a) == AS_BOOL(b);
-        case VAL_NIL:    return true;
+        case VAL_NULL:    return true;
         case VAL_NUMBER: return AS_NUMBER(a) == AS_NUMBER(b);
         case VAL_OBJ:
         {
@@ -66,9 +66,9 @@ void printRawValue(Value value)
             break;
         }
 
-        case VAL_NIL:
+        case VAL_NULL:
         {
-            printf("nil");
+            printf("null");
             break;
         }
 
@@ -98,10 +98,10 @@ void printValue(Value value)
             break;
         }
 
-        case VAL_NIL:
+        case VAL_NULL:
         {
             printf(BOLD_RED);
-            printf("nil");
+            printf("null");
             break;
         }
 
@@ -158,9 +158,9 @@ ObjString* valueToString(Value value)
             }
         }
 
-        case VAL_NIL:
+        case VAL_NULL:
         {
-            return copyString("nil", 3);
+            return copyString("null", 3);
         }
 
         case VAL_NUMBER:

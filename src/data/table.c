@@ -33,7 +33,7 @@ static Entry* findEntry(Entry* entries, int capacity, ObjString* key)
         if (entry->key == NULL)
         {
 
-            if (IS_NIL(entry->value))
+            if (IS_NULL(entry->value))
             {
                 // Empty entry.
                 return tombstone != NULL ? tombstone : entry;
@@ -62,7 +62,7 @@ static void adjustCapacity(Table* table, int capacity)
     for (int i = 0; i < capacity; i++)
     {
         entries[i].key = NULL;
-        entries[i].value = NIL_VAL;
+        entries[i].value = NULL_VAL;
     }
 
     for (int i = 0; i < table->capacity; i++)
@@ -108,7 +108,7 @@ ObjString* tableFindString(Table* table, const char* chars, int length, uint32_t
         if (entry->key == NULL)
         {
             // Stop if we find an empty non-tombstone entry
-            if (IS_NIL(entry->value)) return NULL;
+            if (IS_NULL(entry->value)) return NULL;
         }
         else if (entry->key->length == length &&
                  entry->key->hash == hash &&
@@ -135,8 +135,8 @@ bool tableSetNoOverwrite(Table* table, ObjString* key, Value value)
     // if yes, set the existing one
     Entry* entry = findEntry(table->entries, table->capacity, key);
     bool isNewKey = entry->key == NULL;
-    // IS_NIL check makes sure that we're not examining a tombstone
-    if (!isNewKey || !IS_NIL(entry->value)) return false;
+    // IS_NULL check makes sure that we're not examining a tombstone
+    if (!isNewKey || !IS_NULL(entry->value)) return false;
 
     table->count++;
 
@@ -158,8 +158,8 @@ bool tableSet(Table* table, ObjString* key, Value value)
     // if yes, set the existing one
     Entry* entry = findEntry(table->entries, table->capacity, key);
     bool isNewKey = entry->key == NULL;
-    // IS_NIL check makes sure that we're not examining a tombstone
-    if (isNewKey && IS_NIL(entry->value)) table->count++;
+    // IS_NULL check makes sure that we're not examining a tombstone
+    if (isNewKey && IS_NULL(entry->value)) table->count++;
 
     entry->key = key;
     entry->value = value;

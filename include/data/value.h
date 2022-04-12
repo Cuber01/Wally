@@ -8,7 +8,7 @@ typedef struct ObjString ObjString;
 
 // C value => Wally value
 #define BOOL_VAL(value)   ((Value){VAL_BOOL, {.boolean = value}})
-#define NIL_VAL           ((Value){VAL_NIL, {.number = 0}})
+#define NULL_VAL           ((Value){VAL_NULL, {.number = 0}})
 #define NUMBER_VAL(value) ((Value){VAL_NUMBER, {.number = value}})
 #define OBJ_VAL(object)   ((Value){VAL_OBJ, {.obj = (Obj*)object}})
 
@@ -19,13 +19,13 @@ typedef struct ObjString ObjString;
 
 // Check type
 #define IS_BOOL(value)    ((value).type == VAL_BOOL)
-#define IS_NIL(value)     ((value).type == VAL_NIL)
+#define IS_NULL(value)     ((value).type == VAL_NULL)
 #define IS_NUMBER(value)  ((value).type == VAL_NUMBER)
 #define IS_OBJ(value)     ((value).type == VAL_OBJ)
 
 typedef enum {
     VAL_BOOL,
-    VAL_NIL,
+    VAL_NULL,
     VAL_NUMBER,
     VAL_OBJ
 } ValueType;

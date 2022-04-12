@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "misc-no-recursion"
 #include <stdlib.h>
 
 #include "compiler.h"
@@ -239,7 +241,7 @@ static void literal(bool canAssign)
     switch (parser.previous.type)
     {
         case TOKEN_FALSE: emitByte(OP_FALSE); break;
-        case TOKEN_NIL:   emitByte(OP_NIL);   break;
+        case TOKEN_NULL:   emitByte(OP_NULL);   break;
         case TOKEN_TRUE:  emitByte(OP_TRUE);  break;
         default: return; // Unreachable.
     }
@@ -710,8 +712,8 @@ static void varDeclaration()
     }
     else
     {
-        // Else default to nil
-        emitByte(OP_NIL);
+        // Else default to null
+        emitByte(OP_NULL);
     }
 
     consume(TOKEN_SEMICOLON, "Expect ';' after variable declaration.");
@@ -826,7 +828,7 @@ ParseRule rules[] =
         [TOKEN_FOR]           = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_FUN]           = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_IF]            = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_NIL]           = {literal,              NULL,   PREC_NONE},
+        [TOKEN_NULL]           = {literal,              NULL,   PREC_NONE},
         [TOKEN_OR]            = {NULL,                 or,     PREC_OR},
         [TOKEN_PRINT]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_RETURN]        = {NULL,                 NULL,   PREC_NONE},
@@ -862,3 +864,4 @@ void printTokens()
     }
 }
 #endif
+
