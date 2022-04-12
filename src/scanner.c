@@ -181,12 +181,10 @@ static TokenType identifierType()
 {
     switch (scanner.start[0])
     {
-        case 'a': return checkKeyword(1, 2, "nd", TOKEN_AND);
         case 'c': return checkKeyword(1, 4, "lass", TOKEN_CLASS);
         case 'e': return checkKeyword(1, 3, "lse", TOKEN_ELSE);
         case 'i': return checkKeyword(1, 1, "f", TOKEN_IF);
         case 'n': return checkKeyword(1, 3, "ull", TOKEN_NULL);
-        case 'o': return checkKeyword(1, 1, "r", TOKEN_OR);
         case 'p': return checkKeyword(1, 4, "rint", TOKEN_PRINT);
         case 'r': return checkKeyword(1, 5, "eturn", TOKEN_RETURN);
         case 's': return checkKeyword(1, 4, "uper", TOKEN_SUPER);
@@ -249,6 +247,27 @@ Token scanToken()
         case '/': return makeToken(TOKEN_SLASH);
         case '*': return makeToken(TOKEN_STAR);
         case '$': return makeToken(TOKEN_DOLLAR);
+
+        case '&':
+            if(match('&'))
+            {
+                return makeToken(TOKEN_AND);
+            }
+            else
+            {
+                return errorToken("Expected '&' after '&'.");
+            }
+
+        case '|':
+            if(match('|'))
+            {
+                return makeToken(TOKEN_OR);
+            }
+            else
+            {
+                return errorToken("Expected '|' after '|'.");
+            }
+
 
         case '!':
             return makeToken(

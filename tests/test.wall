@@ -1,1 +1,2 @@
-function
+print true && false; // Expect: false
+print true || false; // Expect: true
