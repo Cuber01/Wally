@@ -1,0 +1,35 @@
+for(var i = 0; i < 5; i = i + 1)
+{
+    print i;
+}
+
+// Expect: 0
+// Expect: 1
+// Expect: 2
+// Expect: 3
+// Expect: 4
+
+var i = 0;
+for(; i < 5; i = i + 1)
+{
+    print i;
+}
+
+// Expect: 0
+// Expect: 1
+// Expect: 2
+// Expect: 3
+// Expect: 4
+
+i = 0;
+for(;i < 5;)
+{
+    print i;
+    i = i + 1;
+}
+
+// Expect: 0
+// Expect: 1
+// Expect: 2
+// Expect: 3
+// Expect: 4

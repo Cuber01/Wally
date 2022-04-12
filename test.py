@@ -378,6 +378,7 @@ def run_suite(name):
     expectations = 0
 
     walk(join(REPO_DIR, 'tests/expressions'), run_script)
+    walk(join(REPO_DIR, 'tests/jump'), run_script)
     walk(join(REPO_DIR, 'tests/data'), run_script)
     print_line()
 
