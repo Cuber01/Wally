@@ -131,7 +131,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return constantInstruction("OP_CONSTANT", chunk, offset);
         case OP_SET_GLOBAL:
             return constantInstruction("OP_SET_GLOBAL", chunk, offset);
-
+        case OP_LOOP:
+            return jumpInstruction("OP_LOOP", -1, chunk, offset);
 
         default:
             printf("Unknown opcode %d\n", instruction);
