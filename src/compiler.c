@@ -114,7 +114,7 @@ static void synchronize()
         switch (parser.current.type)
         {
             case TOKEN_CLASS:
-            case TOKEN_FUN:
+            case TOKEN_FUNCTION:
             case TOKEN_VAR:
             case TOKEN_FOR:
             case TOKEN_IF:
@@ -826,7 +826,7 @@ ParseRule rules[] =
         [TOKEN_ELSE]          = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_FALSE]         = {literal,              NULL,   PREC_NONE},
         [TOKEN_FOR]           = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_FUN]           = {NULL,                 NULL,   PREC_NONE},
+        [TOKEN_FUNCTION]           = {NULL, NULL, PREC_NONE},
         [TOKEN_IF]            = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_NULL]           = {literal,              NULL,   PREC_NONE},
         [TOKEN_OR]            = {NULL,                 or,     PREC_OR},

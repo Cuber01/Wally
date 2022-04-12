@@ -30,7 +30,7 @@ char* tokenEnumToChar(TokenType type)
         case TOKEN_ELSE: return "TOKEN_ELSE";
         case TOKEN_FALSE: return "TOKEN_FALSE";
         case TOKEN_FOR: return "TOKEN_FOR";
-        case TOKEN_FUN: return "TOKEN_FUN";
+        case TOKEN_FUNCTION: return "TOKEN_FUNCTION";
         case TOKEN_IF: return "TOKEN_IF";
         case TOKEN_NULL: return "TOKEN_NULL";
         case TOKEN_OR: return "TOKEN_OR";
