@@ -26,7 +26,11 @@ static int simpleInstruction(const char* name, int offset)
 static int byteInstruction(const char* name, Chunk* chunk, int offset)
 {
     uint8_t slot = chunk->code[offset + 1];
-    printf("%-16s %4d\n", name, slot);
+
+    printf(CYAN);
+    printf("%-16s ", name);
+    printf(COLOR_CLEAR);
+    printf("%4d\n", slot);
     return offset + 2;
 }
 
@@ -41,6 +45,7 @@ static int constantInstruction(const char* name, Chunk* chunk, int offset)
 
     printf(BOLD_YELLOW);
     printValue(chunk->constants.values[constant]);
+    printf(COLOR_CLEAR);
 
     printf("'\n");
     return offset + 2;
@@ -52,7 +57,11 @@ static int jumpInstruction(const char* name, int sign, Chunk* chunk, int offset)
 
     jump |= chunk->code[offset + 2];
 
-    printf("%-17s %4d -> %d\n", name, offset, offset + 3 + sign * jump);
+    printf(BOLD_PURPLE);
+    printf("%-17s ", name);
+    printf(COLOR_CLEAR);
+    printf("%4d -> %d\n", offset, offset + 3 + sign * jump);
+
     return offset + 3;
 }
 
@@ -114,9 +123,9 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_TERNARY", offset);
 
         case OP_GET_LOCAL:
-            return byteInstruction("OP_GET_LOCAL", chunk, offset);
+            return constantInstruction("OP_GET_LOCAL", chunk, offset);
         case OP_SET_LOCAL:
-            return byteInstruction("OP_SET_LOCAL", chunk, offset);
+            return constantInstruction("OP_SET_LOCAL", chunk, offset);
 
         case OP_JUMP:
             return jumpInstruction("OP_JUMP", 1, chunk, offset);

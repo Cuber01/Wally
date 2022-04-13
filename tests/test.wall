@@ -1,15 +1,14 @@
-var n = 0;
+var n = true;
 
-while(n < 5)
+while(n)
 {
-    n = n + 1;
+    n = false;
 
-    var i = 0;
+    var i = true;
 
-    while(i < 5)
+    while(i)
     {
-        print i;
-        i = i + 1;
+        i = false;
     }
 }
 
@@ -29,22 +28,4 @@ while(n < 5)
 //        print "error!";
 //    }
 //}
-//
-//// Expect: 0
-//// Expect: 1
-//// Expect: 2
-//// Expect: 3
-//// Expect: 4
-//
-//for(var i = 0; i < 5; i = i + 1)
-//{
-//    print i;
-//    continue;
-//    print "error!";
-//}
-//
-//// Expect: 0
-//// Expect: 1
-//// Expect: 2
-//// Expect: 3
-//// Expect: 4
+
