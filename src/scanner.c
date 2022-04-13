@@ -235,7 +235,6 @@ static Token identifier()
     return makeToken(identifierType());
 }
 
-
 Token scanToken()
 {
     skipWhitespace();

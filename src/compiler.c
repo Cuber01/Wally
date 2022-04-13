@@ -24,6 +24,10 @@ Compiler* current = NULL;
 Chunk* compilingChunk;
 ParseRule rules[];
 
+int innermostLoopStart;
+int innermostLoopDepth = -1;
+int innermostLoopEnd;
+
 // ---------- ERROR ----------
 
 static void errorAt(Token* token, const char* message)
@@ -519,9 +523,31 @@ static void forStatement()
     endScope();
 }
 
+static void breakStatement()
+{
+    if(innermostLoopDepth == -1)
+    {
+        error("Can't use 'break' statements outside of loops.");
+    }
+
+    consume(TOKEN_SEMICOLON, "Expect ';' after 'break'.");
+
+    for (int i = current->localCount - 1;
+         i >= 0 && current->locals[i].depth > innermostLoopDepth;
+         i--)
+    {
+        emitByte(OP_POP);
+    }
+
+    emitJump(innermostLoopEnd);
+}
+
 static void whileStatement()
 {
     int loopStart = currentChunk()->count;
+    innermostLoopDepth = current->scopeDepth;
+    innermostLoopStart = currentChunk()->count;
+
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'while'.");
     expression();
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
@@ -534,6 +560,11 @@ static void whileStatement()
 
     patchJump(exitJump);
     emitByte(OP_POP);
+
+    // If there is another loop then it will reset the value anyway
+    innermostLoopDepth = -1;
+
+    innermostLoopEnd = currentChunk()->count;
 }
 
 static void ifStatement()
@@ -557,32 +588,19 @@ static void ifStatement()
 
 static void statement()
 {
-    if (match(TOKEN_PRINT))
-    {
-        printStatement();
-    }
+    if (match(TOKEN_PRINT))           printStatement();
+    else if (match(TOKEN_BREAK))      breakStatement();
+    else if (match(TOKEN_IF))         ifStatement();
+    else if (match(TOKEN_WHILE))      whileStatement();
+    else if (match(TOKEN_FOR))        forStatement();
     else if (match(TOKEN_LEFT_BRACE))
     {
         beginScope();
         block();
         endScope();
     }
-    else if (match(TOKEN_IF))
-    {
-        ifStatement();
-    }
-    else if (match(TOKEN_WHILE))
-    {
-        whileStatement();
-    }
-    else if (match(TOKEN_FOR))
-    {
-        forStatement();
-    }
-    else
-    {
-        expressionStatement();
-    }
+    else expressionStatement();
+
 }
 
 static uint8_t identifierConstant(Token* name)
