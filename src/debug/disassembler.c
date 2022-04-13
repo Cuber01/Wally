@@ -123,9 +123,9 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_TERNARY", offset);
 
         case OP_GET_LOCAL:
-            return constantInstruction("OP_GET_LOCAL", chunk, offset);
+            return byteInstruction("OP_GET_LOCAL", chunk, offset);
         case OP_SET_LOCAL:
-            return constantInstruction("OP_SET_LOCAL", chunk, offset);
+            return byteInstruction("OP_SET_LOCAL", chunk, offset);
 
         case OP_JUMP:
             return jumpInstruction("OP_JUMP", 1, chunk, offset);

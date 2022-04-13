@@ -51,6 +51,9 @@ char* tokenEnumToChar(TokenType type)
         case TOKEN_QUESTION_MARK: return "TOKEN_QUESTION_MARK";
         case TOKEN_BREAK: return "TOKEN_BREAK";
         case TOKEN_CONTINUE: return "TOKEN_CONTINUE";
+        case TOKEN_CASE:    return "TOKEN_CASE";
+        case TOKEN_DEFAULT: return "TOKEN_DEFAULT";
+        case TOKEN_SWITCH:  return "TOKEN_SWITCH";
     }
 }
 
