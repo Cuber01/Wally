@@ -11,16 +11,16 @@ if(TOKEN_PRINT_ENABLED)
     add_definitions(-DEBUG_PRINT_TOKENS=1)
 endif(TOKEN_PRINT_ENABLED)
 
-include_directories(Wally PRIVATE include/ include/data/ include/misc/ include/debug/)
+include_directories(Wally PRIVATE include/ include/data_structs/ include/misc/ include/debug/)
 add_executable(Wally src/main.c
                      src/memory.c
-                     src/data/chunk.c
+        src/data_structs/chunk.c
                      src/debug/disassembler.c
-                     src/data/value.c
+        src/data_structs/value.c
                      src/vm.c
                      src/scanner.c
                      src/compiler.c
                      src/debug/token_printer.c
-                     src/data/object.c
-                     src/data/table.c
+        src/data_structs/object.c
+        src/data_structs/table.c
         )

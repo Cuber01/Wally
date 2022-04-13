@@ -605,14 +605,54 @@ static void ifStatement()
     patchJump(elseJump);
 }
 
+static void switchStatement()
+{
+    consume(TOKEN_LEFT_PAREN, "Expect '(' after 'switch'.");
+    expression();
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
+    consume(TOKEN_LEFT_BRACE, "Expect '{' after ')'.");
+
+    for(;;)
+    {
+        if(match(TOKEN_CASE))
+        {
+            expression();
+            emitByte(OP_SWITCH_EQUAL);
+
+            int thenJump = emitJump(OP_JUMP_IF_FALSE);
+
+            consume(TOKEN_COLON, "Expect ':' after expression.");
+
+            statement();
+
+            patchJump(thenJump);
+            emitByte(OP_POP);
+        }
+        else if (match(TOKEN_DEFAULT))
+        {
+            consume(TOKEN_COLON, "Expect ':' after 'default'.");
+
+            statement();
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    emitByte(OP_POP);
+    consume(TOKEN_RIGHT_BRACE, "Expect '}' at the end of switch statement.");
+}
+
 static void statement()
 {
     if (match(TOKEN_PRINT))           printStatement();
-    else if (match(TOKEN_BREAK))      breakStatement();
-    else if (match(TOKEN_CONTINUE))   continueStatement();
     else if (match(TOKEN_IF))         ifStatement();
     else if (match(TOKEN_WHILE))      whileStatement();
     else if (match(TOKEN_FOR))        forStatement();
+    else if (match(TOKEN_BREAK))      breakStatement();
+    else if (match(TOKEN_CONTINUE))   continueStatement();
+    else if (match(TOKEN_SWITCH))     switchStatement();
     else if (match(TOKEN_LEFT_BRACE))
     {
         beginScope();

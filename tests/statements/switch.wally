@@ -1,0 +1,13 @@
+switch(true)
+{
+
+    case true: print "good";
+    case false: print "bad";
+    case true: print "good";
+    default: print "good";
+
+}
+
+// Expect: good
+// Expect: good
+// Expect: good

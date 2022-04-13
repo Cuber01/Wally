@@ -9,6 +9,7 @@
 #include "memory.h"
 
 VM vm;
+bool popLeaveNextValue = false;
 
 static void resetStack()
 {
@@ -120,7 +121,6 @@ static InterpretResult run()
     {
         #ifdef DEBUG_TRACE_EXECUTION
         disassembleInstruction(vm.chunk,(int)(vm.ip - vm.chunk->code));
-        bool printedStack = false;
 
         // Print the whole stack
         printf("          ");
@@ -129,8 +129,6 @@ static InterpretResult run()
             printf("[ ");
             printValue(*slot);
             printf(" ]");
-
-            printedStack = true;
         }
         putchar('\n');
 
@@ -157,6 +155,15 @@ static InterpretResult run()
             {
                 Value b = pop();
                 Value a = pop();
+                push(BOOL_VAL(valuesEqual(a, b)));
+                break;
+            }
+
+            case OP_SWITCH_EQUAL:
+            {
+                Value b = pop();
+                Value a = pop();
+                push(a);
                 push(BOOL_VAL(valuesEqual(a, b)));
                 break;
             }
