@@ -24,9 +24,8 @@ Compiler* current = NULL;
 Chunk* compilingChunk;
 ParseRule rules[];
 
-int innermostLoopStart;
-int innermostLoopDepth = -1;
-int innermostLoopEnd;
+int innermostLoopStart = -1;
+int innermostLoopDepth = 0;
 
 // ---------- ERROR ----------
 
@@ -478,11 +477,15 @@ static void forStatement()
     } else if (match(TOKEN_VAR))
     {
         varDeclaration();
-    } else {
+    } else
+    {
         expressionStatement();
     }
 
-    int loopStart = currentChunk()->count;
+    int surroundingLoopStart = innermostLoopStart;
+    int surroundingLoopScopeDepth = innermostLoopDepth;
+    innermostLoopStart = currentChunk()->count;
+    innermostLoopDepth = current->scopeDepth;
 
     // Condition clause
     int exitJump = -1;
@@ -506,13 +509,13 @@ static void forStatement()
         emitByte(OP_POP);
         consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
 
-        emitLoop(loopStart);
-        loopStart = incrementStart;
+        emitLoop(innermostLoopStart);
+        innermostLoopStart = incrementStart;
         patchJump(bodyJump);
     }
 
     statement();
-    emitLoop(loopStart);
+    emitLoop(innermostLoopStart);
 
     if (exitJump != -1)
     {
@@ -520,31 +523,52 @@ static void forStatement()
         emitByte(OP_POP); // Condition.
     }
 
+    innermostLoopStart = surroundingLoopStart;
+    innermostLoopDepth = surroundingLoopScopeDepth;
+
     endScope();
 }
 
 static void breakStatement()
 {
-    if(innermostLoopDepth == -1)
-    {
-        error("Can't use 'break' statements outside of loops.");
+//    if(innermostLoopDepth == -1)
+//    {
+//        error("Can't use 'break' statements outside of loops.");
+//    }
+//
+//    consume(TOKEN_SEMICOLON, "Expect ';' after 'break'.");
+//
+//    for (int i = current->localCount - 1;
+//         i >= 0 && current->locals[i].depth > innermostLoopDepth;
+//         i--)
+//    {
+//        emitByte(OP_POP);
+//    }
+//
+//    emitJump(innermostLoopEnd);
+}
+
+static void continueStatement()
+{
+    if (innermostLoopStart == -1) {
+        error("Can't use 'continue' outside of a loop.");
     }
 
-    consume(TOKEN_SEMICOLON, "Expect ';' after 'break'.");
+    consume(TOKEN_SEMICOLON, "Expect ';' after 'continue'.");
 
+    // Discard any locals created inside the loop.
     for (int i = current->localCount - 1;
          i >= 0 && current->locals[i].depth > innermostLoopDepth;
-         i--)
-    {
+         i--) {
         emitByte(OP_POP);
     }
 
-    emitJump(innermostLoopEnd);
+    // Jump to top of current innermost loop.
+    emitLoop(innermostLoopStart);
 }
 
 static void whileStatement()
 {
-    int loopStart = currentChunk()->count;
     innermostLoopDepth = current->scopeDepth;
     innermostLoopStart = currentChunk()->count;
 
@@ -556,15 +580,11 @@ static void whileStatement()
     emitByte(OP_POP);
 
     statement();
-    emitLoop(loopStart);
+    emitLoop(innermostLoopStart);
 
     patchJump(exitJump);
     emitByte(OP_POP);
 
-    // If there is another loop then it will reset the value anyway
-    innermostLoopDepth = -1;
-
-    innermostLoopEnd = currentChunk()->count;
 }
 
 static void ifStatement()
@@ -590,6 +610,7 @@ static void statement()
 {
     if (match(TOKEN_PRINT))           printStatement();
     else if (match(TOKEN_BREAK))      breakStatement();
+    else if (match(TOKEN_CONTINUE))   continueStatement();
     else if (match(TOKEN_IF))         ifStatement();
     else if (match(TOKEN_WHILE))      whileStatement();
     else if (match(TOKEN_FOR))        forStatement();

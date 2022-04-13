@@ -1,18 +1,50 @@
-//
-//var i = 0;
-//while(true)
-//{
-//    i = i + 1;
+var n = 0;
 
-    while(true)
+while(n < 5)
+{
+    n = n + 1;
+
+    var i = 0;
+
+    while(i < 5)
     {
-        print "gaming";
-        break;
+        print i;
+        i = i + 1;
     }
+}
 
-//    if(i > 5)
-//    {
-//        break;
-//    }
+//var n = 0;
 //
+//while(n < 5)
+//{
+//    n = n + 1;
+//    var i = 0;
+//
+//    while(i < 5)
+//    {
+//        print i;
+//        i = i + 1;
+//        continue;
+//
+//        print "error!";
+//    }
 //}
+//
+//// Expect: 0
+//// Expect: 1
+//// Expect: 2
+//// Expect: 3
+//// Expect: 4
+//
+//for(var i = 0; i < 5; i = i + 1)
+//{
+//    print i;
+//    continue;
+//    print "error!";
+//}
+//
+//// Expect: 0
+//// Expect: 1
+//// Expect: 2
+//// Expect: 3
+//// Expect: 4
