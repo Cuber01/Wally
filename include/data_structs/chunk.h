@@ -5,8 +5,6 @@
 #include "value.h"
 
 typedef enum {
-    OP_RETURN,
-
     // Literals
     OP_CONSTANT,
     OP_NULL,
@@ -46,6 +44,9 @@ typedef enum {
     OP_JUMP_IF_TRUE,
     OP_JUMP,
     OP_LOOP,
+
+    OP_CALL,
+    OP_RETURN,
 
     // Misc
     OP_POP,

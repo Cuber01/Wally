@@ -1,0 +1,7 @@
+function areWeHavingItYet() {
+ print "Yes we are!";
+}
+
+areWeHavingItYet();
+
+// Expect: Yes we are!
