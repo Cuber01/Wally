@@ -26,16 +26,10 @@ typedef struct {
     Obj* objects;
 } VM;
 
-typedef enum {
-    INTERPRET_OK,
-    INTERPRET_COMPILE_ERROR,
-    INTERPRET_RUNTIME_ERROR
-} InterpretResult;
-
 extern VM vm;
 
 void initVM();
 void freeVM();
-InterpretResult interpret(const char* source);
+int interpret(const char* source);
 
 #endif //WALLY_VM_H

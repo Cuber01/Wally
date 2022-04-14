@@ -28,6 +28,8 @@ static void runtimeError(const char* format, ...)
     va_end(args);
     fputs("\n", stderr);
 
+    if(vm.frameCount == 0) vm.frameCount++; // Allows us to report top-level errors
+
     for (int i = vm.frameCount - 1; i >= 0; i--)
     {
         CallFrame* frame = &vm.frames[i];
@@ -185,7 +187,7 @@ static bool callValue(Value callee, int argCount)
     return false;
 }
 
-static InterpretResult run()
+static int run()
 {
     CallFrame* frame = &vm.frames[vm.frameCount - 1];
 
@@ -326,7 +328,7 @@ static InterpretResult run()
                 bool success = tableSetNoOverwrite(&vm.globals, name, peek(0));
                 if (!success)
                 {
-                    runtimeError("Tried to redefine variable '%s'.", name->chars); //TODO
+                    runtimeError("Tried to redefine variable '%s'.", name->chars);
                     return INTERPRET_RUNTIME_ERROR;
                 }
                 pop();
@@ -444,7 +446,17 @@ static InterpretResult run()
                 if (vm.frameCount == 0)
                 {
                     pop();
-                    return INTERPRET_OK;
+
+                    if(IS_NUMBER(result))
+                    {
+                        return AS_NUMBER(result);
+                    }
+                    else
+                    {
+                        runtimeError("Expect number in top-level return statements.");
+                        return INTERPRET_RUNTIME_ERROR;
+                    }
+
                 }
 
                 vm.stackTop = frame->slots;
@@ -463,7 +475,7 @@ static InterpretResult run()
 }
 
 
-InterpretResult interpret(const char* source)
+int interpret(const char* source)
 {
     ObjFunction* function = compile(source);
     if (function == NULL) return INTERPRET_COMPILE_ERROR;
