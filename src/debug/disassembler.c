@@ -123,6 +123,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_TERNARY", offset);
         case OP_SWITCH_EQUAL:
             return simpleInstruction("OP_SWITCH_EQUAL", offset);
+        case OP_POP_N:
+            return simpleInstruction("OP_POP_N", offset);
 
         case OP_GET_LOCAL:
             return byteInstruction("OP_GET_LOCAL", chunk, offset);

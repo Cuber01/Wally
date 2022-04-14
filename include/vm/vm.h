@@ -8,6 +8,10 @@
 #define FRAMES_MAX 64
 #define STACK_MAX (FRAMES_MAX * UINT8_COUNT)
 
+#define INTERPRET_OK 0
+#define INTERPRET_RUNTIME_ERROR 70
+#define INTERPRET_COMPILE_ERROR 65
+
 typedef struct {
     ObjFunction* function;
     uint8_t* ip;

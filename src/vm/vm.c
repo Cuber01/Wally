@@ -99,6 +99,11 @@ Value pop()
     return *vm.stackTop;
 }
 
+Value popNullable()
+{
+    return *vm.stackTop;
+}
+
 static Value peek(int distance)
 {
     return vm.stackTop[-1 - distance];
@@ -245,6 +250,17 @@ static int run()
             case OP_FALSE: push(BOOL_VAL(false)); break;
 
             case OP_POP: pop(); break;
+
+            case OP_POP_N:
+            {
+                int amount = AS_NUMBER(pop());
+                while(amount > 0)
+                {
+                    amount--;
+                    pop();
+                }
+                break;
+            }
 
             case OP_EQUAL:
             {
@@ -440,7 +456,7 @@ static int run()
 
             case OP_RETURN:
             {
-                Value result = pop();
+                Value result = popNullable();
                 vm.frameCount--;
 
                 if (vm.frameCount == 0)
@@ -453,8 +469,7 @@ static int run()
                     }
                     else
                     {
-                        runtimeError("Expect number in top-level return statements.");
-                        return INTERPRET_RUNTIME_ERROR;
+                        return INTERPRET_OK;
                     }
 
                 }

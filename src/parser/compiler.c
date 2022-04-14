@@ -206,6 +206,11 @@ static void emitConstant(Value value)
     emitBytes(OP_CONSTANT, makeConstant(value));
 }
 
+static void emitMultiplePop(int amount)
+{
+    emitConstant(NUMBER_VAL(amount));
+    emitByte(OP_POP_N);
+}
 
 static void emitReturn()
 {
@@ -423,13 +428,8 @@ static void endScope()
     current->scopeDepth--;
 
     // Remove all locals from the scope we left
-    while (current->localCount > 0 &&
-           current->locals[current->localCount - 1].depth >
-           current->scopeDepth)
-    {
-        emitByte(OP_POP);
-        current->localCount--;
-    }
+    emitMultiplePop(current->localCount - 1);
+    current->localCount = 0;
 }
 
 static void beginScope()
@@ -570,7 +570,7 @@ static void breakStatement()
 //         i >= 0 && current->locals[i].depth > innermostLoopDepth;
 //         i--)
 //    {
-//        emitByte(OP_POP);
+//        emitByte(OP_POP); POPN
 //    }
 //
 //    emitJump(innermostLoopEnd);
@@ -585,11 +585,8 @@ static void continueStatement()
     consume(TOKEN_SEMICOLON, "Expect ';' after 'continue'.");
 
     // Discard any locals created inside the loop.
-    for (int i = current->localCount - 1;
-         i >= 0 && current->locals[i].depth > innermostLoopDepth;
-         i--) {
-        emitByte(OP_POP);
-    }
+    emitMultiplePop(current->localCount - 1);
+    current->localCount = 0;
 
     // Jump to top of current innermost loop.
     emitLoop(innermostLoopStart);
