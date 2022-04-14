@@ -1,1 +1,6 @@
-print true ? false : true; // Expect: false
+function areWeHavingItYet()
+{
+  print "Yes we are!";
+}
+
+print areWeHavingItYet;
