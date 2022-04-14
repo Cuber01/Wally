@@ -633,6 +633,26 @@ static void ifStatement()
     patchJump(elseJump);
 }
 
+static void returnStatement()
+{
+    // TODO
+    if (current->type == TYPE_SCRIPT)
+    {
+        error("Can't return from top-level code.");
+    }
+
+    if (match(TOKEN_SEMICOLON))
+    {
+        emitReturn();
+    }
+    else
+    {
+        expression();
+        consume(TOKEN_SEMICOLON, "Expect ';' after return value.");
+        emitByte(OP_RETURN);
+    }
+}
+
 static void switchStatement()
 {
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'switch'.");
@@ -681,6 +701,7 @@ static void statement()
     else if (match(TOKEN_BREAK))      breakStatement();
     else if (match(TOKEN_CONTINUE))   continueStatement();
     else if (match(TOKEN_SWITCH))     switchStatement();
+    else if (match(TOKEN_RETURN))     returnStatement();
     else if (match(TOKEN_LEFT_BRACE))
     {
         beginScope();

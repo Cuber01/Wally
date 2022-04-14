@@ -1,0 +1,6 @@
+function ala(param)
+{
+    print param;
+}
+
+ala("hello"); // Expect: hello

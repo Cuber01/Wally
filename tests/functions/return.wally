@@ -4,3 +4,5 @@ function ala(param)
 }
 
 print ala("hello");
+
+// Expect: hello
