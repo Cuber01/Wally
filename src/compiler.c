@@ -21,7 +21,6 @@
 Parser parser;
 Compiler* current = NULL;
 
-Chunk* compilingChunk;
 ParseRule rules[];
 
 int innermostLoopStart = -1;
@@ -365,6 +364,8 @@ static void grouping(bool canAssign)
 static void declaration();
 static void statement();
 static void varDeclaration();
+static void initCompiler(Compiler* compiler, FunctionType type);
+static ObjFunction* endCompiler();
 
 static void expressionStatement()
 {
@@ -733,6 +734,8 @@ static void addLocal(Token name)
 
 static void markInitialized()
 {
+    if (current->scopeDepth == 0) return;
+
     current->locals[current->localCount - 1].depth = current->scopeDepth;
 }
 
@@ -786,6 +789,29 @@ static uint8_t parseVariable(const char* errorMessage)
     return identifierConstant(&parser.previous);
 }
 
+static void function(FunctionType type)
+{
+    Compiler compiler;
+    initCompiler(&compiler, type);
+    beginScope();
+
+    consume(TOKEN_LEFT_PAREN, "Expect '(' after function name.");
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after parameters.");
+    consume(TOKEN_LEFT_BRACE, "Expect '{' before function body.");
+    block();
+
+    ObjFunction* function = endCompiler();
+    emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)));
+}
+
+static void functionDeclaration()
+{
+    uint8_t global = parseVariable("Expect function name.");
+    markInitialized();
+    function(TYPE_FUNCTION);
+    defineVariable(global);
+}
+
 static void varDeclaration()
 {
     // Get name
@@ -809,10 +835,8 @@ static void varDeclaration()
 
 static void declaration()
 {
-    if (match(TOKEN_VAR))
-    {
-        varDeclaration();
-    }
+    if (match(TOKEN_VAR)) varDeclaration();
+    else if (match(TOKEN_FUNCTION)) functionDeclaration();
     else
     {
         statement();
@@ -825,6 +849,7 @@ static void declaration()
 
 static void initCompiler(Compiler* compiler, FunctionType type)
 {
+    compiler->enclosing = current;
     compiler->function = NULL;
     compiler->type = type;
 
@@ -847,10 +872,11 @@ static ObjFunction* endCompiler()
     #ifdef DEBUG_PRINT_BYTECODE
     if (!parser.hadError)
     {
-        disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>";
+        disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
     }
     #endif
 
+    current = current->enclosing;
     return function;
 }
 
