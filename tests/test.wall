@@ -1,6 +1,9 @@
-function ala(param)
-{
-    return param;
+function fib(n)
+ {
+  if (n < 2) return n;
+  return fib(n - 2) + fib(n - 1);
 }
 
-print ala("hello");
+var start = clock();
+print fib(4);
+print clock() - start;

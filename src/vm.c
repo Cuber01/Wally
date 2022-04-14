@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdarg.h>
+#include <time.h>
 
 #include "common.h"
 #include "vm.h"
@@ -7,6 +8,7 @@
 #include "compiler.h"
 #include "object.h"
 #include "memory.h"
+
 
 VM vm;
 bool popLeaveNextValue = false;
@@ -48,11 +50,31 @@ static void runtimeError(const char* format, ...)
     resetStack();
 }
 
+// TODO
+static Value clockNative(int argCount, Value* args)
+{
+    return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
+}
+
+void push(Value value);
+Value pop();
+static void defineNative(const char* name, NativeFn function)
+{
+    push(OBJ_VAL(copyString(name, (int)strlen(name))));
+    push(OBJ_VAL(newNative(function)));
+    tableSet(&vm.globals, AS_STRING(vm.stack[0]), vm.stack[1]);
+    pop();
+    pop();
+}
+
 void initVM()
 {
     resetStack();
     initTable(&vm.globals);
     initTable(&vm.strings);
+
+    defineNative("clock", clockNative);
+
     vm.objects = NULL;
 }
 
@@ -145,6 +167,14 @@ static bool callValue(Value callee, int argCount)
         {
             case OBJ_FUNCTION:
                 return call(AS_FUNCTION(callee), argCount);
+            case OBJ_NATIVE:
+            {
+                NativeFn native = AS_NATIVE(callee);
+                Value result = native(argCount, vm.stackTop - argCount);
+                vm.stackTop -= argCount + 1;
+                push(result);
+                return true;
+            }
             default:
                 break; // Non-callable object type.
         }
