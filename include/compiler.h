@@ -3,13 +3,22 @@
 
 #include "chunk.h"
 #include "scanner.h"
+#include "object.h"
 
 typedef struct {
     Token name;
     int depth;
 } Local;
 
+typedef enum {
+    TYPE_FUNCTION,
+    TYPE_SCRIPT
+} FunctionType;
+
 typedef struct {
+    ObjFunction* function;
+    FunctionType type;
+
     Local locals[UINT8_COUNT];
 
     int localCount;
@@ -52,6 +61,6 @@ typedef struct {
     Precedence precedence;
 } ParseRule;
 
-bool compile(const char* source, Chunk* chunk);
+ObjFunction* compile(const char* source);
 
 #endif //WALLY_COMPILER_H

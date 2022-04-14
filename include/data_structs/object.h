@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "value.h"
+#include "chunk.h"
 
 // Objects are kept on the heap, and we just keep a pointer to them in Value.
 // This allows us to make objects as big, or as small, as we want (in theory).
@@ -16,12 +17,16 @@
 #define OBJ_TYPE(value)        (AS_OBJ(value)->type)
 
 #define IS_STRING(value)       isObjType(value, OBJ_STRING)
+#define IS_FUNCTION(value)     isObjType(value, OBJ_FUNCTION)
 
 #define AS_STRING(value)        ((ObjString*)AS_OBJ(value))
 #define AS_CSTRING(value)       (((ObjString*)AS_OBJ(value))->chars)
+#define AS_FUNCTION(value)     ((ObjFunction*)AS_OBJ(value))
+
 
 typedef enum {
     OBJ_STRING,
+    OBJ_FUNCTION,
 } ObjType;
 
 struct Obj {
@@ -40,6 +45,15 @@ struct ObjString {
     uint32_t hash; // Used in hashtables
 };
 
+typedef struct {
+    Obj obj;
+    int arity;
+    Chunk chunk;
+    ObjString* name;
+} ObjFunction;
+
+
+
 static inline bool isObjType(Value value, ObjType type)
 {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
@@ -50,5 +64,7 @@ ObjString* takeString(char* chars, int length);
 
 void printObject(Value value);
 ObjString* objectToString(Value value);
+
+ObjFunction* newFunction();
 
 #endif //WALLY_OBJECT_H

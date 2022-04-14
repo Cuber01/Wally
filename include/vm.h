@@ -3,12 +3,20 @@
 
 #include "chunk.h"
 #include "table.h"
-#define STACK_MAX 256
+#include "object.h"
 
+#define FRAMES_MAX 64
+#define STACK_MAX (FRAMES_MAX * UINT8_COUNT)
 
 typedef struct {
-    Chunk* chunk;
-    uint8_t* ip; // Instruction pointer. Points towards the next instruction to be executed.
+    ObjFunction* function;
+    uint8_t* ip;
+    Value* slots;
+} CallFrame;
+
+typedef struct {
+    CallFrame frames[FRAMES_MAX];
+    int frameCount; // Instruction pointer. Points towards the next instruction to be executed.
 
     Value stack[STACK_MAX];
     Value* stackTop; // Points towards where the next pushed value will go, a.k.a. an empty place in the stack array.
