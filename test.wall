@@ -1,16 +1,8 @@
-var globalSet;
-var globalGet;
-
-function main() {
-  var a = "initial";
-
-  function set() { a = "updated"; }
-  function get() { print a; }
-
-  globalSet = set;
-  globalGet = get;
+function outer() {
+  var x = "outside";
+  function inner() {
+    print x;
+  }
+  inner();
 }
-
-main();
-globalSet();
-globalGet();
+outer();

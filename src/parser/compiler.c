@@ -958,7 +958,7 @@ static void declaration()
 
 static void initCompiler(Compiler* compiler, FunctionType type)
 {
-    compiler->enclosing = current;
+    compiler->enclosing = (struct Compiler*) current;
     compiler->function = NULL;
     compiler->type = type;
 
@@ -991,7 +991,7 @@ static ObjFunction* endCompiler()
     }
     #endif
 
-    current = current->enclosing;
+    current = (Compiler*) current->enclosing;
     return function;
 }
 
