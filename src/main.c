@@ -4,6 +4,7 @@
 
 #include "chunk.h"
 #include "disassembler.h"
+#include "list.h"
 #include "vm.h"
 
 
@@ -71,6 +72,12 @@ static void repl()
 
 int main(int argc, const char* argv[])
 {
+    Node* root = newNode(NULL);
+    listAdd(root, 1);
+    listAdd(root, 2);
+    printf("%d", listGet(root, 1));
+
+    /*
     initVM();
 
     if (argc == 1)
@@ -88,6 +95,7 @@ int main(int argc, const char* argv[])
     freeVM();
 
     return 0;
+    */
 }
 
 

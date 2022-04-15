@@ -13,7 +13,7 @@ void initChunk(Chunk* chunk)
     initValueArray(&chunk->constants);
 }
 
-void writeChunk(Chunk* chunk, uint8_t byte, int line)
+void writeChunk(Chunk* chunk, uint8_t byte, unsigned int line)
 {
 
     // Grow the array if we don't have enough space

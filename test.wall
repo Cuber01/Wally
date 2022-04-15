@@ -1,8 +1,12 @@
-function outer() {
-  var x = "outside";
-  function inner() {
-    print x;
-  }
-  inner();
+var a = 2;
+var b = 3;
+
+if(a == 3)
+{
+    print "bad";
 }
-outer();
+else if (b == 3)
+{
+    print "good"; // Expect: good
+}
+

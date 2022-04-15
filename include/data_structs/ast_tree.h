@@ -31,7 +31,7 @@ typedef enum {
 
 typedef struct {
     ExprType type;
-    int line;
+    unsigned int line;
 } Expr;
 
 typedef struct
@@ -111,7 +111,7 @@ typedef struct
 
 typedef struct Stmt {
     StmtType type;
-    int line;
+    unsigned int line;
 } Stmt;
 
 typedef struct

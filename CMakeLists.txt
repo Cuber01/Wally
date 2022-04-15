@@ -24,4 +24,4 @@ add_executable(Wally src/main.c
                      src/debug/token_printer.c
                      src/data_structs/object.c
                      src/data_structs/table.c
-        src/data_structs/ast_tree.c)
+        src/data_structs/ast_tree.c src/data_structs/list.c src/data_structs/list.h)
