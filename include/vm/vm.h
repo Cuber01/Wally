@@ -13,7 +13,7 @@
 #define INTERPRET_COMPILE_ERROR 65
 
 typedef struct {
-    ObjFunction* function;
+    ObjClosure* closure;
     uint8_t* ip;
     Value* slots;
 } CallFrame;

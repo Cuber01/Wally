@@ -16,10 +16,16 @@ typedef enum {
 } FunctionType;
 
 typedef struct {
+    uint8_t index;
+    bool isLocal;
+} Upvalue;
+
+typedef struct {
     struct Compiler* enclosing;
     ObjFunction* function;
     FunctionType type;
 
+    Upvalue upvalues[UINT8_COUNT];
     Local locals[UINT8_COUNT];
 
     int localCount;
