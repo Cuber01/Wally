@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "chunk.h"
 #include "disassembler.h"
@@ -48,7 +49,7 @@ static void runFile(const char* path)
     int result = interpret(source);
     free(source);
 
-    exit(result);
+    //exit(result);
 }
 
 static void repl()
@@ -74,7 +75,6 @@ static void repl()
 int main(int argc, const char* argv[])
 {
 
-
     /*
     Node* root = newNode(0);
     listAdd(root, 1);
@@ -85,7 +85,7 @@ int main(int argc, const char* argv[])
     freeList(root);
     */
 
-    /*
+
     initVM();
 
     if (argc == 1)
@@ -100,10 +100,10 @@ int main(int argc, const char* argv[])
         exit(64);
     }
 
-    freeVM();
+    freeVM(); // TODO unreachable
 
     return 0;
-    */
+
 }
 
 

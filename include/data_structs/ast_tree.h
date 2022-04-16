@@ -99,7 +99,6 @@ typedef struct
     const char* name;
 } VarExpr;
 
-
 typedef struct
 {
     Expr expr;

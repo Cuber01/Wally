@@ -1,6 +1,7 @@
 #include <malloc.h>
 
 #include "ast_tree.h"
+#include "memory.h"
 
 #define ALLOCATE_EXPRESSION(objectType, enumType) \
     newExpression(sizeof(objectType), enumType)
@@ -28,18 +29,126 @@ static Stmt* newStatement(size_t size, StmtType type)
     return object;
 }
 
+void freeStatement()
+{
+
+}
+
+void freeExpression(Expr* expr)
+{
+    switch (expr->type)
+    {
+        case LITERAL_EXPRESSION:
+        {
+            free(expr);
+            break;
+        }
+
+        case BINARY_EXPRESSION:
+        {
+            BinaryExpr* expression = (BinaryExpr*) expr;
+
+            freeExpression(expression->right);
+            freeExpression(expression->left);
+
+            free(expression);
+            break;
+        }
+
+        case UNARY_EXPRESSION:
+        {
+            UnaryExpr* expression = (UnaryExpr*) expr;
+
+            freeExpression(expression->target);
+            break;
+        }
+
+        case VAR_EXPRESSION:
+        {
+            free(expr);
+            break;
+        }
+
+        case ASSIGN_EXPRESSION:
+        {
+            AssignExpr* expression = (AssignExpr*) expr;
+
+            freeExpression(expression->value);
+            free(expr);
+            break;
+        }
+
+        case CALL_EXPRESSION:
+        {
+            CallExpr* expression = (CallExpr*) expr;
+
+            freeExpression(expression->callee);
+            // TODO free arg list
+
+            free(expr);
+            break;
+        }
+
+        case OBJECT_EXPRESSION:
+        {
+            ObjectExpr *expression = (ObjectExpr *) expr;
+
+            freeObject(&expression->value);
+            free(expr);
+
+            break;
+        }
+
+        case LOGICAL_EXPRESSION:
+        {
+            LogicalExpr* expression = (LogicalExpr*) expr;
+
+            freeExpression(expression->right);
+            freeExpression(expression->left);
+
+            free(expression);
+            break;
+        }
+
+        case GROUPED_EXPRESSION:
+        {
+            GroupedExpr* expression = (GroupedExpr*) expr;
+
+            freeExpression(expression->in);
+
+            free(expression);
+            break;
+        }
+
+        case TERNARY_EXPRESSION:
+        {
+            TernaryExpr* expression = (TernaryExpr*) expr;
+
+            freeExpression(expression->condition);
+            freeExpression(expression->thenBranch);
+            freeExpression(expression->elseBranch);
+
+            free(expression);
+            break;
+        }
+    }
+}
+
 // ------------ EXPRESSIONS ------------
-ContinueStmt *newContinueStmt() {
+ContinueStmt* newContinueStmt()
+{
     ContinueStmt* stmt = (ContinueStmt*) ALLOCATE_STATEMENT(ContinueStmt, CONTINUE_STATEMENT);
     return stmt;
 }
 
-BreakStmt *newBreakStmt() {
+BreakStmt* newBreakStmt()
+{
     BreakStmt* stmt = (BreakStmt*) ALLOCATE_STATEMENT(BreakStmt, BREAK_STATEMENT);
     return stmt;
 }
 
-ReturnStmt *newReturnStmt(Expr *value) {
+ReturnStmt* newReturnStmt(Expr* value)
+{
     ReturnStmt* stmt = (ReturnStmt*) ALLOCATE_STATEMENT(ReturnStmt, RETURN_STATEMENT);
 
     stmt->value = value;
@@ -47,7 +156,8 @@ ReturnStmt *newReturnStmt(Expr *value) {
     return stmt;
 }
 
-FunctionStmt *newFunctionStmt(const char *name, Stmt *body) {
+FunctionStmt* newFunctionStmt(const char* name, Stmt* body)
+{
     FunctionStmt* stmt = (FunctionStmt*) ALLOCATE_STATEMENT(FunctionStmt, FUNCTION_STATEMENT);
 
     stmt->name = name;
@@ -58,7 +168,8 @@ FunctionStmt *newFunctionStmt(const char *name, Stmt *body) {
     return stmt;
 }
 
-VariableStmt *newVariableStmt(const char *name, Expr *initializer) {
+VariableStmt* newVariableStmt(const char* name, Expr* initializer)
+{
     VariableStmt* stmt = (VariableStmt*) ALLOCATE_STATEMENT(VariableStmt, VAR_STATEMENT);
 
     stmt->name = name;
@@ -67,7 +178,8 @@ VariableStmt *newVariableStmt(const char *name, Expr *initializer) {
     return stmt;
 }
 
-SwitchStmt *newSwitchStmt(Stmt *defaultBranch) {
+SwitchStmt* newSwitchStmt(Stmt* defaultBranch)
+{
     SwitchStmt* stmt = (SwitchStmt*) ALLOCATE_STATEMENT(SwitchStmt, SWITCH_STATEMENT);
 
     stmt->defaultBranch = defaultBranch;
@@ -78,7 +190,8 @@ SwitchStmt *newSwitchStmt(Stmt *defaultBranch) {
     return stmt;
 }
 
-WhileStmt *newWhileStmt(Expr *condition, Stmt *body) {
+WhileStmt* newWhileStmt(Expr* condition, Stmt* body)
+{
     WhileStmt* stmt = (WhileStmt*) ALLOCATE_STATEMENT(WhileStmt, WHILE_STATEMENT);
 
     stmt->condition = condition;
@@ -87,7 +200,8 @@ WhileStmt *newWhileStmt(Expr *condition, Stmt *body) {
     return stmt;
 }
 
-IfStmt *newIfStmt(Expr *condition, Stmt *thenBranch, Stmt *elseBranch) {
+IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch)
+{
     IfStmt* stmt = (IfStmt*) ALLOCATE_STATEMENT(IfStmt, IF_STATEMENT);
 
     stmt->condition = condition;
@@ -97,7 +211,8 @@ IfStmt *newIfStmt(Expr *condition, Stmt *thenBranch, Stmt *elseBranch) {
     return stmt;
 }
 
-BlockStmt *newBlockStmt() {
+BlockStmt* newBlockStmt()
+{
     BlockStmt* stmt = (BlockStmt*) ALLOCATE_STATEMENT(BlockStmt, BLOCK_STATEMENT);
 
     // TODO list of statements
@@ -105,7 +220,8 @@ BlockStmt *newBlockStmt() {
     return stmt;
 }
 
-ExpressionStmt *newExpressionStmt(Expr *expr) {
+ExpressionStmt* newExpressionStmt(Expr* expr)
+{
     ExpressionStmt* stmt = (ExpressionStmt*) ALLOCATE_STATEMENT(ExpressionStmt, EXPRESSION_STATEMENT);
 
     stmt->expr = expr;
@@ -113,7 +229,8 @@ ExpressionStmt *newExpressionStmt(Expr *expr) {
     return stmt;
 }
 
-CallExpr *newCallExpr(Expr *callee) {
+CallExpr* newCallExpr(Expr* callee)
+{
     CallExpr* expr = (CallExpr*) ALLOCATE_EXPRESSION(CallExpr, CALL_EXPRESSION);
 
     expr->callee = callee;
@@ -122,7 +239,8 @@ CallExpr *newCallExpr(Expr *callee) {
     return expr;
 }
 
-AssignExpr *newAssignExpr(const char *name, Expr *value) {
+AssignExpr* newAssignExpr(const char* name, Expr* value)
+{
     AssignExpr* expr = (AssignExpr*) ALLOCATE_EXPRESSION(AssignExpr, ASSIGN_EXPRESSION);
 
     expr->name = name;
@@ -131,7 +249,8 @@ AssignExpr *newAssignExpr(const char *name, Expr *value) {
     return expr;
 }
 
-VarExpr *newVarExpr(const char *name) {
+VarExpr* newVarExpr(const char* name)
+{
     VarExpr* expr = (VarExpr*) ALLOCATE_EXPRESSION(VarExpr, VAR_EXPRESSION);
 
     expr->name = name;
@@ -139,7 +258,8 @@ VarExpr *newVarExpr(const char *name) {
     return expr;
 }
 
-UnaryExpr *newUnaryExpr(Expr *target, TokenType operator) {
+UnaryExpr* newUnaryExpr(Expr* target, TokenType operator)
+{
     UnaryExpr* expr = (UnaryExpr*) ALLOCATE_EXPRESSION(UnaryExpr, UNARY_EXPRESSION);
 
     expr->target = target;
@@ -148,13 +268,15 @@ UnaryExpr *newUnaryExpr(Expr *target, TokenType operator) {
     return expr;
 }
 
-GroupedExpr *newGroupedExpr(Expr *in) {
+GroupedExpr* newGroupedExpr(Expr* in)
+{
     GroupedExpr* expr = (GroupedExpr*) ALLOCATE_EXPRESSION(GroupedExpr, GROUPED_EXPRESSION);
     expr->in = in;
     return expr;
 }
 
-TernaryExpr *newTernaryExpr(Expr *condition, Expr *thenBranch, Expr *elseBranch) {
+TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch)
+{
     TernaryExpr* expr = (TernaryExpr*) ALLOCATE_EXPRESSION(TernaryExpr, TERNARY_EXPRESSION);
 
     expr->condition = condition;
@@ -164,7 +286,8 @@ TernaryExpr *newTernaryExpr(Expr *condition, Expr *thenBranch, Expr *elseBranch)
     return expr;
 }
 
-LogicalExpr *newLogicalExpr(Expr *left, TokenType operator, Expr *right) {
+LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right)
+{
     LogicalExpr* expr = (LogicalExpr*) ALLOCATE_EXPRESSION(LogicalExpr, LOGICAL_EXPRESSION);
 
     expr->left = left;
@@ -174,7 +297,8 @@ LogicalExpr *newLogicalExpr(Expr *left, TokenType operator, Expr *right) {
     return expr;
 }
 
-BinaryExpr *newBinaryExpr(Expr *left, TokenType operator, Expr *right) {
+BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right)
+{
     BinaryExpr* expr = (BinaryExpr*) ALLOCATE_EXPRESSION(BinaryExpr, BINARY_EXPRESSION);
 
     expr->left = left;
@@ -184,13 +308,15 @@ BinaryExpr *newBinaryExpr(Expr *left, TokenType operator, Expr *right) {
     return expr;
 }
 
-ObjectExpr *newObjectExpr(Obj value) {
+ObjectExpr* newObjectExpr(Obj value)
+{
     ObjectExpr* expr = (ObjectExpr*) ALLOCATE_EXPRESSION(ObjectExpr, OBJECT_EXPRESSION);
     expr->value = value;
     return expr;
 }
 
-LiteralExpr *newLiteralExpr(Value value) {
+LiteralExpr* newLiteralExpr(Value value)
+{
     LiteralExpr* expr = (LiteralExpr*) ALLOCATE_EXPRESSION(LiteralExpr, LITERAL_EXPRESSION);
     expr->value = value;
     return expr;

@@ -2,6 +2,7 @@
 #define WALLY_MEMORY_H
 
 #include "common.h"
+#include "object.h"
 
 #define GROW_CAPACITY(capacity) \
     ((capacity) < 8 ? 8 : (capacity) * 2)
@@ -16,5 +17,6 @@
 
 void* reallocate(void* pointer, size_t oldSize, size_t newSize);
 void freeObjects();
+void freeObject(Obj* object);
 
 #endif //WALLY_MEMORY_H

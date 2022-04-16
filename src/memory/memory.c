@@ -29,7 +29,7 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize)
 }
 
 
-static void freeObject(Obj* object)
+void freeObject(Obj* object)
 {
     switch (object->type)
     {
