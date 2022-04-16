@@ -37,6 +37,13 @@ LiteralExpr* newLiteralExpr(Value value)
     return expr;
 }
 
+ObjectExpr* newObjectExpr(Obj value)
+{
+    ObjectExpr* expr = (ObjectExpr*) ALLOCATE_EXPRESSION(ObjectExpr, OBJECT_EXPRESSION);
+    expr->value = value;
+    return expr;
+}
+
 BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right)
 {
     BinaryExpr* expr = (BinaryExpr*) ALLOCATE_EXPRESSION(BinaryExpr, BINARY_EXPRESSION);
@@ -118,84 +125,97 @@ CallExpr* newCallExpr(Expr* callee)
 
 // ------------ STATEMENTS ------------
 
-//typedef struct
-//{
-//    Stmt stmt;
-//
-//    Expr* toPrint;
-//} PrintStmt;
-//
-//typedef struct
-//{
-//    Stmt stmt;
-//
-//    // TODO list of stmt
-//} BlockStmt;
-//
-//typedef struct
-//{
-//    Stmt stmt;
-//
-//    Expr* expr;
-//} ExpressionStmt;
-//
-//typedef struct
-//{
-//    Stmt stmt;
-//
-//    Expr* condition;
-//    Stmt* thenBranch;
-//    Stmt* elseBranch;
-//} IfStmt;
-//
-//typedef struct
-//{
-//    Stmt stmt;
-//
-//    Expr* condition;
-//    Stmt* body;
-//} WhileStmt;
-//
-//typedef struct
-//{
-//    Stmt stmt;
-//
-//    // TODO list of conditions
-//    // TODO list of bodies
-//    Stmt* defaultBranch;
-//} SwitchStmt;
-//
-//typedef struct
-//{
-//    Stmt stmt;
-//
-//    const char* name;
-//    Expr* initializer;
-//} VariableStmt;
-//
-//
-//typedef struct
-//{
-//    Stmt stmt;
-//
-//    const char* name;
-//    Stmt* body;
-//    // TODO list of params
-//} FunctionStmt;
-//
-//typedef struct
-//{
-//    Stmt stmt;
-//
-//    Expr* value;
-//} ReturnStmt;
-//
-//typedef struct
-//{
-//    Stmt stmt;
-//} ContinueStmt;
-//
-//typedef struct
-//{
-//    Stmt stmt;
-//} BreakStmt;
+ExpressionStmt* newExpressionStmt(Expr* expr)
+{
+    ExpressionStmt* stmt = (ExpressionStmt*) ALLOCATE_STATEMENT(ExpressionStmt, EXPRESSION_STATEMENT);
+
+    stmt->expr = expr;
+
+    return stmt;
+}
+
+BlockStmt* newBlockStmt()
+{
+    BlockStmt* stmt = (BlockStmt*) ALLOCATE_STATEMENT(BlockStmt, BLOCK_STATEMENT);
+
+    // TODO list of statements
+
+    return stmt;
+}
+
+IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch)
+{
+    IfStmt* stmt = (IfStmt*) ALLOCATE_STATEMENT(IfStmt, IF_STATEMENT);
+
+    stmt->condition = condition;
+    stmt->thenBranch = thenBranch;
+    stmt->elseBranch = elseBranch;
+
+    return stmt;
+}
+
+WhileStmt* newWhileStmt(Expr* condition, Stmt* body)
+{
+    WhileStmt* stmt = (WhileStmt*) ALLOCATE_STATEMENT(WhileStmt, WHILE_STATEMENT);
+
+    stmt->condition = condition;
+    stmt->body = body;
+
+    return stmt;
+}
+
+SwitchStmt* newSwitchStmt(Stmt* defaultBranch)
+{
+    SwitchStmt* stmt = (SwitchStmt*) ALLOCATE_STATEMENT(SwitchStmt, SWITCH_STATEMENT);
+
+    stmt->defaultBranch = defaultBranch;
+
+    // TODO list of conditions
+    // TODO list of bodies
+
+    return stmt;
+}
+
+VariableStmt* newVariableStmt(const char* name, Expr* initializer)
+{
+    VariableStmt* stmt = (VariableStmt*) ALLOCATE_STATEMENT(VariableStmt, VAR_STATEMENT);
+
+    stmt->name = name;
+    stmt->initializer = initializer;
+
+    return stmt;
+}
+
+FunctionStmt* newFunctionStmt(const char* name, Stmt* body)
+{
+    FunctionStmt* stmt = (FunctionStmt*) ALLOCATE_STATEMENT(FunctionStmt, FUNCTION_STATEMENT);
+
+    stmt->name = name;
+    stmt->body = body;
+
+    // TODO list of params
+
+    return stmt;
+}
+
+ReturnStmt* newReturnStmt(Expr* value)
+{
+    ReturnStmt* stmt = (ReturnStmt*) ALLOCATE_STATEMENT(ReturnStmt, RETURN_STATEMENT);
+
+    stmt->value = value;
+
+    return stmt;
+}
+
+BreakStmt* newBreakStmt()
+{
+    BreakStmt* stmt = (BreakStmt*) ALLOCATE_STATEMENT(BreakStmt, BREAK_STATEMENT);
+    return stmt;
+}
+
+
+ContinueStmt* newContinueStmt()
+{
+    ContinueStmt* stmt = (ContinueStmt*) ALLOCATE_STATEMENT(ContinueStmt, CONTINUE_STATEMENT);
+    return stmt;
+}

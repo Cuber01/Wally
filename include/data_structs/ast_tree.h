@@ -1,6 +1,7 @@
 
 #include "value.h"
 #include "scanner.h"
+#include "object.h"
 
 typedef enum {
     LITERAL_EXPRESSION,
@@ -12,8 +13,6 @@ typedef enum {
     ASSIGN_EXPRESSION,
     CALL_EXPRESSION,
     TERNARY_EXPRESSION,
-    SET_EXPRESSION,
-    GET_EXPRESSION,
     OBJECT_EXPRESSION
 } ExprType;
 
@@ -22,7 +21,7 @@ typedef enum {
     BLOCK_STATEMENT,
     IF_STATEMENT,
     WHILE_STATEMENT,
-    FOR_STATEMENT,
+    SWITCH_STATEMENT,
     VAR_STATEMENT,
     CONTINUE_STATEMENT,
     BREAK_STATEMENT,
@@ -43,6 +42,13 @@ typedef struct
 
     Value value;
 } LiteralExpr;
+
+typedef struct
+{
+    Expr expr;
+
+    Obj value;
+} ObjectExpr;
 
 typedef struct
 {
