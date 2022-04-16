@@ -61,4 +61,16 @@ int listGet(Node* root, unsigned int index)
     return node->value;
 }
 
+void freeList(Node* root)
+{
+    Node* toFree = root;
+    while (root != NULL)
+    {
+        toFree = root;
+        root = root->next;
+        free(toFree);
+    }
+
+}
+
 

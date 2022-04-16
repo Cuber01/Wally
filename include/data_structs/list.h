@@ -11,5 +11,6 @@ Node* newNode(int value);
 void listAdd(Node* node, int value);
 int listGet(Node* root, unsigned int index);
 void listWriteValue(Node* root, int index, int value);
+void freeList(Node* root);
 
 #endif //WALLY_LIST_H

@@ -78,7 +78,7 @@ int main(int argc, const char* argv[])
     printf("%d %d %d", listGet(root, 0), listGet(root, 1), listGet(root, 2) );
     listWriteValue(root, 0, 9);
     printf("%d", listGet(root, 0));
-
+    freeList(root);
 
     /*
     initVM();
