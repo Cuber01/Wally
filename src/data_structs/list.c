@@ -4,7 +4,7 @@
 #include "native_error.h"
 #include "list.h"
 
-Node* newNode(int value)
+Node* newNode(void* value)
 {
     Node* newNode = malloc(sizeof(Node));
     newNode->next = NULL;
@@ -13,7 +13,7 @@ Node* newNode(int value)
     return newNode;
 }
 
-void listAdd(Node* node, int value)
+void listAdd(Node* node, void* value)
 {
     while (node->next != NULL)
     {
@@ -23,7 +23,7 @@ void listAdd(Node* node, int value)
     node->next = newNode(value);
 }
 
-void listWriteValue(Node* root, int index, int value)
+void listWriteValue(Node* root, int index, void* value)
 {
     Node* node = root;
     while(index > 0)
@@ -42,7 +42,7 @@ void listWriteValue(Node* root, int index, int value)
     node->value = value;
 }
 
-int listGet(Node* root, unsigned int index)
+void* listGet(Node* root, unsigned int index)
 {
     Node* node = root;
     while(index > 0)
@@ -52,7 +52,7 @@ int listGet(Node* root, unsigned int index)
         if(node->next == NULL)
         {
             nativeError("Index %d is outside the bounds of the list.", index);
-            return -999;
+            return NULL;
         }
 
         node = node->next;
