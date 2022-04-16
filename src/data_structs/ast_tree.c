@@ -6,6 +6,9 @@
 #define ALLOCATE_EXPRESSION(objectType, enumType) \
     newExpression(sizeof(objectType), enumType)
 
+#define DEALLOCATE_EXPRESSION(expr, type) \
+    reallocate(expr, sizeof(type), 0)
+
 static Expr* newExpression(size_t size, ExprType type)
 {
     Expr* object = malloc(size);
@@ -40,7 +43,7 @@ void freeExpression(Expr* expr)
     {
         case LITERAL_EXPRESSION:
         {
-            free(expr);
+            DEALLOCATE_EXPRESSION(expr, LiteralExpr);
             break;
         }
 
@@ -51,7 +54,7 @@ void freeExpression(Expr* expr)
             freeExpression(expression->right);
             freeExpression(expression->left);
 
-            free(expression);
+            DEALLOCATE_EXPRESSION(expr, BinaryExpr);
             break;
         }
 
@@ -60,12 +63,14 @@ void freeExpression(Expr* expr)
             UnaryExpr* expression = (UnaryExpr*) expr;
 
             freeExpression(expression->target);
+
+            DEALLOCATE_EXPRESSION(expr, UnaryExpr);
             break;
         }
 
         case VAR_EXPRESSION:
         {
-            free(expr);
+            DEALLOCATE_EXPRESSION(expr, VarExpr);
             break;
         }
 
@@ -74,7 +79,8 @@ void freeExpression(Expr* expr)
             AssignExpr* expression = (AssignExpr*) expr;
 
             freeExpression(expression->value);
-            free(expr);
+
+            DEALLOCATE_EXPRESSION(expr, AssignExpr);
             break;
         }
 
@@ -85,7 +91,7 @@ void freeExpression(Expr* expr)
             freeExpression(expression->callee);
             // TODO free arg list
 
-            free(expr);
+            DEALLOCATE_EXPRESSION(expr, CallExpr);
             break;
         }
 
@@ -94,8 +100,8 @@ void freeExpression(Expr* expr)
             ObjectExpr *expression = (ObjectExpr *) expr;
 
             freeObject(&expression->value);
-            free(expr);
 
+            DEALLOCATE_EXPRESSION(expr, ObjectExpr);
             break;
         }
 
@@ -106,7 +112,7 @@ void freeExpression(Expr* expr)
             freeExpression(expression->right);
             freeExpression(expression->left);
 
-            free(expression);
+            DEALLOCATE_EXPRESSION(expr, LogicalExpr);
             break;
         }
 
@@ -116,7 +122,7 @@ void freeExpression(Expr* expr)
 
             freeExpression(expression->in);
 
-            free(expression);
+            DEALLOCATE_EXPRESSION(expr, GroupedExpr);
             break;
         }
 
@@ -128,7 +134,7 @@ void freeExpression(Expr* expr)
             freeExpression(expression->thenBranch);
             freeExpression(expression->elseBranch);
 
-            free(expression);
+            DEALLOCATE_EXPRESSION(expr, TernaryExpr);
             break;
         }
     }
