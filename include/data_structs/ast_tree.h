@@ -204,3 +204,29 @@ typedef struct
 {
     Stmt stmt;
 } BreakStmt;
+
+// ------------ EXPRESSION CONSTRUCTORS ------------
+
+LiteralExpr* newLiteralExpr(Value value);
+ObjectExpr* newObjectExpr(Obj value);
+BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right);
+LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right);
+GroupedExpr* newGroupedExpr(Expr* in);
+TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch);
+UnaryExpr* newUnaryExpr(Expr* target, TokenType operator);
+VarExpr* newVarExpr(const char* name);
+AssignExpr* newAssignExpr(const char* name, Expr* value);
+CallExpr* newCallExpr(Expr* callee);
+
+// ------------ STATEMENT CONSTRUCTORS ------------
+
+ExpressionStmt* newExpressionStmt(Expr* expr);
+BlockStmt* newBlockStmt();
+IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch);
+WhileStmt* newWhileStmt(Expr* condition, Stmt* body);
+SwitchStmt* newSwitchStmt(Stmt* defaultBranch);
+VariableStmt* newVariableStmt(const char* name, Expr* initializer);
+FunctionStmt* newFunctionStmt(const char* name, Stmt* body);
+ReturnStmt* newReturnStmt(Expr* value);
+BreakStmt* newBreakStmt();
+ContinueStmt* newContinueStmt();
