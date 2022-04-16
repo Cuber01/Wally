@@ -53,9 +53,11 @@ void runtimeError(const char* format, ...)
 }
 
 // TODO
-static Value clockNative(int argCount, Value* args)
+static Value printNative(int argCount, Value* args)
 {
-    return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
+    printRawValue(*args);
+    putchar('\n');
+    return NULL_VAL;
 }
 
 static void defineNative(const char* name, NativeFn function);
@@ -65,7 +67,7 @@ void initVM()
     initTable(&vm.globals);
     initTable(&vm.strings);
 
-    defineNative("clock", clockNative);
+    defineNative("print", printNative);
 
     vm.objects = NULL;
 }
@@ -335,13 +337,6 @@ static int run()
             case OP_SUBTRACT: BINARY_OP(NUMBER_VAL, -); break;
             case OP_MULTIPLY: BINARY_OP(NUMBER_VAL, *); break;
             case OP_DIVIDE:   BINARY_OP(NUMBER_VAL, /); break;
-
-            case OP_PRINT:
-            {
-                printRawValue(pop());
-                putchar('\n');
-                break;
-            }
 
             case OP_DEFINE_GLOBAL:
             {

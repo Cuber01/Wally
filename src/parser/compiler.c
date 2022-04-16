@@ -121,7 +121,6 @@ static void synchronize()
             case TOKEN_FOR:
             case TOKEN_IF:
             case TOKEN_WHILE:
-            case TOKEN_PRINT:
             case TOKEN_RETURN:
                 return;
 
@@ -406,13 +405,6 @@ static void expressionStatement()
     emitByte(OP_POP);
 }
 
-static void printStatement()
-{
-    expression();
-    consume(TOKEN_SEMICOLON, "Expect ';' after value.");
-    emitByte(OP_PRINT);
-}
-
 static void block()
 {
     while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
@@ -685,8 +677,7 @@ static void switchStatement()
 
 static void statement()
 {
-    if (match(TOKEN_PRINT))           printStatement();
-    else if (match(TOKEN_IF))         ifStatement();
+    if (match(TOKEN_IF))         ifStatement();
     else if (match(TOKEN_WHILE))      whileStatement();
     else if (match(TOKEN_FOR))        forStatement();
     else if (match(TOKEN_BREAK))      breakStatement();
@@ -1070,7 +1061,6 @@ ParseRule rules[] =
         [TOKEN_IF]            = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_NULL]          = {literal,              NULL,   PREC_NONE},
         [TOKEN_OR]            = {NULL,                 or,     PREC_OR},
-        [TOKEN_PRINT]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_RETURN]        = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_SUPER]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_THIS]          = {NULL,                 NULL,   PREC_NONE},

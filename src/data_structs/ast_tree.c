@@ -118,11 +118,6 @@ CallExpr* newCallExpr(Expr* callee)
 
 // ------------ STATEMENTS ------------
 
-PrintStmt* newPrintStmt(Expr* toPrint)
-{
-    PrintStmt* stmt = (PrintStmt*) ALLOCATE_STATEMENT(PrintStmt, PRINT_STATEMENT);
-}
-
 //typedef struct
 //{
 //    Stmt stmt;

@@ -15,9 +15,6 @@ typedef enum {
     OP_NEGATE,
     OP_NOT,
 
-    // Statements
-    OP_PRINT,
-
     // Comparison
     OP_EQUAL,
     OP_NOT_EQUAL,

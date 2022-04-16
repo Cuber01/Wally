@@ -1,1 +1,1 @@
-print true ? false : true; // Expect: false
+print(true ? false : true); // Expect: false

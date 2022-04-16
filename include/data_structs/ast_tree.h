@@ -20,7 +20,6 @@ typedef enum {
 typedef enum {
     EXPRESSION_STATEMENT,
     BLOCK_STATEMENT,
-    PRINT_STATEMENT,
     IF_STATEMENT,
     WHILE_STATEMENT,
     FOR_STATEMENT,

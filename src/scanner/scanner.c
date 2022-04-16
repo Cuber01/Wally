@@ -184,7 +184,6 @@ static TokenType identifierType()
         case 'e': return checkKeyword(1, 3, "lse", TOKEN_ELSE);
         case 'i': return checkKeyword(1, 1, "f", TOKEN_IF);
         case 'n': return checkKeyword(1, 3, "ull", TOKEN_NULL);
-        case 'p': return checkKeyword(1, 4, "rint", TOKEN_PRINT);
         case 'r': return checkKeyword(1, 5, "eturn", TOKEN_RETURN);
         case 'v': return checkKeyword(1, 2, "ar", TOKEN_VAR);
         case 'w': return checkKeyword(1, 4, "hile", TOKEN_WHILE);

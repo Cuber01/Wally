@@ -1,1 +1,1 @@
-print "he";
+print(print("he"));
