@@ -6,9 +6,6 @@
 #define ALLOCATE_EXPRESSION(objectType, enumType) \
     newExpression(sizeof(objectType), enumType)
 
-#define DEALLOCATE_EXPRESSION(expr, type) \
-    reallocate(expr, sizeof(type), 0)
-
 static Expr* newExpression(size_t size, ExprType type)
 {
     Expr* object = malloc(size);
@@ -32,10 +29,6 @@ static Stmt* newStatement(size_t size, StmtType type)
     return object;
 }
 
-void freeStatement()
-{
-
-}
 
 void freeExpression(Expr* expr)
 {
@@ -43,7 +36,7 @@ void freeExpression(Expr* expr)
     {
         case LITERAL_EXPRESSION:
         {
-            DEALLOCATE_EXPRESSION(expr, LiteralExpr);
+            FREE(LiteralExpr, expr);
             break;
         }
 
@@ -54,7 +47,7 @@ void freeExpression(Expr* expr)
             freeExpression(expression->right);
             freeExpression(expression->left);
 
-            DEALLOCATE_EXPRESSION(expr, BinaryExpr);
+            FREE(BinaryExpr, expr);
             break;
         }
 
@@ -64,13 +57,13 @@ void freeExpression(Expr* expr)
 
             freeExpression(expression->target);
 
-            DEALLOCATE_EXPRESSION(expr, UnaryExpr);
+            FREE(UnaryExpr, expr);
             break;
         }
 
         case VAR_EXPRESSION:
         {
-            DEALLOCATE_EXPRESSION(expr, VarExpr);
+            FREE(VarExpr, expr);
             break;
         }
 
@@ -80,7 +73,7 @@ void freeExpression(Expr* expr)
 
             freeExpression(expression->value);
 
-            DEALLOCATE_EXPRESSION(expr, AssignExpr);
+            FREE(AssignExpr, expr);
             break;
         }
 
@@ -91,7 +84,7 @@ void freeExpression(Expr* expr)
             freeExpression(expression->callee);
             // TODO free arg list
 
-            DEALLOCATE_EXPRESSION(expr, CallExpr);
+            FREE(CallExpr, expr);
             break;
         }
 
@@ -101,7 +94,7 @@ void freeExpression(Expr* expr)
 
             freeObject(&expression->value);
 
-            DEALLOCATE_EXPRESSION(expr, ObjectExpr);
+            FREE(ObjectExpr, expr);
             break;
         }
 
@@ -112,7 +105,7 @@ void freeExpression(Expr* expr)
             freeExpression(expression->right);
             freeExpression(expression->left);
 
-            DEALLOCATE_EXPRESSION(expr, LogicalExpr);
+            FREE(LogicalExpr, expr);
             break;
         }
 
@@ -122,7 +115,7 @@ void freeExpression(Expr* expr)
 
             freeExpression(expression->in);
 
-            DEALLOCATE_EXPRESSION(expr, GroupedExpr);
+            FREE(GroupedExpr, expr);
             break;
         }
 
@@ -134,9 +127,112 @@ void freeExpression(Expr* expr)
             freeExpression(expression->thenBranch);
             freeExpression(expression->elseBranch);
 
-            DEALLOCATE_EXPRESSION(expr, TernaryExpr);
+            FREE(TernaryExpr, expr);
             break;
         }
+    }
+}
+
+void freeStatement(Stmt* stmt)
+{
+    switch (stmt->type)
+    {
+
+        case EXPRESSION_STATEMENT:
+        {
+            ExpressionStmt* statement = (ExpressionStmt*) stmt;
+
+            freeExpression(statement->expr);
+
+            FREE(ExpressionStmt, stmt);
+            break;
+        }
+
+        case BLOCK_STATEMENT:
+        {
+            BlockStmt* statement = (BlockStmt*) stmt;
+
+            // todo free all statements in block
+
+            FREE(BlockStmt, stmt);
+            break;
+        }
+
+        case VARIABLE_STATEMENT:
+        {
+            VariableStmt* statement = (VariableStmt*) stmt;
+
+            freeExpression(statement->initializer);
+
+            FREE(VariableStmt, stmt);
+            break;
+        }
+
+        case IF_STATEMENT:
+        {
+            IfStmt* statement = (IfStmt*) stmt;
+
+            freeExpression(statement->condition);
+            freeStatement(statement->thenBranch);
+            freeStatement(statement->elseBranch);
+
+            FREE(IfStmt, stmt);
+            break;
+        }
+
+        case WHILE_STATEMENT:
+        {
+            WhileStmt* statement = (WhileStmt*) stmt;
+
+            freeExpression(statement->condition);
+            freeStatement(statement->body);
+
+            FREE(WhileStmt, stmt);
+            break;
+        }
+
+
+        case CONTINUE_STATEMENT:
+        {
+            FREE(ContinueStmt, stmt);
+            break;
+        }
+
+        case BREAK_STATEMENT:
+        {
+            FREE(BreakStmt, stmt);
+            break;
+        }
+
+        case FUNCTION_STATEMENT:
+        {
+            FunctionStmt* statement = (FunctionStmt*) stmt;
+
+            // todo free params
+            freeStatement(statement->body);
+
+            FREE(FunctionStmt, stmt);
+            break;
+        }
+
+        case RETURN_STATEMENT:
+        {
+            FREE(ReturnStmt, stmt);
+            break;
+        }
+
+        case SWITCH_STATEMENT:
+        {
+            SwitchStmt* statement = (SwitchStmt*) stmt;
+
+            // todo free list of cases
+            // todo free list of condition
+            freeStatement(statement->defaultBranch);
+
+            FREE(SwitchStmt, stmt);
+            break;
+        }
+
     }
 }
 
@@ -176,7 +272,7 @@ FunctionStmt* newFunctionStmt(const char* name, Stmt* body)
 
 VariableStmt* newVariableStmt(const char* name, Expr* initializer)
 {
-    VariableStmt* stmt = (VariableStmt*) ALLOCATE_STATEMENT(VariableStmt, VAR_STATEMENT);
+    VariableStmt* stmt = (VariableStmt*) ALLOCATE_STATEMENT(VariableStmt, VARIABLE_STATEMENT);
 
     stmt->name = name;
     stmt->initializer = initializer;
