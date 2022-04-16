@@ -72,15 +72,15 @@ static void repl()
 
 int main(int argc, const char* argv[])
 {
-    Node* root = newNode(0);
-    listAdd(root, 1);
-    listAdd(root, 2);
-    printf("%d %d %d", listGet(root, 0), listGet(root, 1), listGet(root, 2) );
-    listWriteValue(root, 0, 9);
-    printf("%d", listGet(root, 0));
-    freeList(root);
+//    Node* root = newNode(0);
+//    listAdd(root, 1);
+//    listAdd(root, 2);
+//    printf("%d %d %d", listGet(root, 0), listGet(root, 1), listGet(root, 2) );
+//    listWriteValue(root, 0, 9);
+//    printf(" %d", listGet(root, 0));
+//    freeList(root);
 
-    /*
+
     initVM();
 
     if (argc == 1)
@@ -98,7 +98,7 @@ int main(int argc, const char* argv[])
     freeVM();
 
     return 0;
-    */
+
 }
 
 

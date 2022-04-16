@@ -63,7 +63,7 @@ int listGet(Node* root, unsigned int index)
 
 void freeList(Node* root)
 {
-    Node* toFree = root;
+    Node* toFree;
     while (root != NULL)
     {
         toFree = root;
