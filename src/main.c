@@ -72,10 +72,13 @@ static void repl()
 
 int main(int argc, const char* argv[])
 {
-    Node* root = newNode(NULL);
+    Node* root = newNode(0);
     listAdd(root, 1);
     listAdd(root, 2);
-    printf("%d", listGet(root, 1));
+    printf("%d %d %d", listGet(root, 0), listGet(root, 1), listGet(root, 2) );
+    listWriteValue(root, 0, 9);
+    printf("%d", listGet(root, 0));
+
 
     /*
     initVM();

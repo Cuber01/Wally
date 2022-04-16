@@ -20,7 +20,7 @@ static void resetStack()
     vm.frameCount = 0;
 }
 
-static void runtimeError(const char* format, ...)
+void runtimeError(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -58,17 +58,7 @@ static Value clockNative(int argCount, Value* args)
     return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
 }
 
-void push(Value value);
-Value pop();
-static void defineNative(const char* name, NativeFn function)
-{
-    push(OBJ_VAL(copyString(name, (int)strlen(name))));
-    push(OBJ_VAL(newNative(function)));
-    tableSet(&vm.globals, AS_STRING(vm.stack[0]), vm.stack[1]);
-    pop();
-    pop();
-}
-
+static void defineNative(const char* name, NativeFn function);
 void initVM()
 {
     resetStack();
@@ -196,6 +186,15 @@ static ObjUpvalue* captureUpvalue(Value* local)
 {
     ObjUpvalue* createdUpvalue = newUpvalue(local);
     return createdUpvalue;
+}
+
+static void defineNative(const char* name, NativeFn function)
+{
+    push(OBJ_VAL(copyString(name, (int)strlen(name))));
+    push(OBJ_VAL(newNative(function)));
+    tableSet(&vm.globals, AS_STRING(vm.stack[0]), vm.stack[1]);
+    pop();
+    pop();
 }
 
 static int run()

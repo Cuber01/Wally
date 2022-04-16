@@ -10,5 +10,6 @@ typedef struct Node
 Node* newNode(int value);
 void listAdd(Node* node, int value);
 int listGet(Node* root, unsigned int index);
+void listWriteValue(Node* root, int index, int value);
 
 #endif //WALLY_LIST_H

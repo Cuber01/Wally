@@ -1,5 +1,7 @@
 #include <stddef.h>
 #include <malloc.h>
+
+#include "native_error.h"
 #include "list.h"
 
 Node* newNode(int value)
@@ -21,16 +23,36 @@ void listAdd(Node* node, int value)
     node->next = newNode(value);
 }
 
-int listGet(Node* root, unsigned int index)
+void listWriteValue(Node* root, int index, int value)
 {
     Node* node = root;
-    while(index + 1 > 0)
+    while(index > 0)
     {
         index--;
 
         if(node->next == NULL)
         {
-            return NULL;
+            nativeError("Index %d is outside the bounds of the list.", index);
+            return;
+        }
+
+        node = node->next;
+    }
+
+    node->value = value;
+}
+
+int listGet(Node* root, unsigned int index)
+{
+    Node* node = root;
+    while(index > 0)
+    {
+        index--;
+
+        if(node->next == NULL)
+        {
+            nativeError("Index %d is outside the bounds of the list.", index);
+            return -999;
         }
 
         node = node->next;
