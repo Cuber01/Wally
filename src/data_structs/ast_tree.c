@@ -1,6 +1,4 @@
-#include <malloc.h>
-
-#include "ast_tree.h"
+#include "list.h"
 #include "memory.h"
 
 #define ALLOCATE_EXPRESSION(objectType, enumType) \
@@ -82,7 +80,7 @@ void freeExpression(Expr* expr)
             CallExpr* expression = (CallExpr*) expr;
 
             freeExpression(expression->callee);
-            // TODO free arg list
+            freeList(expression->args);
 
             FREE(CallExpr, expr);
             break;
@@ -152,7 +150,7 @@ void freeStatement(Stmt* stmt)
         {
             BlockStmt* statement = (BlockStmt*) stmt;
 
-            // todo free all statements in block
+            freeList(statement->statements);
 
             FREE(BlockStmt, stmt);
             break;
@@ -208,7 +206,7 @@ void freeStatement(Stmt* stmt)
         {
             FunctionStmt* statement = (FunctionStmt*) stmt;
 
-            // todo free params
+            freeList(statement->params);
             freeStatement(statement->body);
 
             FREE(FunctionStmt, stmt);
@@ -225,8 +223,9 @@ void freeStatement(Stmt* stmt)
         {
             SwitchStmt* statement = (SwitchStmt*) stmt;
 
-            // todo free list of cases
-            // todo free list of condition
+            freeList(statement->caseBodies);
+            freeList(statement->conditions);
+
             freeStatement(statement->defaultBranch);
 
             FREE(SwitchStmt, stmt);
@@ -258,14 +257,13 @@ ReturnStmt* newReturnStmt(Expr* value)
     return stmt;
 }
 
-FunctionStmt* newFunctionStmt(const char* name, Stmt* body)
+FunctionStmt* newFunctionStmt(const char* name, Stmt* body, Node* params)
 {
     FunctionStmt* stmt = (FunctionStmt*) ALLOCATE_STATEMENT(FunctionStmt, FUNCTION_STATEMENT);
 
     stmt->name = name;
     stmt->body = body;
-
-    // TODO list of params
+    stmt->params = params;
 
     return stmt;
 }
@@ -280,14 +278,14 @@ VariableStmt* newVariableStmt(const char* name, Expr* initializer)
     return stmt;
 }
 
-SwitchStmt* newSwitchStmt(Stmt* defaultBranch)
+SwitchStmt* newSwitchStmt(Node* caseConditions, Node* caseBodies, Stmt* defaultBranch)
 {
     SwitchStmt* stmt = (SwitchStmt*) ALLOCATE_STATEMENT(SwitchStmt, SWITCH_STATEMENT);
 
     stmt->defaultBranch = defaultBranch;
 
-    // TODO list of conditions
-    // TODO list of bodies
+    stmt->caseBodies = caseBodies;
+    stmt->conditions = caseConditions;
 
     return stmt;
 }
@@ -313,11 +311,11 @@ IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch)
     return stmt;
 }
 
-BlockStmt* newBlockStmt()
+BlockStmt* newBlockStmt(Node* statements)
 {
     BlockStmt* stmt = (BlockStmt*) ALLOCATE_STATEMENT(BlockStmt, BLOCK_STATEMENT);
 
-    // TODO list of statements
+    stmt->statements = statements;
 
     return stmt;
 }
@@ -331,12 +329,12 @@ ExpressionStmt* newExpressionStmt(Expr* expr)
     return stmt;
 }
 
-CallExpr* newCallExpr(Expr* callee)
+CallExpr* newCallExpr(Expr* callee, Node* args)
 {
     CallExpr* expr = (CallExpr*) ALLOCATE_EXPRESSION(CallExpr, CALL_EXPRESSION);
 
     expr->callee = callee;
-    // TODO args
+    expr->args = args;
 
     return expr;
 }

@@ -1,7 +1,9 @@
-
 #include "value.h"
 #include "scanner.h"
 #include "object.h"
+#include "list.h"
+
+typedef struct Node Node;
 
 typedef enum {
     BINARY_EXPRESSION,
@@ -112,7 +114,7 @@ typedef struct
     Expr expr;
 
     Expr* callee;
-    // TODO args
+    Node* args;
 } CallExpr;
 
 // ------------ STATEMENTS ------------
@@ -133,7 +135,7 @@ typedef struct
 {
     Stmt stmt;
 
-    // TODO list of stmt
+    Node* statements;
 } BlockStmt;
 
 typedef struct
@@ -164,8 +166,9 @@ typedef struct
 {
     Stmt stmt;
 
-    // TODO list of conditions
-    // TODO list of bodies
+    Node* conditions;
+    Node* caseBodies;
+
     Stmt* defaultBranch;
 } SwitchStmt;
 
@@ -183,8 +186,9 @@ typedef struct
     Stmt stmt;
 
     const char* name;
+    Node* params;
     Stmt* body;
-    // TODO list of params
+
 } FunctionStmt;
 
 typedef struct
@@ -215,7 +219,7 @@ TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch)
 UnaryExpr* newUnaryExpr(Expr* target, TokenType operator);
 VarExpr* newVarExpr(const char* name);
 AssignExpr* newAssignExpr(const char* name, Expr* value);
-CallExpr* newCallExpr(Expr* callee);
+CallExpr* newCallExpr(Expr* callee, Node* args);
 
 // ------------ STATEMENT CONSTRUCTORS ------------
 
@@ -223,9 +227,9 @@ ExpressionStmt* newExpressionStmt(Expr* expr);
 BlockStmt* newBlockStmt();
 IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch);
 WhileStmt* newWhileStmt(Expr* condition, Stmt* body);
-SwitchStmt* newSwitchStmt(Stmt* defaultBranch);
+SwitchStmt* newSwitchStmt(Node* caseConditions, Node* caseBodies, Stmt* defaultBranch);
 VariableStmt* newVariableStmt(const char* name, Expr* initializer);
-FunctionStmt* newFunctionStmt(const char* name, Stmt* body);
+FunctionStmt* newFunctionStmt(const char* name, Stmt* body, Node* params);
 ReturnStmt* newReturnStmt(Expr* value);
 BreakStmt* newBreakStmt();
 ContinueStmt* newContinueStmt();
