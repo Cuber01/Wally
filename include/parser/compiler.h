@@ -4,6 +4,7 @@
 #include "chunk.h"
 #include "scanner.h"
 #include "object.h"
+#include "list.h"
 
 typedef struct {
     Token name;
@@ -27,6 +28,8 @@ typedef struct {
 
     Upvalue upvalues[UINT8_COUNT];
     Local locals[UINT8_COUNT];
+
+    Node* statements;
 
     int localCount;
     int scopeDepth;
@@ -60,7 +63,7 @@ typedef enum {
     PREC_PRIMARY
 } Precedence;
 
-typedef void (*ParseFn)(bool canAssign);
+typedef Expr* (*ParseFn)(bool canAssign);
 
 typedef struct {
     ParseFn prefix;

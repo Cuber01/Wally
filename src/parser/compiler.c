@@ -145,7 +145,7 @@ static ParseRule* getRule(TokenType type)
     return &rules[type];
 }
 
-static void parsePrecedence(Precedence precedence)
+static Expr* parsePrecedence(Precedence precedence)
 {
     advance();
 
@@ -153,28 +153,30 @@ static void parsePrecedence(Precedence precedence)
     if (prefixRule == NULL)
     {
         error("Expect expression.");
-        return;
+        return NULL;
     }
 
     bool canAssign = precedence <= PREC_ASSIGNMENT;
-    prefixRule(canAssign);
+    Expr* expr = (Expr*)prefixRule(canAssign);
 
     while (precedence <= getRule(parser.current.type)->precedence)
     {
         advance();
         ParseFn infixRule = getRule(parser.previous.type)->infix;
-        infixRule(canAssign);
+        expr = infixRule(canAssign);
     }
 
     if (canAssign && match(TOKEN_EQUAL))
     {
         error("Invalid assignment target.");
     }
+
+    return expr;
 }
 
-static void expression()
+static Expr* expression()
 {
-    parsePrecedence(PREC_ASSIGNMENT);
+    return parsePrecedence(PREC_ASSIGNMENT);
 }
 
 // endregion
@@ -267,10 +269,10 @@ static void literal(bool canAssign)
     }
 }
 
-static void number(bool canAssign)
+static LiteralExpr* number(bool canAssign)
 {
     double value = strtod(parser.previous.start, NULL);
-    emitConstant(NUMBER_VAL(value));
+    return newLiteralExpr(NUMBER_VAL(value));
 }
 
 static void escapeSequences(char* destination, char* source)
@@ -400,20 +402,20 @@ static void call(bool canAssign)
 // endregion
 
 // region STATEMENTS
-static void declaration();
-static void statement();
-static void varDeclaration();
+static Stmt* declaration();
+static Stmt* statement();
+static Stmt* varDeclaration();
 static void initCompiler(Compiler* compiler, FunctionType type);
 static ObjFunction* endCompiler();
 
-static void expressionStatement()
+static Stmt* expressionStatement()
 {
-    expression();
+    Expr* expr = expression();
     consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
-    emitByte(OP_POP);
+    return (Stmt*)newExpressionStmt(expr);
 }
 
-static void block()
+static Stmt* block()
 {
     while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
     {
@@ -493,7 +495,7 @@ static void emitLoop(int loopStart)
     emitByte(offset & 0xff);
 }
 
-static void forStatement()
+static Stmt* forStatement()
 {
     beginScope();
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
@@ -557,7 +559,7 @@ static void forStatement()
     endScope();
 }
 
-static void breakStatement()
+static Stmt* breakStatement()
 {
 //    if(innermostLoopDepth == -1)
 //    {
@@ -576,7 +578,7 @@ static void breakStatement()
 //    emitJump(innermostLoopEnd);
 }
 
-static void continueStatement()
+static Stmt* continueStatement()
 {
     if (innermostLoopStart == -1) {
         error("Can't use 'continue' outside of a loop.");
@@ -592,7 +594,7 @@ static void continueStatement()
     emitLoop(innermostLoopStart);
 }
 
-static void whileStatement()
+static Stmt* whileStatement()
 {
     innermostLoopDepth = current->scopeDepth;
     innermostLoopStart = currentChunk()->count;
@@ -611,7 +613,7 @@ static void whileStatement()
     emitByte(OP_POP);
 }
 
-static void ifStatement()
+static Stmt* ifStatement()
 {
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'if'.");
     expression();
@@ -630,7 +632,7 @@ static void ifStatement()
     patchJump(elseJump);
 }
 
-static void returnStatement()
+static Stmt* returnStatement()
 {
     if (match(TOKEN_SEMICOLON))
     {
@@ -644,7 +646,7 @@ static void returnStatement()
     }
 }
 
-static void switchStatement()
+static Stmt* switchStatement()
 {
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'switch'.");
     expression();
@@ -683,22 +685,24 @@ static void switchStatement()
     consume(TOKEN_RIGHT_BRACE, "Expect '}' at the end of switch statement.");
 }
 
-static void statement()
+static Stmt* statement()
 {
-    if (match(TOKEN_IF))         ifStatement();
-    else if (match(TOKEN_WHILE))      whileStatement();
-    else if (match(TOKEN_FOR))        forStatement();
-    else if (match(TOKEN_BREAK))      breakStatement();
-    else if (match(TOKEN_CONTINUE))   continueStatement();
-    else if (match(TOKEN_SWITCH))     switchStatement();
-    else if (match(TOKEN_RETURN))     returnStatement();
+    if (match(TOKEN_IF))              return ifStatement();
+    else if (match(TOKEN_WHILE))      return whileStatement();
+    else if (match(TOKEN_FOR))        return forStatement();
+    else if (match(TOKEN_BREAK))      return breakStatement();
+    else if (match(TOKEN_CONTINUE))   return continueStatement();
+    else if (match(TOKEN_SWITCH))     return switchStatement();
+    else if (match(TOKEN_RETURN))     return returnStatement();
     else if (match(TOKEN_LEFT_BRACE))
     {
         beginScope();
-        block();
+        Stmt* stmt = block();
         endScope();
+
+        return stmt;
     }
-    else expressionStatement();
+    else return expressionStatement();
 
 }
 
@@ -922,7 +926,7 @@ static void function(FunctionType type)
     }
 }
 
-static void functionDeclaration()
+static Stmt* functionDeclaration()
 {
     exit(1);
 
@@ -932,7 +936,7 @@ static void functionDeclaration()
     defineVariable(global);
 }
 
-static void varDeclaration()
+static Stmt* varDeclaration()
 {
     exit(1);
 
@@ -955,16 +959,19 @@ static void varDeclaration()
     defineVariable(global);
 }
 
-static void declaration()
+static Stmt* declaration()
 {
-    if (match(TOKEN_VAR)) varDeclaration();
-    else if (match(TOKEN_FUNCTION)) functionDeclaration();
+    Stmt* stmt;
+
+    if      (match(TOKEN_VAR))      stmt = varDeclaration();
+    else if (match(TOKEN_FUNCTION)) stmt = functionDeclaration();
     else
     {
-        statement();
+        stmt = statement();
     }
 
     if (parser.panicMode) synchronize();
+    return stmt;
 }
 
 // endregion
@@ -1030,10 +1037,22 @@ ObjFunction* compile(const char* source)
 
     advance();
 
+    Node *statements = NULL;
+
     while (!match(TOKEN_EOF))
     {
-        declaration();
+        if(statements == NULL)
+        {
+            statements = newNode((NodeValue){.as.statement = declaration()});
+        }
+        else
+        {
+            listAdd(statements, (NodeValue){.as.statement = declaration()});
+        }
     }
+
+    NodeValue val = listGet(statements, 0);
+    printValue(((LiteralExpr*)((ExpressionStmt*)val.as.statement)->expr)->value);
 
     consume(TOKEN_EOF, "Expect end of expression.");
 
