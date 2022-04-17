@@ -52,7 +52,7 @@ void runtimeError(const char* format, ...)
     resetStack();
 }
 
-// TODO
+// TODO organize native functions
 static Value printNative(int argCount, Value* args)
 {
     printRawValue(*args);

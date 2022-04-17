@@ -4,8 +4,8 @@
 #include "object.h"
 
 typedef enum {
-    LITERAL_EXPRESSION,
     BINARY_EXPRESSION,
+    LITERAL_EXPRESSION,
     UNARY_EXPRESSION,
     VAR_EXPRESSION,
     LOGICAL_EXPRESSION,
