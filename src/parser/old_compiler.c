@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "misc-no-recursion"
 #include <stdlib.h>
 
 #include "compiler.h"
@@ -24,7 +26,7 @@ ParseRule rules[];
 int innermostLoopStart = -1;
 int innermostLoopDepth = 0;
 
-// region ERROR
+// ---------- ERROR ----------
 
 static void errorAt(Token* token, const char* message)
 {
@@ -58,9 +60,7 @@ static void error(const char* message)
     errorAt(&parser.previous, message);
 }
 
-// endregion
-
-// region UTIL
+// ---------- UTIL ----------
 
 static void advance()
 {
@@ -136,9 +136,7 @@ static Chunk* currentChunk()
     return &current->function->chunk;
 }
 
-// endregion
-
-// region PRECEDENCE
+// ---------- PRECEDENCE ----------
 
 static ParseRule* getRule(TokenType type)
 {
@@ -177,9 +175,7 @@ static void expression()
     parsePrecedence(PREC_ASSIGNMENT);
 }
 
-// endregion
-
-// region EMITTING BYTES (LEGACY)
+// ---------- EMITTING BYTES ----------
 
 static void emitByte(uint8_t byte)
 {
@@ -220,9 +216,7 @@ static void emitReturn()
     emitByte(OP_RETURN);
 }
 
-// endregion
-
-// region EXPRESSIONS
+// ---------- EXPRESSIONS ----------
 
 static void binary(bool canAssign)
 {
@@ -397,9 +391,7 @@ static void call(bool canAssign)
     emitBytes(OP_CALL, argCount);
 }
 
-// endregion
-
-// region STATEMENTS
+// ---------- STATEMENTS ------------
 static void declaration();
 static void statement();
 static void varDeclaration();
@@ -967,9 +959,7 @@ static void declaration()
     if (parser.panicMode) synchronize();
 }
 
-// endregion
-
-// region MAIN
+// ---------- MAIN ----------
 
 static void initCompiler(Compiler* compiler, FunctionType type)
 {
@@ -999,12 +989,12 @@ static ObjFunction* endCompiler()
     emitReturn();
     ObjFunction* function = current->function;
 
-    #ifdef DEBUG_PRINT_BYTECODE
+#ifdef DEBUG_PRINT_BYTECODE
     if (!parser.hadError)
     {
         disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
     }
-    #endif
+#endif
 
     current = (Compiler*) current->enclosing;
     return function;
@@ -1023,10 +1013,10 @@ ObjFunction* compile(const char* source)
     parser.hadError = false;
     parser.panicMode = false;
 
-    #ifdef DEBUG_PRINT_TOKENS
+#ifdef DEBUG_PRINT_TOKENS
     printTokens();
     return false;
-    #endif
+#endif
 
     advance();
 
@@ -1042,58 +1032,60 @@ ObjFunction* compile(const char* source)
 }
 
 ParseRule rules[] =
-{
-        // Prefix vs Infix
-        // Prefix examples: -1, (1, 1, "str"
-        // In prefix the expression token is on the left of the rest of the expression or is the expression itself (1, "str")
-        //
-        // Infix examples: 1 + 1, 2 * 2,
-        // In prefix the expression token is in the middle of other two expressions
+        {
+                // Prefix vs Infix
+                // Prefix examples: -1, (1, 1, "str"
+                // In prefix the expression token is on the left of the rest of the expression or is the expression itself (1, "str")
+                //
+                // Infix examples: 1 + 1, 2 * 2,
+                // In prefix the expression token is in the middle of other two expressions
 
-        //                       prefix                    infix   precedence
-        [TOKEN_LEFT_PAREN]    = {grouping,             call,   PREC_CALL},
-        [TOKEN_RIGHT_PAREN]   = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_LEFT_BRACE]    = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_RIGHT_BRACE]   = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_COMMA]         = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_DOT]           = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_MINUS]         = {unary,                binary, PREC_TERM},
-        [TOKEN_PLUS]          = {NULL,                 binary, PREC_TERM},
-        [TOKEN_SEMICOLON]     = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_SLASH]         = {NULL,                 binary, PREC_FACTOR},
-        [TOKEN_STAR]          = {NULL,                 binary, PREC_FACTOR},
-        [TOKEN_BANG]          = {unary,                NULL,   PREC_NONE},
-        [TOKEN_BANG_EQUAL]    = {NULL,                 binary, PREC_EQUALITY},
-        [TOKEN_EQUAL]         = {NULL,                 binary, PREC_COMPARISON},
-        [TOKEN_EQUAL_EQUAL]   = {NULL,                 binary, PREC_EQUALITY},
-        [TOKEN_GREATER]       = {NULL,                 binary, PREC_COMPARISON},
-        [TOKEN_GREATER_EQUAL] = {NULL,                 binary, PREC_COMPARISON},
-        [TOKEN_LESS]          = {NULL,                 binary, PREC_COMPARISON},
-        [TOKEN_LESS_EQUAL]    = {NULL,                 binary, PREC_COMPARISON},
-        [TOKEN_IDENTIFIER]    = {variable,             NULL,   PREC_NONE},
-        [TOKEN_DOLLAR]        = {interpolatedString,   NULL,   PREC_NONE},
-        [TOKEN_STRING]        = {string,               NULL,   PREC_NONE},
-        [TOKEN_NUMBER]        = {number,               NULL,   PREC_NONE},
-        [TOKEN_AND]           = {NULL,                 and,    PREC_AND},
-        [TOKEN_CLASS]         = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_ELSE]          = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_QUESTION_MARK] = {NULL,                 ternary,PREC_TERNARY},
-        [TOKEN_COLON]         = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_FALSE]         = {literal,              NULL,   PREC_NONE},
-        [TOKEN_FOR]           = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_FUNCTION]      = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_IF]            = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_NULL]          = {literal,              NULL,   PREC_NONE},
-        [TOKEN_OR]            = {NULL,                 or,     PREC_OR},
-        [TOKEN_RETURN]        = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_SUPER]         = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_THIS]          = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_TRUE]          = {literal,              NULL,   PREC_NONE},
-        [TOKEN_VAR]           = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_WHILE]         = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_ERROR]         = {NULL,                 NULL,   PREC_NONE},
-        [TOKEN_EOF]           = {NULL,                 NULL,   PREC_NONE},
-};
+                //                       prefix                    infix   precedence
+                [TOKEN_LEFT_PAREN]    = {grouping,             call,   PREC_CALL},
+                [TOKEN_RIGHT_PAREN]   = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_LEFT_BRACE]    = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_RIGHT_BRACE]   = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_COMMA]         = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_DOT]           = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_MINUS]         = {unary,                binary, PREC_TERM},
+                [TOKEN_PLUS]          = {NULL,                 binary, PREC_TERM},
+                [TOKEN_SEMICOLON]     = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_SLASH]         = {NULL,                 binary, PREC_FACTOR},
+                [TOKEN_STAR]          = {NULL,                 binary, PREC_FACTOR},
+                [TOKEN_BANG]          = {unary,                NULL,   PREC_NONE},
+                [TOKEN_BANG_EQUAL]    = {NULL,                 binary, PREC_EQUALITY},
+                [TOKEN_EQUAL]         = {NULL,                 binary, PREC_COMPARISON},
+                [TOKEN_EQUAL_EQUAL]   = {NULL,                 binary, PREC_EQUALITY},
+                [TOKEN_GREATER]       = {NULL,                 binary, PREC_COMPARISON},
+                [TOKEN_GREATER_EQUAL] = {NULL,                 binary, PREC_COMPARISON},
+                [TOKEN_LESS]          = {NULL,                 binary, PREC_COMPARISON},
+                [TOKEN_LESS_EQUAL]    = {NULL,                 binary, PREC_COMPARISON},
+                [TOKEN_IDENTIFIER]    = {variable,             NULL,   PREC_NONE},
+                [TOKEN_DOLLAR]        = {interpolatedString,   NULL,   PREC_NONE},
+                [TOKEN_STRING]        = {string,               NULL,   PREC_NONE},
+                [TOKEN_NUMBER]        = {number,               NULL,   PREC_NONE},
+                [TOKEN_AND]           = {NULL,                 and,    PREC_AND},
+                [TOKEN_CLASS]         = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_ELSE]          = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_QUESTION_MARK] = {NULL,                 ternary,PREC_TERNARY},
+                [TOKEN_COLON]         = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_FALSE]         = {literal,              NULL,   PREC_NONE},
+                [TOKEN_FOR]           = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_FUNCTION]      = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_IF]            = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_NULL]          = {literal,              NULL,   PREC_NONE},
+                [TOKEN_OR]            = {NULL,                 or,     PREC_OR},
+                [TOKEN_RETURN]        = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_SUPER]         = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_THIS]          = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_TRUE]          = {literal,              NULL,   PREC_NONE},
+                [TOKEN_VAR]           = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_WHILE]         = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_ERROR]         = {NULL,                 NULL,   PREC_NONE},
+                [TOKEN_EOF]           = {NULL,                 NULL,   PREC_NONE},
+        };
+
+
 
 #ifdef DEBUG_PRINT_TOKENS
 void printTokens()
@@ -1117,4 +1109,3 @@ void printTokens()
 }
 #endif
 
-// endregion

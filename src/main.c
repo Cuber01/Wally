@@ -47,7 +47,9 @@ static void runFile(const char* path)
     int result = interpret(source);
     free(source);
 
-    //exit(result);
+    freeVM();
+
+    exit(result);
 }
 
 static void repl()
@@ -68,38 +70,38 @@ static void repl()
 
         interpret(line);
     }
+
+    freeVM();
 }
 
 int main(int argc, const char* argv[])
 {
 
-    Node* root = newNode((NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(1))});
-    listAdd(root, (NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(2))});
-    listAdd(root, (NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(3))});
-    printf("%f %f %f", AS_NUMBER(((LiteralExpr*)listGet(root, 0).as.expression)->value), AS_NUMBER(((LiteralExpr*)listGet(root, 1).as.expression)->value),
-           AS_NUMBER(((LiteralExpr*)listGet(root, 2).as.expression)->value) );
-    listWriteValue(root, 0, (NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(3))});
-    printf(" %f", AS_NUMBER(((LiteralExpr*)listGet(root, 0).as.expression)->value));
-   // freeList(root);
+//    Node* root = newNode((NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(1))});
+//    listAdd(root, (NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(2))});
+//    listAdd(root, (NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(3))});
+//    printf("%f %f %f", AS_NUMBER(((LiteralExpr*)listGet(root, 0).as.expression)->value), AS_NUMBER(((LiteralExpr*)listGet(root, 1).as.expression)->value),
+//           AS_NUMBER(((LiteralExpr*)listGet(root, 2).as.expression)->value) );
+//    listWriteValue(root, 0, (NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(3))});
+//    printf(" %f", AS_NUMBER(((LiteralExpr*)listGet(root, 0).as.expression)->value));
+//    freeList(root);
 
 
-//
-//    initVM();
-//
-//    if (argc == 1)
-//    {
-//        repl();
-//    } else if (argc == 2)
-//    {
-//        runFile(argv[1]);
-//    } else
-//    {
-//        fprintf(stderr, "Usage: Wally [path]\n");
-//        exit(64);
-//    }
-//
-//    freeVM(); // TODO unreachable
-//
+
+    initVM();
+
+    if (argc == 1)
+    {
+        repl();
+    } else if (argc == 2)
+    {
+        runFile(argv[1]);
+    } else
+    {
+        fprintf(stderr, "Usage: Wally [path]\n");
+        exit(64);
+    }
+
     return 0;
 
 }
