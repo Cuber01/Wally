@@ -8,7 +8,7 @@
 
 static Expr* newExpression(size_t size, ExprType type)
 {
-    Expr* object = malloc(size);
+    Expr* object = reallocate(NULL, 0, size);
 
     object->type = type;
     object->line = 0; // TODO
@@ -21,7 +21,7 @@ static Expr* newExpression(size_t size, ExprType type)
 
 static Stmt* newStatement(size_t size, StmtType type)
 {
-    Stmt* object = malloc(size);
+    Stmt* object = reallocate(NULL, 0, size);
 
     object->type = type;
     object->line = 0; // TODO
