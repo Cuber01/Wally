@@ -86,8 +86,6 @@ int main(int argc, const char* argv[])
 //    printf(" %f", AS_NUMBER(((LiteralExpr*)listGet(root, 0).as.expression)->value));
 //    freeList(root);
 
-
-
     initVM();
 
     if (argc == 1)
