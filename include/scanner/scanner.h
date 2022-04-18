@@ -41,7 +41,7 @@ typedef struct {
 
     const char* start;
     int length;
-    uint32_t line;
+    uint16_t line;
 } Token;
 
 typedef struct {

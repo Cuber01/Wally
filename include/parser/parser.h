@@ -8,7 +8,7 @@
 
 typedef struct {
     Node* statements;
-    uint32_t line;
+    uint16_t line;
 
     bool hadError;
     bool panicMode;

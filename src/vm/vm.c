@@ -231,7 +231,7 @@ static int run()
         (int)(frame->ip - frame->closure->function->chunk.code));
 
         // Print the whole stack
-        printf("        | ");
+        printf("        |  ");
         for (Value* slot = vm.stack; slot < vm.stackTop; slot++)
         {
             printf("[ ");
@@ -242,8 +242,7 @@ static int run()
 
         #endif
 
-        uint8_t instruction;
-        switch (instruction = READ_BYTE())
+        switch (READ_BYTE())
         {
 
             case OP_CONSTANT:

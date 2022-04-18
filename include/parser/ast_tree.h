@@ -34,7 +34,7 @@ typedef enum {
 
 typedef struct {
     ExprType type;
-    uint32_t line;
+    uint16_t line;
 } Expr;
 
 typedef struct
@@ -120,7 +120,7 @@ typedef struct
 
 typedef struct Stmt {
     StmtType type;
-    uint32_t line;
+    uint16_t line;
 } Stmt;
 
 typedef struct
@@ -210,25 +210,25 @@ typedef struct
 
 // ------------ EXPRESSION CONSTRUCTORS ------------
 
-LiteralExpr* newLiteralExpr(Value value, uint32_t line);
-BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right, uint32_t line);
-LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right, uint32_t line);
-GroupedExpr* newGroupedExpr(Expr* in, uint32_t line);
-TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch, uint32_t line);
-UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint32_t line);
-VarExpr* newVarExpr(const char* name, uint32_t line);
-AssignExpr* newAssignExpr(const char* name, Expr* value, uint32_t line);
-CallExpr* newCallExpr(Expr* callee, Node* args, uint32_t line);
+LiteralExpr* newLiteralExpr(Value value, uint16_t line);
+BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right, uint16_t line);
+LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right, uint16_t line);
+GroupedExpr* newGroupedExpr(Expr* in, uint16_t line);
+TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch, uint16_t line);
+UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line);
+VarExpr* newVarExpr(const char* name, uint16_t line);
+AssignExpr* newAssignExpr(const char* name, Expr* value, uint16_t line);
+CallExpr* newCallExpr(Expr* callee, Node* args, uint16_t line);
 
 // ------------ STATEMENT CONSTRUCTORS ------------
 
-ExpressionStmt* newExpressionStmt(Expr* expr, uint32_t line);
-BlockStmt* newBlockStmt(Node* statements, uint32_t line);
-IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch, uint32_t line);
-WhileStmt* newWhileStmt(Expr* condition, Stmt* body, uint32_t line);
-SwitchStmt* newSwitchStmt(Node* caseConditions, Node* caseBodies, Stmt* defaultBranch, uint32_t line);
-VariableStmt* newVariableStmt(const char* name, Expr* initializer, uint32_t line);
-FunctionStmt* newFunctionStmt(const char* name, Stmt* body, Node* params, uint32_t line);
-ReturnStmt* newReturnStmt(Expr* value, uint32_t line);
-BreakStmt* newBreakStmt(uint32_t line);
-ContinueStmt* newContinueStmt(uint32_t line);
+ExpressionStmt* newExpressionStmt(Expr* expr, uint16_t line);
+BlockStmt* newBlockStmt(Node* statements, uint16_t line);
+IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch, uint16_t line);
+WhileStmt* newWhileStmt(Expr* condition, Stmt* body, uint16_t line);
+SwitchStmt* newSwitchStmt(Node* caseConditions, Node* caseBodies, Stmt* defaultBranch, uint16_t line);
+VariableStmt* newVariableStmt(const char* name, Expr* initializer, uint16_t line);
+FunctionStmt* newFunctionStmt(const char* name, Stmt* body, Node* params, uint16_t line);
+ReturnStmt* newReturnStmt(Expr* value, uint16_t line);
+BreakStmt* newBreakStmt(uint16_t line);
+ContinueStmt* newContinueStmt(uint16_t line);

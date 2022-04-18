@@ -25,15 +25,15 @@ static Chunk* currentChunk()
     return &current->function->chunk;
 }
 
-static void emitByte(uint8_t byte)
+static void emitByte(uint8_t byte, uint16_t line)
 {
-    writeChunk(currentChunk(), byte, -1); // todo line
+    writeChunk(currentChunk(), byte, line);
 }
 
-static void emitBytes(uint8_t byte1, uint8_t byte2)
+static void emitBytes(uint8_t byte1, uint8_t byte2, uint16_t line)
 {
-    emitByte(byte1);
-    emitByte(byte2);
+    emitByte(byte1, line);
+    emitByte(byte2, line);
 }
 
 static uint8_t makeConstant(Value value)
@@ -48,26 +48,28 @@ static uint8_t makeConstant(Value value)
     return (uint8_t)constant;
 }
 
-static void emitConstant(Value value)
+static void emitConstant(Value value, uint16_t line)
 {
-    emitBytes(OP_CONSTANT, makeConstant(value));
+    emitBytes(OP_CONSTANT, makeConstant(value), line);
 }
 
-static void emitMultiplePop(int amount)
+static void emitMultiplePop(int amount, uint16_t line)
 {
-    emitConstant(NUMBER_VAL(amount));
-    emitByte(OP_POP_N);
+    emitConstant(NUMBER_VAL(amount), line);
+    emitByte(OP_POP_N, line);
 }
 
 static void emitReturn()
 {
-    emitByte(OP_RETURN);
+    emitByte(OP_RETURN, 999);
 }
 
 // endregion
 
 static void compileExpression(Expr* expression)
 {
+    uint16_t line = expression->line;
+
     switch (expression->type)
     {
         case LITERAL_EXPRESSION:
@@ -77,19 +79,19 @@ static void compileExpression(Expr* expression)
             switch (expr->value.type)
             {
                 case VAL_BOOL:
-                    emitConstant(BOOL_VAL(expr->value.as.boolean));
+                    emitConstant(BOOL_VAL(expr->value.as.boolean), line);
                     break;
 
                 case VAL_NULL:
-                    emitConstant(NULL_VAL);
+                    emitConstant(NULL_VAL, line);
                     break;
 
                 case VAL_NUMBER:
-                    emitConstant(NUMBER_VAL(expr->value.as.number));
+                    emitConstant(NUMBER_VAL(expr->value.as.number), line);
                     break;
 
                 case VAL_OBJ:
-                    emitConstant(OBJ_VAL(expr->value.as.obj));
+                    emitConstant(OBJ_VAL(expr->value.as.obj), line);
                     break;
             }
 
@@ -106,34 +108,34 @@ static void compileExpression(Expr* expression)
             switch (expr->operator)
             {
                 case TOKEN_PLUS:
-                    emitByte(OP_ADD);
+                    emitByte(OP_ADD, line);
                     break;
                 case TOKEN_MINUS:
-                    emitByte(OP_SUBTRACT);
+                    emitByte(OP_SUBTRACT, line);
                     break;
                 case TOKEN_SLASH:
-                    emitByte(OP_DIVIDE);
+                    emitByte(OP_DIVIDE, line);
                     break;
                 case TOKEN_STAR:
-                    emitByte(OP_MULTIPLY);
+                    emitByte(OP_MULTIPLY, line);
                     break;
                 case TOKEN_EQUAL_EQUAL:
-                    emitByte(OP_EQUAL);
+                    emitByte(OP_EQUAL, line);
                     break;
                 case TOKEN_BANG_EQUAL:
-                    emitByte(OP_NOT_EQUAL);
+                    emitByte(OP_NOT_EQUAL, line);
                     break;
                 case TOKEN_GREATER_EQUAL:
-                    emitByte(OP_GREATER_EQUAL);
+                    emitByte(OP_GREATER_EQUAL, line);
                     break;
                 case TOKEN_LESS_EQUAL:
-                    emitByte(OP_LESS_EQUAL);
+                    emitByte(OP_LESS_EQUAL, line);
                     break;
                 case TOKEN_LESS:
-                    emitByte(OP_LESS);
+                    emitByte(OP_LESS, line);
                     break;
                 case TOKEN_GREATER:
-                    emitByte(OP_GREATER);
+                    emitByte(OP_GREATER, line);
                     break;
 
                 default:
@@ -152,11 +154,11 @@ static void compileExpression(Expr* expression)
             switch (expr->operator)
             {
                 case TOKEN_MINUS:
-                    emitByte(OP_NEGATE);
+                    emitByte(OP_NEGATE, line);
                     break;
 
                 case TOKEN_BANG:
-                    emitByte(OP_NOT);
+                    emitByte(OP_NOT, line);
                     break;
 
                 default:
@@ -173,7 +175,7 @@ static void compileExpression(Expr* expression)
             compileExpression(expr->thenBranch);
             compileExpression(expr->elseBranch);
 
-            emitByte(OP_TERNARY);
+            emitByte(OP_TERNARY, line);
             break;
         }
 

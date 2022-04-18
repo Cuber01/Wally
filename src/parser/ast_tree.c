@@ -4,7 +4,7 @@
 #define ALLOCATE_EXPRESSION(objectType, enumType, line) \
     newExpression(sizeof(objectType), enumType, line)
 
-static Expr* newExpression(size_t size, ExprType type, uint32_t line)
+static Expr* newExpression(size_t size, ExprType type, uint16_t line)
 {
     Expr* object = reallocate(NULL, 0, size);
 
@@ -17,7 +17,7 @@ static Expr* newExpression(size_t size, ExprType type, uint32_t line)
 #define ALLOCATE_STATEMENT(objectType, enumType, line) \
     newStatement(sizeof(objectType), enumType, line)
 
-static Stmt* newStatement(size_t size, StmtType type, uint32_t line)
+static Stmt* newStatement(size_t size, StmtType type, uint16_t line)
 {
     Stmt* object = reallocate(NULL, 0, size);
 
@@ -226,19 +226,19 @@ void freeStatement(Stmt* stmt)
 }
 
 // ------------ EXPRESSIONS ------------
-ContinueStmt* newContinueStmt(uint32_t line)
+ContinueStmt* newContinueStmt(uint16_t line)
 {
     ContinueStmt* stmt = (ContinueStmt*) ALLOCATE_STATEMENT(ContinueStmt, CONTINUE_STATEMENT, line);
     return stmt;
 }
 
-BreakStmt* newBreakStmt(uint32_t line)
+BreakStmt* newBreakStmt(uint16_t line)
 {
     BreakStmt* stmt = (BreakStmt*) ALLOCATE_STATEMENT(BreakStmt, BREAK_STATEMENT, line);
     return stmt;
 }
 
-ReturnStmt* newReturnStmt(Expr* value, uint32_t line)
+ReturnStmt* newReturnStmt(Expr* value, uint16_t line)
 {
     ReturnStmt* stmt = (ReturnStmt*) ALLOCATE_STATEMENT(ReturnStmt, RETURN_STATEMENT, line);
 
@@ -247,7 +247,7 @@ ReturnStmt* newReturnStmt(Expr* value, uint32_t line)
     return stmt;
 }
 
-FunctionStmt* newFunctionStmt(const char* name, Stmt* body, Node* params, uint32_t line)
+FunctionStmt* newFunctionStmt(const char* name, Stmt* body, Node* params, uint16_t line)
 {
     FunctionStmt* stmt = (FunctionStmt*) ALLOCATE_STATEMENT(FunctionStmt, FUNCTION_STATEMENT, line);
 
@@ -258,7 +258,7 @@ FunctionStmt* newFunctionStmt(const char* name, Stmt* body, Node* params, uint32
     return stmt;
 }
 
-VariableStmt* newVariableStmt(const char* name, Expr* initializer, uint32_t line)
+VariableStmt* newVariableStmt(const char* name, Expr* initializer, uint16_t line)
 {
     VariableStmt* stmt = (VariableStmt*) ALLOCATE_STATEMENT(VariableStmt, VARIABLE_STATEMENT, line);
 
@@ -268,7 +268,7 @@ VariableStmt* newVariableStmt(const char* name, Expr* initializer, uint32_t line
     return stmt;
 }
 
-SwitchStmt* newSwitchStmt(Node* caseConditions, Node* caseBodies, Stmt* defaultBranch, uint32_t line)
+SwitchStmt* newSwitchStmt(Node* caseConditions, Node* caseBodies, Stmt* defaultBranch, uint16_t line)
 {
     SwitchStmt* stmt = (SwitchStmt*) ALLOCATE_STATEMENT(SwitchStmt, SWITCH_STATEMENT, line);
 
@@ -280,7 +280,7 @@ SwitchStmt* newSwitchStmt(Node* caseConditions, Node* caseBodies, Stmt* defaultB
     return stmt;
 }
 
-WhileStmt* newWhileStmt(Expr* condition, Stmt* body, uint32_t line)
+WhileStmt* newWhileStmt(Expr* condition, Stmt* body, uint16_t line)
 {
     WhileStmt* stmt = (WhileStmt*) ALLOCATE_STATEMENT(WhileStmt, WHILE_STATEMENT, line);
 
@@ -290,7 +290,7 @@ WhileStmt* newWhileStmt(Expr* condition, Stmt* body, uint32_t line)
     return stmt;
 }
 
-IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch, uint32_t line)
+IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch, uint16_t line)
 {
     IfStmt* stmt = (IfStmt*) ALLOCATE_STATEMENT(IfStmt, IF_STATEMENT, line);
 
@@ -301,7 +301,7 @@ IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch, uint32_t 
     return stmt;
 }
 
-BlockStmt* newBlockStmt(Node* statements, uint32_t line)
+BlockStmt* newBlockStmt(Node* statements, uint16_t line)
 {
     BlockStmt* stmt = (BlockStmt*) ALLOCATE_STATEMENT(BlockStmt, BLOCK_STATEMENT, line);
 
@@ -310,7 +310,7 @@ BlockStmt* newBlockStmt(Node* statements, uint32_t line)
     return stmt;
 }
 
-ExpressionStmt* newExpressionStmt(Expr* expr, uint32_t line)
+ExpressionStmt* newExpressionStmt(Expr* expr, uint16_t line)
 {
     ExpressionStmt* stmt = (ExpressionStmt*) ALLOCATE_STATEMENT(ExpressionStmt, EXPRESSION_STATEMENT, line);
 
@@ -319,7 +319,7 @@ ExpressionStmt* newExpressionStmt(Expr* expr, uint32_t line)
     return stmt;
 }
 
-CallExpr* newCallExpr(Expr* callee, Node* args, uint32_t line)
+CallExpr* newCallExpr(Expr* callee, Node* args, uint16_t line)
 {
     CallExpr* expr = (CallExpr*) ALLOCATE_EXPRESSION(CallExpr, CALL_EXPRESSION, line);
 
@@ -329,7 +329,7 @@ CallExpr* newCallExpr(Expr* callee, Node* args, uint32_t line)
     return expr;
 }
 
-AssignExpr* newAssignExpr(const char* name, Expr* value, uint32_t line)
+AssignExpr* newAssignExpr(const char* name, Expr* value, uint16_t line)
 {
     AssignExpr* expr = (AssignExpr*) ALLOCATE_EXPRESSION(AssignExpr, ASSIGN_EXPRESSION, line);
 
@@ -339,7 +339,7 @@ AssignExpr* newAssignExpr(const char* name, Expr* value, uint32_t line)
     return expr;
 }
 
-VarExpr* newVarExpr(const char* name, uint32_t line)
+VarExpr* newVarExpr(const char* name, uint16_t line)
 {
     VarExpr* expr = (VarExpr*) ALLOCATE_EXPRESSION(VarExpr, VAR_EXPRESSION, line);
 
@@ -348,7 +348,7 @@ VarExpr* newVarExpr(const char* name, uint32_t line)
     return expr;
 }
 
-UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint32_t line)
+UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line)
 {
     UnaryExpr* expr = (UnaryExpr*) ALLOCATE_EXPRESSION(UnaryExpr, UNARY_EXPRESSION, line);
 
@@ -358,14 +358,14 @@ UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint32_t line)
     return expr;
 }
 
-GroupedExpr* newGroupedExpr(Expr* in, uint32_t line)
+GroupedExpr* newGroupedExpr(Expr* in, uint16_t line)
 {
     GroupedExpr* expr = (GroupedExpr*) ALLOCATE_EXPRESSION(GroupedExpr, GROUPED_EXPRESSION, line);
     expr->in = in;
     return expr;
 }
 
-TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch, uint32_t line)
+TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch, uint16_t line)
 {
     TernaryExpr* expr = (TernaryExpr*) ALLOCATE_EXPRESSION(TernaryExpr, TERNARY_EXPRESSION, line);
 
@@ -376,7 +376,7 @@ TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch,
     return expr;
 }
 
-LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right, uint32_t line)
+LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right, uint16_t line)
 {
     LogicalExpr* expr = (LogicalExpr*) ALLOCATE_EXPRESSION(LogicalExpr, LOGICAL_EXPRESSION, line);
 
@@ -387,7 +387,7 @@ LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right, uint32_
     return expr;
 }
 
-BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right, uint32_t line)
+BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right, uint16_t line)
 {
     BinaryExpr* expr = (BinaryExpr*) ALLOCATE_EXPRESSION(BinaryExpr, BINARY_EXPRESSION, line);
 
@@ -398,7 +398,7 @@ BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right, uint32_t 
     return expr;
 }
 
-LiteralExpr* newLiteralExpr(Value value, uint32_t line)
+LiteralExpr* newLiteralExpr(Value value, uint16_t line)
 {
     LiteralExpr* expr = (LiteralExpr*) ALLOCATE_EXPRESSION(LiteralExpr, LITERAL_EXPRESSION, line);
     expr->value = value;
