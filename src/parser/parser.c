@@ -306,7 +306,7 @@ static void escapeSequences(char* destination, char* source)
 
 }
 
-static Expr * string(bool canAssign)
+static Expr* string(bool canAssign)
 {
     // Math is for trimming ""
     uint32_t length = strlen(parser.previous.start);
@@ -320,7 +320,7 @@ static Expr * string(bool canAssign)
     emitConstant(OBJ_VAL(copyString(str, parser.previous.length - 2)));
 }
 
-static Expr * interpolatedString(bool canAssign)
+static Expr* interpolatedString(bool canAssign)
 {
 
 }

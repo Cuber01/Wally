@@ -229,7 +229,7 @@ static ObjFunction* endCompiler()
 }
 
 
-void emit(Node* statements)
+ObjFunction* emit(Node* statements)
 {
     Compiler compiler;
     initCompiler(&compiler, TYPE_SCRIPT);
@@ -242,5 +242,6 @@ void emit(Node* statements)
         stmt = stmt->next;
     }
 
-    endCompiler();
+    ObjFunction* function = endCompiler();
+    return hadError ? NULL : function;
 }

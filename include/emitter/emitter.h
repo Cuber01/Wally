@@ -31,6 +31,6 @@ typedef struct {
     int scopeDepth;
 } Compiler;
 
-void emit(Node* statements);
+ObjFunction* emit(Node* statements);
 
 #endif //WALLY_EMITTER_H
