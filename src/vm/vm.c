@@ -231,7 +231,7 @@ static int run()
         (int)(frame->ip - frame->closure->function->chunk.code));
 
         // Print the whole stack
-        printf("          ");
+        printf("        | ");
         for (Value* slot = vm.stack; slot < vm.stackTop; slot++)
         {
             printf("[ ");

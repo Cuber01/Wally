@@ -208,7 +208,7 @@ static Expr* binary(Expr* previous, bool canAssign)
     // We want to use a higher level because binary is left associative
     Expr* right = parsePrecedence((Precedence)(rule->precedence + 1));
 
-    return (Expr*)newBinaryExpr(previous, operatorType, right);
+    return (Expr*)newBinaryExpr(previous, operatorType, right, parser.line);
 }
 
 static Expr* ternary(Expr* previous, bool canAssign)
@@ -216,16 +216,16 @@ static Expr* ternary(Expr* previous, bool canAssign)
     Expr* thenBranch = parsePrecedence(PREC_TERNARY);
     consume(TOKEN_COLON, "Expect ':' after first ternary branch.");
     Expr* elseBranch = parsePrecedence(PREC_ASSIGNMENT);
-    return (Expr*)newTernaryExpr(previous, thenBranch, elseBranch);
+    return (Expr*)newTernaryExpr(previous, thenBranch, elseBranch, parser.line);
 }
 
 static LiteralExpr* literal(bool canAssign)
 {
     switch (parser.previous.type)
     {
-        case TOKEN_FALSE: return newLiteralExpr(BOOL_VAL(false));
-        case TOKEN_NULL:  return newLiteralExpr(NULL_VAL);
-        case TOKEN_TRUE:  return newLiteralExpr(BOOL_VAL(true));
+        case TOKEN_FALSE: return newLiteralExpr(BOOL_VAL(false), parser.line);
+        case TOKEN_NULL:  return newLiteralExpr(NULL_VAL, parser.line);
+        case TOKEN_TRUE:  return newLiteralExpr(BOOL_VAL(true), parser.line);
         default:
             return NULL; // Unreachable.
     }
@@ -234,7 +234,7 @@ static LiteralExpr* literal(bool canAssign)
 static Expr* number(bool canAssign)
 {
     double value = strtod(parser.previous.start, NULL);
-    return (Expr*)newLiteralExpr(NUMBER_VAL(value));
+    return (Expr*)newLiteralExpr(NUMBER_VAL(value), parser.line);
 }
 
 static void escapeSequences(char* destination, char* source)
@@ -307,7 +307,7 @@ static Expr* string(bool canAssign)
 
     escapeSequences(str, str);
 
-    return (Expr*)newLiteralExpr(OBJ_VAL(copyString(str, parser.previous.length - 2)));
+    return (Expr*)newLiteralExpr(OBJ_VAL(copyString(str, parser.previous.length - 2)), parser.line);
 }
 
 static Expr* interpolatedString(bool canAssign)
@@ -321,7 +321,7 @@ static Expr* unary(bool canAssign)
 
     Expr* expr = parsePrecedence(PREC_UNARY);
 
-    return (Expr*) newUnaryExpr(expr, operatorType);
+    return (Expr*) newUnaryExpr(expr, operatorType, parser.line);
 }
 
 static Expr* grouping(bool canAssign)
@@ -370,7 +370,7 @@ static Stmt* expressionStatement()
 {
     Expr* expr = expression();
     consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
-    return (Stmt*)newExpressionStmt(expr);
+    return (Stmt*)newExpressionStmt(expr, parser.line);
 }
 
 static Stmt* block()
@@ -645,6 +645,8 @@ static Stmt* switchStatement()
 
 static Stmt* statement()
 {
+    parser.line = parser.previous.line;
+
     if (match(TOKEN_IF))              return ifStatement();
     else if (match(TOKEN_WHILE))      return whileStatement();
     else if (match(TOKEN_FOR))        return forStatement();
@@ -920,7 +922,7 @@ static Stmt* declaration()
 {
     Stmt* stmt;
 
-    if      (match(TOKEN_VAR))      stmt = varDeclaration();
+    if (match(TOKEN_VAR))           stmt = varDeclaration();
     else if (match(TOKEN_FUNCTION)) stmt = functionDeclaration();
     else
     {
@@ -942,15 +944,9 @@ Node* compile(const char* source)
 {
     initScanner(source);
 
-    //if (!parser.hadError)
-    //{
-    //    disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
-    //}
-
-    Compiler compiler;
-
     parser.hadError = false;
     parser.panicMode = false;
+    parser.line = 0;
 
     #ifdef DEBUG_PRINT_TOKENS
     printTokens();
@@ -974,7 +970,6 @@ Node* compile(const char* source)
     }
 
     consume(TOKEN_EOF, "Expect end of expression.");
-
 
     return parser.hadError ? NULL : statements;
 }
