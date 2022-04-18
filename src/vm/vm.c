@@ -527,15 +527,16 @@ static int run()
 
 int interpret(const char* source)
 {
-    ObjFunction* function = compile(source);
-    if (function == NULL) return INTERPRET_COMPILE_ERROR;
+    Node* statements = compile(source);
+    if (statements == NULL) return INTERPRET_COMPILE_ERROR;
+//
+//    push(OBJ_VAL(function));
+//
+//    ObjClosure* closure = newClosure(function);
+//    pop();
+//    push(OBJ_VAL(closure));
+//    call(closure, 0);
 
-    push(OBJ_VAL(function));
-
-    ObjClosure* closure = newClosure(function);
-    pop();
-    push(OBJ_VAL(closure));
-    call(closure, 0);
-
-    return run();
+//    return run();
+    return 0;
 }

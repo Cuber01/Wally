@@ -226,32 +226,17 @@ static void emitReturn()
 
 // region EXPRESSIONS
 
-static Expr * binary(bool canAssign)
+static BinaryExpr* binary(bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
     ParseRule* rule = getRule(operatorType);
     // We want to use a higher level because binary is left associative
-    parsePrecedence((Precedence)(rule->precedence + 1));
+    Expr* right = parsePrecedence((Precedence)(rule->precedence + 1));
 
-    switch (operatorType)
-    {
-        case TOKEN_BANG_EQUAL:    emitByte(OP_NOT_EQUAL);     break;
-        case TOKEN_EQUAL_EQUAL:   emitByte(OP_EQUAL);         break;
-        case TOKEN_GREATER:       emitByte(OP_GREATER);       break;
-        case TOKEN_GREATER_EQUAL: emitByte(OP_GREATER_EQUAL); break;
-        case TOKEN_LESS:          emitByte(OP_LESS);          break;
-        case TOKEN_LESS_EQUAL:    emitByte(OP_LESS_EQUAL);    break;
-
-        case TOKEN_PLUS:          emitByte(OP_ADD); break;
-        case TOKEN_MINUS:         emitByte(OP_SUBTRACT); break;
-        case TOKEN_STAR:          emitByte(OP_MULTIPLY); break;
-        case TOKEN_SLASH:         emitByte(OP_DIVIDE); break;
-        default:
-            return NULL; // Unreachable.
-    }
+    //return newBinaryExpr()
 }
 
-static Expr * ternary(bool canAssign)
+static Expr* ternary(bool canAssign)
 {
     parsePrecedence(PREC_TERNARY);
     consume(TOKEN_COLON, "Expect ':' after first ternary branch.");
@@ -259,19 +244,19 @@ static Expr * ternary(bool canAssign)
     emitByte(OP_TERNARY);
 }
 
-static Expr * literal(bool canAssign)
+static LiteralExpr* literal(bool canAssign)
 {
     switch (parser.previous.type)
     {
-        case TOKEN_FALSE: emitByte(OP_FALSE); break;
-        case TOKEN_NULL:  emitByte(OP_NULL);   break;
-        case TOKEN_TRUE:  emitByte(OP_TRUE);  break;
+        case TOKEN_FALSE: return newLiteralExpr(BOOL_VAL(false));
+        case TOKEN_NULL:  return newLiteralExpr(NULL_VAL);
+        case TOKEN_TRUE:  return newLiteralExpr(BOOL_VAL(true));
         default:
             return NULL; // Unreachable.
     }
 }
 
-static Expr * number(bool canAssign)
+static LiteralExpr* number(bool canAssign)
 {
     double value = strtod(parser.previous.start, NULL);
     return newLiteralExpr(NUMBER_VAL(value));
@@ -322,6 +307,10 @@ static void escapeSequences(char* destination, char* source)
 
                 state = ST_COPY;
                 break;
+
+            default:
+                break; // Unreachable
+
         }
 
         source++;
@@ -478,7 +467,7 @@ static Expr * or(bool canAssign)
     patchJump(endJump);
 }
 
-static Expr * and(bool canAssign)
+static Expr* and(bool canAssign)
 {
     int endJump = emitJump(OP_JUMP_IF_FALSE);
 
@@ -981,20 +970,17 @@ static Stmt* declaration()
 
 // region MAIN
 
-#ifdef DEBUG_PRINT_BYTECODE
-if (!parser.hadError)
-{
-    disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
-}
-#endif
-
-
 #ifdef DEBUG_PRINT_TOKENS
 void printTokens();
 #endif
 Node* compile(const char* source)
 {
     initScanner(source);
+
+    //if (!parser.hadError)
+    //{
+    //    disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
+    //}
 
     Compiler compiler;
 
@@ -1022,8 +1008,8 @@ Node* compile(const char* source)
         }
     }
 
-//    NodeValue val = listGet(statements, 0);
-//    printValue(((LiteralExpr*)((ExpressionStmt*)val.as.statement)->expr)->value);
+    NodeValue val = listGet(statements, 0);
+    printValue(((LiteralExpr*)((ExpressionStmt*)val.as.statement)->expr)->value);
 
     consume(TOKEN_EOF, "Expect end of expression.");
 
