@@ -86,16 +86,6 @@ void freeExpression(Expr* expr)
             break;
         }
 
-        case OBJECT_EXPRESSION:
-        {
-            ObjectExpr *expression = (ObjectExpr *) expr;
-
-            freeObject(&expression->value);
-
-            FREE(ObjectExpr, expr);
-            break;
-        }
-
         case LOGICAL_EXPRESSION:
         {
             LogicalExpr* expression = (LogicalExpr*) expr;
@@ -405,13 +395,6 @@ BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right)
     expr->operator = operator;
     expr->right = right;
 
-    return expr;
-}
-
-ObjectExpr* newObjectExpr(Obj value)
-{
-    ObjectExpr* expr = (ObjectExpr*) ALLOCATE_EXPRESSION(ObjectExpr, OBJECT_EXPRESSION);
-    expr->value = value;
     return expr;
 }
 

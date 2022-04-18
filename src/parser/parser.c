@@ -151,7 +151,7 @@ static Expr* parsePrecedence(Precedence precedence)
     }
 
     bool canAssign = precedence <= PREC_ASSIGNMENT;
-    Expr* expr = (Expr*)prefixRule(canAssign);
+    Expr* expr = prefixRule(canAssign);
 
     while (precedence <= getRule(parser.current.type)->precedence)
     {
@@ -187,17 +187,7 @@ static void emitBytes(uint8_t byte1, uint8_t byte2)
 
 }
 
-static uint8_t makeConstant(Value value)
-{
-
-}
-
 static void emitConstant(Value value)
-{
-
-}
-
-static void emitMultiplePop(int amount)
 {
 
 }
@@ -211,22 +201,22 @@ static void emitReturn()
 
 // region EXPRESSIONS
 
-static BinaryExpr* binary(Expr* previous, bool canAssign)
+static Expr* binary(Expr* previous, bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
     ParseRule* rule = getRule(operatorType);
     // We want to use a higher level because binary is left associative
     Expr* right = parsePrecedence((Precedence)(rule->precedence + 1));
 
-    return newBinaryExpr(previous, operatorType, right);
+    return (Expr*)newBinaryExpr(previous, operatorType, right);
 }
 
-static Expr* ternary(bool canAssign)
+static Expr* ternary(Expr* previous, bool canAssign)
 {
-    parsePrecedence(PREC_TERNARY);
+    Expr* thenBranch = parsePrecedence(PREC_TERNARY);
     consume(TOKEN_COLON, "Expect ':' after first ternary branch.");
-    parsePrecedence(PREC_ASSIGNMENT);
-    emitByte(OP_TERNARY);
+    Expr* elseBranch = parsePrecedence(PREC_ASSIGNMENT);
+    return (Expr*)newTernaryExpr(previous, thenBranch, elseBranch);
 }
 
 static LiteralExpr* literal(bool canAssign)
@@ -241,10 +231,10 @@ static LiteralExpr* literal(bool canAssign)
     }
 }
 
-static LiteralExpr* number(bool canAssign)
+static Expr* number(bool canAssign)
 {
     double value = strtod(parser.previous.start, NULL);
-    return newLiteralExpr(NUMBER_VAL(value));
+    return (Expr*)newLiteralExpr(NUMBER_VAL(value));
 }
 
 static void escapeSequences(char* destination, char* source)
@@ -329,19 +319,9 @@ static Expr* unary(bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
 
-    // Compile the operand.
-    parsePrecedence(PREC_UNARY);
+    Expr* expr = parsePrecedence(PREC_UNARY);
 
-    // Emit the operator instruction.
-    switch (operatorType)
-    {
-        case TOKEN_BANG:
-            emitByte(OP_NOT);    break;
-        case TOKEN_MINUS:
-            emitByte(OP_NEGATE); break;
-        default:
-            return NULL; // Unreachable.
-    }
+    return (Expr*) newUnaryExpr(expr, operatorType);
 }
 
 static Expr* grouping(bool canAssign)
@@ -686,8 +666,8 @@ static Stmt* statement()
 
 static uint8_t identifierConstant(Token* name)
 {
-    return makeConstant(
-            OBJ_VAL(copyString(name->start,name->length)));
+//    return makeConstant(
+//            OBJ_VAL(copyString(name->start,name->length)));
 }
 
 static int resolveLocal(Compiler* compiler, Token* name)

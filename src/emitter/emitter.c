@@ -138,14 +138,45 @@ static void compileExpression(Expr* expression)
 
                 default:
                     error("Unknown operator");
-            };
+            }
 
             break;
         }
 
-
         case UNARY_EXPRESSION:
+        {
+            UnaryExpr* expr = (UnaryExpr*)expression;
+
+            compileExpression(expr->target);
+
+            switch (expr->operator)
+            {
+                case TOKEN_MINUS:
+                    emitByte(OP_NEGATE);
+                    break;
+
+                case TOKEN_BANG:
+                    emitByte(OP_NOT);
+                    break;
+
+                default:
+                    error("Unrecognized operand in unary expression.");
+            }
             break;
+        }
+
+        case TERNARY_EXPRESSION:
+        {
+            TernaryExpr* expr = (TernaryExpr*)expression;
+
+            compileExpression(expr->condition);
+            compileExpression(expr->thenBranch);
+            compileExpression(expr->elseBranch);
+
+            emitByte(OP_TERNARY);
+            break;
+        }
+
         case VAR_EXPRESSION:
             break;
         case LOGICAL_EXPRESSION:
@@ -156,10 +187,7 @@ static void compileExpression(Expr* expression)
             break;
         case CALL_EXPRESSION:
             break;
-        case TERNARY_EXPRESSION:
-            break;
-        case OBJECT_EXPRESSION:
-            break;
+
     }
 }
 
