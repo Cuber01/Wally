@@ -146,7 +146,7 @@ static Expr* parsePrecedence(Precedence precedence)
     ParsePrefixFn prefixRule = getRule(parser.previous.type)->prefix;
     if (prefixRule == NULL)
     {
-        error("Expect compileExpression.");
+        error("Expect expression.");
         return NULL;
     }
 
@@ -369,7 +369,7 @@ static Stmt* varDeclaration();
 static Stmt* expressionStatement()
 {
     Expr* expr = expression();
-    consume(TOKEN_SEMICOLON, "Expect ';' after compileExpression.");
+    consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
     return (Stmt*)newExpressionStmt(expr);
 }
 
@@ -620,7 +620,7 @@ static Stmt* switchStatement()
 
             int thenJump = emitJump(OP_JUMP_IF_FALSE);
 
-            consume(TOKEN_COLON, "Expect ':' after compileExpression.");
+            consume(TOKEN_COLON, "Expect ':' after expression.");
 
             statement();
 
@@ -973,7 +973,7 @@ Node* compile(const char* source)
         }
     }
 
-    consume(TOKEN_EOF, "Expect end of compileExpression.");
+    consume(TOKEN_EOF, "Expect end of expression.");
 
 
     return parser.hadError ? NULL : statements;
