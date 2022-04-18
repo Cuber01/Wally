@@ -346,8 +346,9 @@ static Expr* unary(bool canAssign)
 
 static Expr* grouping(bool canAssign)
 {
-    expression();
-    consume(TOKEN_RIGHT_PAREN, "Expect ')' after compileExpression.");
+    Expr* expr = expression();
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
+    return expr;
 }
 
 static uint8_t argumentList()
