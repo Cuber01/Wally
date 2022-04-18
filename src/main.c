@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "chunk.h"
-#include "disassembler.h"
-#include "list.h"
 #include "vm.h"
 
 

@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "compiler.h"
+#include "parser.h"
 #include "scanner.h"
 #include "chunk.h"
 #include "object.h"
@@ -185,41 +185,32 @@ static Expr* expression()
 
 static void emitByte(uint8_t byte)
 {
-    writeChunk(currentChunk(), byte, parser.previous.line);
+
 }
 
 static void emitBytes(uint8_t byte1, uint8_t byte2)
 {
-    emitByte(byte1);
-    emitByte(byte2);
+
 }
 
 static uint8_t makeConstant(Value value)
 {
-    int constant = addConstant(currentChunk(), value);
-    if (constant > UINT8_MAX)
-    {
-        error("Too many constants in one chunk.");
-        return 0;
-    }
 
-    return (uint8_t)constant;
 }
 
 static void emitConstant(Value value)
 {
-    emitBytes(OP_CONSTANT, makeConstant(value));
+
 }
 
 static void emitMultiplePop(int amount)
 {
-    emitConstant(NUMBER_VAL(amount));
-    emitByte(OP_POP_N);
+
 }
 
 static void emitReturn()
 {
-    emitByte(OP_RETURN);
+
 }
 
 // endregion
@@ -1007,9 +998,6 @@ Node* compile(const char* source)
             listAdd(statements, (NodeValue){.as.statement = declaration()});
         }
     }
-
-    NodeValue val = listGet(statements, 0);
-    printValue(((LiteralExpr*)((ExpressionStmt*)val.as.statement)->expr)->value);
 
     consume(TOKEN_EOF, "Expect end of expression.");
 

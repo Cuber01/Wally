@@ -3,6 +3,9 @@
 
 #include "ast_tree.h"
 
+#define AS_STATEMENT(node)  (node)->value.as.statement
+#define AS_EXPRESSION(node) (node)->value.as.expression
+
 typedef struct NodeValue
 {
     union {

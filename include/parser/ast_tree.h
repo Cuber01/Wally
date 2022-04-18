@@ -3,7 +3,7 @@
 #include "object.h"
 #include "list.h"
 
-typedef struct Node Node;
+typedef struct Node Node; // todo
 
 typedef enum {
     BINARY_EXPRESSION,
@@ -142,6 +142,7 @@ typedef struct
 {
     Stmt stmt;
 
+    ExprType type;
     Expr* expr;
 } ExpressionStmt;
 

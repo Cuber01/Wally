@@ -60,16 +60,29 @@ NodeValue listGet(Node* root, unsigned int index)
     return node->value;
 }
 
+int getLength(Node* root)
+{
+    Node* node = root;
+    int length = 0;
+
+    while (node != NULL)
+    {
+        node = node->next;
+        length++;
+    }
+
+    return length;
+}
+
 void freeList(Node* root)
 {
     Node* toFree;
     while (root != NULL)
     {
         toFree = root;
-        root = root->next;
+        root = root->next; // todo free values?
         free(toFree);
     }
-
 }
 
 

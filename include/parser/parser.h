@@ -1,5 +1,5 @@
-#ifndef WALLY_COMPILER_H
-#define WALLY_COMPILER_H
+#ifndef WALLY_PARSER_H
+#define WALLY_PARSER_H
 
 #include "chunk.h"
 #include "scanner.h"
@@ -73,4 +73,4 @@ typedef struct {
 
 Node* compile(const char* source);
 
-#endif //WALLY_COMPILER_H
+#endif //WALLY_PARSER_H

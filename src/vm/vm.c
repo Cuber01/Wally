@@ -5,9 +5,10 @@
 #include "common.h"
 #include "vm.h"
 #include "disassembler.h"
-#include "compiler.h"
+#include "parser.h"
 #include "object.h"
 #include "memory.h"
+#include "emitter.h"
 
 
 VM vm;
@@ -529,6 +530,8 @@ int interpret(const char* source)
 {
     Node* statements = compile(source);
     if (statements == NULL) return INTERPRET_COMPILE_ERROR;
+
+    emit(statements);
 //
 //    push(OBJ_VAL(function));
 //

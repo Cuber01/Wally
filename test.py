@@ -83,7 +83,6 @@ class Test:
         if state and state == 'skip':
             num_skipped += 1
             return False
-        # TODO: State for tests that should be run but are expected to fail?
 
         line_num = 1
         with open(self.path, 'r') as file:
