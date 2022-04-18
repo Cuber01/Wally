@@ -71,6 +71,6 @@ typedef struct {
     Precedence precedence;
 } ParseRule;
 
-ObjFunction* compile(const char* source);
+Node* compile(const char* source);
 
 #endif //WALLY_COMPILER_H

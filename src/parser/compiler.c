@@ -226,7 +226,7 @@ static void emitReturn()
 
 // region EXPRESSIONS
 
-static void binary(bool canAssign)
+static Expr * binary(bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
     ParseRule* rule = getRule(operatorType);
@@ -246,11 +246,12 @@ static void binary(bool canAssign)
         case TOKEN_MINUS:         emitByte(OP_SUBTRACT); break;
         case TOKEN_STAR:          emitByte(OP_MULTIPLY); break;
         case TOKEN_SLASH:         emitByte(OP_DIVIDE); break;
-        default: return; // Unreachable.
+        default:
+            return NULL; // Unreachable.
     }
 }
 
-static void ternary(bool canAssign)
+static Expr * ternary(bool canAssign)
 {
     parsePrecedence(PREC_TERNARY);
     consume(TOKEN_COLON, "Expect ':' after first ternary branch.");
@@ -258,18 +259,19 @@ static void ternary(bool canAssign)
     emitByte(OP_TERNARY);
 }
 
-static void literal(bool canAssign)
+static Expr * literal(bool canAssign)
 {
     switch (parser.previous.type)
     {
         case TOKEN_FALSE: emitByte(OP_FALSE); break;
         case TOKEN_NULL:  emitByte(OP_NULL);   break;
         case TOKEN_TRUE:  emitByte(OP_TRUE);  break;
-        default: return; // Unreachable.
+        default:
+            return NULL; // Unreachable.
     }
 }
 
-static LiteralExpr* number(bool canAssign)
+static Expr * number(bool canAssign)
 {
     double value = strtod(parser.previous.start, NULL);
     return newLiteralExpr(NUMBER_VAL(value));
@@ -330,7 +332,7 @@ static void escapeSequences(char* destination, char* source)
 
 }
 
-static void string(bool canAssign)
+static Expr * string(bool canAssign)
 {
     // Math is for trimming ""
     uint32_t length = strlen(parser.previous.start);
@@ -344,12 +346,12 @@ static void string(bool canAssign)
     emitConstant(OBJ_VAL(copyString(str, parser.previous.length - 2)));
 }
 
-static void interpolatedString(bool canAssign)
+static Expr * interpolatedString(bool canAssign)
 {
 
 }
 
-static void unary(bool canAssign)
+static Expr* unary(bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
 
@@ -359,13 +361,16 @@ static void unary(bool canAssign)
     // Emit the operator instruction.
     switch (operatorType)
     {
-        case TOKEN_BANG:  emitByte(OP_NOT);    break;
-        case TOKEN_MINUS: emitByte(OP_NEGATE); break;
-        default: return; // Unreachable.
+        case TOKEN_BANG:
+            emitByte(OP_NOT);    break;
+        case TOKEN_MINUS:
+            emitByte(OP_NEGATE); break;
+        default:
+            return NULL; // Unreachable.
     }
 }
 
-static void grouping(bool canAssign)
+static Expr* grouping(bool canAssign)
 {
     expression();
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
@@ -393,7 +398,7 @@ static uint8_t argumentList()
     return argCount;
 }
 
-static void call(bool canAssign)
+static Expr * call(bool canAssign)
 {
     uint8_t argCount = argumentList();
     emitBytes(OP_CALL, argCount);
@@ -406,7 +411,6 @@ static Stmt* declaration();
 static Stmt* statement();
 static Stmt* varDeclaration();
 static void initCompiler(Compiler* compiler, FunctionType type);
-static ObjFunction* endCompiler();
 
 static Stmt* expressionStatement()
 {
@@ -464,7 +468,7 @@ static void patchJump(int offset)
     currentChunk()->code[offset + 1] = jump & 0xff;
 }
 
-static void or(bool canAssign)
+static Expr * or(bool canAssign)
 {
     int endJump = emitJump(OP_JUMP_IF_TRUE);
 
@@ -474,7 +478,7 @@ static void or(bool canAssign)
     patchJump(endJump);
 }
 
-static void and(bool canAssign)
+static Expr * and(bool canAssign)
 {
     int endJump = emitJump(OP_JUMP_IF_FALSE);
 
@@ -806,7 +810,7 @@ static void namedVariable(Token name, bool canAssign)
     }
 }
 
-static void variable(bool canAssign)
+static Expr * variable(bool canAssign)
 {
     namedVariable(parser.previous, canAssign);
 }
@@ -916,14 +920,13 @@ static void function(FunctionType type)
     consume(TOKEN_LEFT_BRACE, "Expect '{' before function body.");
     block();
 
-    ObjFunction* function = endCompiler();
     emitBytes(OP_CLOSURE, makeConstant(OBJ_VAL(function)));
 
-    for (int i = 0; i < function->upvalueCount; i++)
-    {
-        emitByte(compiler.upvalues[i].isLocal ? 1 : 0);
-        emitByte(compiler.upvalues[i].index);
-    }
+//    for (int i = 0; i < function->upvalueCount; i++)
+//    {
+//        emitByte(compiler.upvalues[i].isLocal ? 1 : 0);
+//        emitByte(compiler.upvalues[i].index);
+//    }
 }
 
 static Stmt* functionDeclaration()
@@ -978,66 +981,34 @@ static Stmt* declaration()
 
 // region MAIN
 
-static void initCompiler(Compiler* compiler, FunctionType type)
+#ifdef DEBUG_PRINT_BYTECODE
+if (!parser.hadError)
 {
-    compiler->enclosing = (struct Compiler*) current;
-    compiler->function = NULL;
-    compiler->type = type;
-
-    compiler->localCount = 0;
-    compiler->scopeDepth = 0;
-    compiler->function = newFunction();
-    current = compiler;
-
-    if (type != TYPE_SCRIPT)
-    {
-        current->function->name = copyString(parser.previous.start,
-                                             parser.previous.length);
-    }
-
-    Local* local = &current->locals[current->localCount++];
-    local->depth = 0;
-    local->name.start = "";
-    local->name.length = 0;
+    disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
 }
+#endif
 
-static ObjFunction* endCompiler()
-{
-    emitReturn();
-    ObjFunction* function = current->function;
-
-    #ifdef DEBUG_PRINT_BYTECODE
-    if (!parser.hadError)
-    {
-        disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
-    }
-    #endif
-
-    current = (Compiler*) current->enclosing;
-    return function;
-}
 
 #ifdef DEBUG_PRINT_TOKENS
 void printTokens();
 #endif
-ObjFunction* compile(const char* source)
+Node* compile(const char* source)
 {
     initScanner(source);
 
     Compiler compiler;
-    initCompiler(&compiler, TYPE_SCRIPT);
 
     parser.hadError = false;
     parser.panicMode = false;
 
     #ifdef DEBUG_PRINT_TOKENS
     printTokens();
-    return false;
+    return NULL;
     #endif
 
     advance();
 
-    Node *statements = NULL;
+    Node* statements = NULL;
 
     while (!match(TOKEN_EOF))
     {
@@ -1051,13 +1022,13 @@ ObjFunction* compile(const char* source)
         }
     }
 
-    NodeValue val = listGet(statements, 0);
-    printValue(((LiteralExpr*)((ExpressionStmt*)val.as.statement)->expr)->value);
+//    NodeValue val = listGet(statements, 0);
+//    printValue(((LiteralExpr*)((ExpressionStmt*)val.as.statement)->expr)->value);
 
     consume(TOKEN_EOF, "Expect end of expression.");
 
-    ObjFunction* function = endCompiler();
-    return parser.hadError ? NULL : function;
+
+    return parser.hadError ? NULL : statements;
 }
 
 ParseRule rules[] =
