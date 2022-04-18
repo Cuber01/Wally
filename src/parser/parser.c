@@ -5,8 +5,6 @@
 #include "chunk.h"
 #include "object.h"
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "UnusedParameter"
 #ifdef DEBUG_PRINT_BYTECODE
 #include "disassembler.h"
 #include "emitter.h"
@@ -145,10 +143,10 @@ static Expr* parsePrecedence(Precedence precedence)
 {
     advance();
 
-    ParseFn prefixRule = getRule(parser.previous.type)->prefix;
+    ParsePrefixFn prefixRule = getRule(parser.previous.type)->prefix;
     if (prefixRule == NULL)
     {
-        error("Expect expression.");
+        error("Expect compileExpression.");
         return NULL;
     }
 
@@ -158,8 +156,8 @@ static Expr* parsePrecedence(Precedence precedence)
     while (precedence <= getRule(parser.current.type)->precedence)
     {
         advance();
-        ParseFn infixRule = getRule(parser.previous.type)->infix;
-        expr = infixRule(canAssign);
+        ParseInfixFn infixRule = getRule(parser.previous.type)->infix;
+        expr = (Expr*)infixRule(expr, canAssign);
     }
 
     if (canAssign && match(TOKEN_EQUAL))
@@ -213,14 +211,14 @@ static void emitReturn()
 
 // region EXPRESSIONS
 
-static BinaryExpr* binary(bool canAssign)
+static BinaryExpr* binary(Expr* previous, bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
     ParseRule* rule = getRule(operatorType);
     // We want to use a higher level because binary is left associative
     Expr* right = parsePrecedence((Precedence)(rule->precedence + 1));
 
-    //return newBinaryExpr() todo
+    return newBinaryExpr(previous, operatorType, right);
 }
 
 static Expr* ternary(bool canAssign)
@@ -349,7 +347,7 @@ static Expr* unary(bool canAssign)
 static Expr* grouping(bool canAssign)
 {
     expression();
-    consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after compileExpression.");
 }
 
 static uint8_t argumentList()
@@ -390,7 +388,7 @@ static Stmt* varDeclaration();
 static Stmt* expressionStatement()
 {
     Expr* expr = expression();
-    consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
+    consume(TOKEN_SEMICOLON, "Expect ';' after compileExpression.");
     return (Stmt*)newExpressionStmt(expr);
 }
 
@@ -641,7 +639,7 @@ static Stmt* switchStatement()
 
             int thenJump = emitJump(OP_JUMP_IF_FALSE);
 
-            consume(TOKEN_COLON, "Expect ':' after expression.");
+            consume(TOKEN_COLON, "Expect ':' after compileExpression.");
 
             statement();
 
@@ -994,7 +992,7 @@ Node* compile(const char* source)
         }
     }
 
-    consume(TOKEN_EOF, "Expect end of expression.");
+    consume(TOKEN_EOF, "Expect end of compileExpression.");
 
 
     return parser.hadError ? NULL : statements;
@@ -1009,7 +1007,7 @@ ParseRule rules[] =
         // Infix examples: 1 + 1, 2 * 2,
         // In prefix the expression token is in the middle of other two expressions
 
-        //                       prefix                    infix   precedence
+        //                       prefix                infix   precedence
         [TOKEN_LEFT_PAREN]    = {grouping,             call,   PREC_CALL},
         [TOKEN_RIGHT_PAREN]   = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_LEFT_BRACE]    = {NULL,                 NULL,   PREC_NONE},

@@ -36,11 +36,12 @@ typedef enum {
     PREC_PRIMARY
 } Precedence;
 
-typedef Expr* (*ParseFn)(bool canAssign);
+typedef Expr* (*ParsePrefixFn)(bool canAssign);
+typedef Expr* (*ParseInfixFn)(Expr* previous, bool canAssign) ;
 
 typedef struct {
-    ParseFn prefix;
-    ParseFn infix;
+    ParsePrefixFn prefix;
+    ParseInfixFn infix;
     Precedence precedence;
 } ParseRule;
 

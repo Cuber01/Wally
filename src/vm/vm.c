@@ -531,15 +531,14 @@ int interpret(const char* source)
     Node* statements = compile(source);
     if (statements == NULL) return INTERPRET_COMPILE_ERROR;
 
-    emit(statements);
-//
-//    push(OBJ_VAL(function));
-//
-//    ObjClosure* closure = newClosure(function);
-//    pop();
-//    push(OBJ_VAL(closure));
-//    call(closure, 0);
+    ObjFunction* function = emit(statements);
 
-//    return run();
-    return 0;
+    push(OBJ_VAL(function));
+
+    ObjClosure* closure = newClosure(function);
+    pop();
+    push(OBJ_VAL(closure));
+    call(closure, 0);
+
+    return run();
 }

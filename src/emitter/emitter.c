@@ -66,15 +66,13 @@ static void emitReturn()
 
 // endregion
 
-static void expressionStatement(ExpressionStmt* stmt)
+static void compileExpression(Expr* expression)
 {
-    #define EXPRESSION stmt->expr
-
-    switch (EXPRESSION->type)
+    switch (expression->type)
     {
         case LITERAL_EXPRESSION:
         {
-            LiteralExpr* expr = (LiteralExpr*)EXPRESSION;
+            LiteralExpr* expr = (LiteralExpr*)expression;
 
             switch (expr->value.type)
             {
@@ -94,12 +92,52 @@ static void expressionStatement(ExpressionStmt* stmt)
                     emitConstant(OBJ_VAL(expr->value.as.obj));
                     break;
             }
-            
+
             break;
         }
 
         case BINARY_EXPRESSION:
+        {
+            BinaryExpr* expr = (BinaryExpr*)expression;
+
+            compileExpression(expr->left);
+            compileExpression(expr->right);
+
+            switch (expr->operator)
+            {
+                case TOKEN_PLUS:
+                    emitByte(OP_ADD);
+                    break;
+                case TOKEN_MINUS:
+                    emitByte(OP_SUBTRACT);
+                    break;
+                case TOKEN_EQUAL_EQUAL:
+                    emitByte(OP_EQUAL);
+                    break;
+                case TOKEN_BANG_EQUAL:
+                    emitByte(OP_NOT_EQUAL);
+                    break;
+                case TOKEN_GREATER_EQUAL:
+                    emitByte(OP_GREATER_EQUAL);
+                    break;
+                case TOKEN_LESS_EQUAL:
+                    emitByte(OP_LESS_EQUAL);
+                    break;
+                case TOKEN_LESS:
+                    emitByte(OP_LESS);
+                    break;
+                case TOKEN_GREATER:
+                    emitByte(OP_GREATER);
+                    break;
+
+                default:
+                    error("Unknown operator");
+            };
+
             break;
+        }
+
+
         case UNARY_EXPRESSION:
             break;
         case VAR_EXPRESSION:
@@ -119,13 +157,18 @@ static void expressionStatement(ExpressionStmt* stmt)
     }
 }
 
+static void compileExpressionStatement(ExpressionStmt* stmt)
+{
+    compileExpression(stmt->expr);
+}
+
 static void compileStatement(Stmt* stmt)
 {
     switch (stmt->type)
     {
         case EXPRESSION_STATEMENT:
         {
-            expressionStatement((ExpressionStmt*) stmt);
+            compileExpressionStatement((ExpressionStmt *) stmt);
             break;
         }
 
