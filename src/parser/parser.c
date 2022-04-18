@@ -317,7 +317,7 @@ static Expr* string(bool canAssign)
 
     escapeSequences(str, str);
 
-    emitConstant(OBJ_VAL(copyString(str, parser.previous.length - 2)));
+    return (Expr*)newLiteralExpr(OBJ_VAL(copyString(str, parser.previous.length - 2)));
 }
 
 static Expr* interpolatedString(bool canAssign)
