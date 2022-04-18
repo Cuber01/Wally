@@ -4,6 +4,10 @@
 #include "emitter.h"
 #include "chunk.h"
 #include "list.h"
+#include "disassembler.h"
+
+Compiler* current = NULL;
+bool hadError = false;
 
 // region ERROR
 
@@ -12,14 +16,14 @@ static void error(const char* message)
     printf("%s", message);
 }
 
-static Chunk* currentChunk()
-{
-    // todo
-}
-
 // endregion
 
 // region EMITTING BYTES
+
+static Chunk* currentChunk()
+{
+    return &current->function->chunk;
+}
 
 static void emitByte(uint8_t byte)
 {
@@ -64,11 +68,33 @@ static void emitReturn()
 
 static void expressionStatement(ExpressionStmt* stmt)
 {
-    switch (stmt->expr->type)
+    #define EXPRESSION stmt->expr
+
+    switch (EXPRESSION->type)
     {
         case LITERAL_EXPRESSION:
         {
-            printValue(((LiteralExpr*)stmt->expr)->value);
+            LiteralExpr* expr = (LiteralExpr*)EXPRESSION;
+
+            switch (expr->value.type)
+            {
+                case VAL_BOOL:
+                    emitConstant(BOOL_VAL(expr->value.as.boolean));
+                    break;
+
+                case VAL_NULL:
+                    emitConstant(NULL_VAL);
+                    break;
+
+                case VAL_NUMBER:
+                    emitConstant(NUMBER_VAL(expr->value.as.number));
+                    break;
+
+                case VAL_OBJ:
+                    emitConstant(OBJ_VAL(expr->value.as.obj));
+                    break;
+            }
+            
             break;
         }
 
@@ -93,7 +119,7 @@ static void expressionStatement(ExpressionStmt* stmt)
     }
 }
 
-static void parseStatement(Stmt* stmt)
+static void compileStatement(Stmt* stmt)
 {
     switch (stmt->type)
     {
@@ -124,13 +150,54 @@ static void parseStatement(Stmt* stmt)
     }
 }
 
+// region MAIN
+
+static void initCompiler(Compiler* compiler, FunctionType type)
+{
+    compiler->enclosing = (struct Compiler*) current;
+    compiler->function = NULL;
+    compiler->type = type;
+
+    compiler->localCount = 0;
+    compiler->scopeDepth = 0;
+    compiler->function = newFunction();
+    current = compiler;
+
+    Local* local = &current->locals[current->localCount++];
+    local->depth = 0;
+    local->name.start = "";
+    local->name.length = 0;
+}
+
+static ObjFunction* endCompiler()
+{
+    emitReturn();
+    ObjFunction* function = current->function;
+
+    #ifdef DEBUG_PRINT_BYTECODE
+    if (!hadError)
+    {
+        disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
+    }
+    #endif
+
+    current = (Compiler*) current->enclosing;
+    return function;
+}
+
+
 void emit(Node* statements)
 {
+    Compiler compiler;
+    initCompiler(&compiler, TYPE_SCRIPT);
+
     Node* stmt = statements;
 
     while (stmt != NULL)
     {
-        parseStatement(AS_STATEMENT(stmt));
+        compileStatement(AS_STATEMENT(stmt));
         stmt = stmt->next;
     }
+
+    endCompiler();
 }
