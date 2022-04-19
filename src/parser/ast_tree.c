@@ -247,7 +247,7 @@ ReturnStmt* newReturnStmt(Expr* value, uint16_t line)
     return stmt;
 }
 
-FunctionStmt* newFunctionStmt(const char* name, Stmt* body, Node* params, uint16_t line)
+FunctionStmt* newFunctionStmt(ObjString* name, Stmt* body, Node* params, uint16_t line)
 {
     FunctionStmt* stmt = (FunctionStmt*) ALLOCATE_STATEMENT(FunctionStmt, FUNCTION_STATEMENT, line);
 
@@ -258,7 +258,7 @@ FunctionStmt* newFunctionStmt(const char* name, Stmt* body, Node* params, uint16
     return stmt;
 }
 
-VariableStmt* newVariableStmt(const char* name, Expr* initializer, uint16_t line)
+VariableStmt* newVariableStmt(ObjString* name, Expr* initializer, uint16_t line)
 {
     VariableStmt* stmt = (VariableStmt*) ALLOCATE_STATEMENT(VariableStmt, VARIABLE_STATEMENT, line);
 
@@ -329,7 +329,7 @@ CallExpr* newCallExpr(Expr* callee, Node* args, uint16_t line)
     return expr;
 }
 
-AssignExpr* newAssignExpr(const char* name, Expr* value, uint16_t line)
+AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line)
 {
     AssignExpr* expr = (AssignExpr*) ALLOCATE_EXPRESSION(AssignExpr, ASSIGN_EXPRESSION, line);
 
@@ -339,7 +339,7 @@ AssignExpr* newAssignExpr(const char* name, Expr* value, uint16_t line)
     return expr;
 }
 
-VarExpr* newVarExpr(const char* name, uint16_t line)
+VarExpr* newVarExpr(ObjString* name, uint16_t line)
 {
     VarExpr* expr = (VarExpr*) ALLOCATE_EXPRESSION(VarExpr, VAR_EXPRESSION, line);
 

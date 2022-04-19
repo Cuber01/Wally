@@ -1,4 +1,5 @@
 #include "list.h"
+#include "environment.h"
 
 #ifndef WALLY_EMITTER_H
 #define WALLY_EMITTER_H

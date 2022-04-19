@@ -770,7 +770,7 @@ static void namedVariable(Token name, bool canAssign)
 
 static Expr* variable(__attribute__((unused)) bool canAssign)
 {
-    const char* name = parser.previous.start;
+    ObjString* name = copyString(parser.previous.start, strlen(parser.previous.start));
 
     return (Expr*)newVarExpr(name, parser.line);
 }
@@ -900,7 +900,7 @@ static Stmt* functionDeclaration()
 static Stmt* varDeclaration()
 {
     // Get name
-    const char* name = parser.previous.start;
+    ObjString* name = copyString(parser.previous.start, strlen(parser.previous.start));
     // uint8_t global = parseVariable("Expect variable name.");
 
     // Get initializer

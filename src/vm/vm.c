@@ -65,7 +65,6 @@ static void defineNative(const char* name, NativeFn function);
 void initVM()
 {
     resetStack();
-    initTable(&vm.globals);
     initTable(&vm.strings);
 
     defineNative("print", printNative);
@@ -75,7 +74,7 @@ void initVM()
 
 void freeVM()
 {
-    freeTable(&vm.globals);
+    // todo free environment
     freeTable(&vm.strings);
     freeObjects();
 }
@@ -195,7 +194,7 @@ static void defineNative(const char* name, NativeFn function)
 {
     push(OBJ_VAL(copyString(name, (int)strlen(name))));
     push(OBJ_VAL(newNative(function)));
-    tableSet(&vm.globals, AS_STRING(vm.stack[0]), vm.stack[1]);
+
     pop();
     pop();
 }
@@ -341,7 +340,7 @@ static int run()
             case OP_DEFINE_GLOBAL:
             {
                 ObjString *name = READ_STRING();
-                bool success = tableSetNoOverwrite(&vm.globals, name, peek(0));
+                bool success = tableSetNoOverwrite(vm.currentEnvironment->values, name, peek(0));
                 if (!success)
                 {
                     runtimeError("Tried to redefine variable '%s'.", name->chars);
@@ -356,7 +355,7 @@ static int run()
                 ObjString* name = READ_STRING();
                 Value value;
 
-                if (!tableGet(&vm.globals, name, &value))
+                if (!tableGet(vm.currentEnvironment->values, name, &value))
                 {
                     runtimeError("Undefined variable '%s'.", name->chars);
                     return INTERPRET_RUNTIME_ERROR;
@@ -370,9 +369,9 @@ static int run()
             {
                 ObjString* name = READ_STRING();
 
-                if (tableSet(&vm.globals, name, peek(0)))
+                if (tableSet(vm.currentEnvironment->values, name, peek(0)))
                 {
-                    tableDelete(&vm.globals, name);
+                    tableDelete(vm.currentEnvironment->values, name); // todo ???
                     runtimeError("Undefined variable '%s'.", name->chars);
 
                     return INTERPRET_RUNTIME_ERROR;

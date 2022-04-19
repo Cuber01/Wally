@@ -22,7 +22,7 @@ void environmentDefine(Environment* env, ObjString* name, Value value)
     }
 }
 
-Value* environmentGet(Environment* env, ObjString* name)
+Value environmentGet(Environment* env, ObjString* name)
 {
     Value* result = NULL;
     bool success = tableGet(env->values, name, result);
@@ -31,7 +31,7 @@ Value* environmentGet(Environment* env, ObjString* name)
         nativeError("Tried to get value of %s, but it doesn't exist.", name->chars);
     }
 
-    return result;
+    return *result;
 }
 
 void freeEnvironment(Environment* env)

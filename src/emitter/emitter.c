@@ -164,7 +164,7 @@ static void compileExpression(Expr* expression)
                     break;
 
                 default:
-                    error("Unknown operator");
+                    error("Unknown operator in binary expression.");
             }
 
             break;
@@ -205,7 +205,15 @@ static void compileExpression(Expr* expression)
         }
 
         case VAR_EXPRESSION:
+        {
+            VarExpr* expr = (VarExpr*)expression;
+
+            emitByte(OP_GET_GLOBAL, line);
+            emitConstant(OBJ_VAL(expr->name), line);
+
             break;
+        }
+
         case LOGICAL_EXPRESSION:
             break;
         case GROUPED_EXPRESSION:
@@ -218,27 +226,27 @@ static void compileExpression(Expr* expression)
     }
 }
 
-static void compileExpressionStatement(ExpressionStmt* stmt)
+static void compileExpressionStatement(ExpressionStmt* statement)
 {
-    compileExpression(stmt->expr);
+    compileExpression(statement->expr);
 }
 
-static void compileStatement(Stmt* stmt)
+static void compileStatement(Stmt* statement)
 {
-    uint16_t line = stmt->line;
+    uint16_t line = statement->line;
 
-    switch (stmt->type)
+    switch (statement->type)
     {
         case EXPRESSION_STATEMENT:
         {
-            compileExpressionStatement((ExpressionStmt*) stmt);
+            compileExpressionStatement((ExpressionStmt*) statement);
             break;
         }
 
         case BLOCK_STATEMENT:
         {
-            BlockStmt* statement = (BlockStmt*)stmt;
-            Node* toExecute = statement->statements;
+            BlockStmt* stmt = (BlockStmt*)statement;
+            Node* toExecute = stmt->statements;
 
             int length = getLength(toExecute);
 
@@ -252,19 +260,19 @@ static void compileStatement(Stmt* stmt)
 
         case IF_STATEMENT:
         {
-            IfStmt* statement = (IfStmt*) stmt;
+            IfStmt* stmt = (IfStmt*) statement;
 
-            compileExpression(statement->condition);
+            compileExpression(stmt->condition);
 
             int thenJump = emitJump(OP_JUMP_IF_FALSE, line);
-            compileStatement(statement->thenBranch);
+            compileStatement(stmt->thenBranch);
 
 
             int elseJump = emitJump(OP_JUMP, line);
             patchJump(thenJump);
-            if(statement->elseBranch != NULL) // todo if more statements will need it we can just check for null at the start of the function
+            if(stmt->elseBranch != NULL) // todo if more statements will need it we can just check for null at the start of the function
             {
-                compileStatement(statement->elseBranch);
+                compileStatement(stmt->elseBranch);
             }
 
 
@@ -273,11 +281,20 @@ static void compileStatement(Stmt* stmt)
             break;
         }
 
+        case VARIABLE_STATEMENT:
+        {
+            VariableStmt* stmt = (VariableStmt*) statement;
+
+            emitByte(OP_DEFINE_GLOBAL, line);
+            emitConstant(OBJ_VAL(stmt->name), line);
+            compileExpression(stmt->initializer);
+
+            break;
+        }
+
         case WHILE_STATEMENT:
             break;
         case SWITCH_STATEMENT:
-            break;
-        case VARIABLE_STATEMENT:
             break;
         case CONTINUE_STATEMENT:
             break;

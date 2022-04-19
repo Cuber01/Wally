@@ -86,8 +86,8 @@ static inline bool isObjType(Value value, ObjType type)
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
 
-ObjString* copyString(const char* chars, int length);
-ObjString* takeString(char* chars, int length);
+ObjString* copyString(const char* chars, unsigned int length);
+ObjString* takeString(char* chars, unsigned int length);
 
 void printObject(Value value);
 ObjString* objectToString(Value value);

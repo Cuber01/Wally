@@ -4,6 +4,7 @@
 #include "chunk.h"
 #include "table.h"
 #include "object.h"
+#include "environment.h"
 
 #define FRAMES_MAX 64
 #define STACK_MAX (FRAMES_MAX * UINT8_COUNT)
@@ -19,6 +20,9 @@ typedef struct {
 } CallFrame;
 
 typedef struct {
+    Environment* currentEnvironment;
+
+
     CallFrame frames[FRAMES_MAX];
     int frameCount; // Instruction pointer. Points towards the next instruction to be executed.
 
@@ -26,7 +30,6 @@ typedef struct {
     Value* stackTop; // Points towards where the next pushed value will go, a.k.a. an empty place in the stack array.
 
     Table strings;
-    Table globals;
     Obj* objects;
 } VM;
 

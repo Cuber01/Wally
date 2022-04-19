@@ -97,14 +97,14 @@ typedef struct
 {
     Expr expr;
 
-    const char* name;
+    ObjString* name;
 } VarExpr;
 
 typedef struct
 {
     Expr expr;
 
-    const char* name;
+    ObjString* name;
     Expr* value;
 } AssignExpr;
 
@@ -176,7 +176,7 @@ typedef struct
 {
     Stmt stmt;
 
-    const char* name;
+    ObjString* name;
     Expr* initializer;
 } VariableStmt;
 
@@ -185,7 +185,7 @@ typedef struct
 {
     Stmt stmt;
 
-    const char* name;
+    ObjString* name;
     Node* params;
     Stmt* body;
 
@@ -216,8 +216,8 @@ LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right, uint16_
 GroupedExpr* newGroupedExpr(Expr* in, uint16_t line);
 TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch, uint16_t line);
 UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line);
-VarExpr* newVarExpr(const char* name, uint16_t line);
-AssignExpr* newAssignExpr(const char* name, Expr* value, uint16_t line);
+VarExpr* newVarExpr(ObjString* name, uint16_t line);
+AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line);
 CallExpr* newCallExpr(Expr* callee, Node* args, uint16_t line);
 
 // ------------ STATEMENT CONSTRUCTORS ------------
@@ -227,8 +227,8 @@ BlockStmt* newBlockStmt(Node* statements, uint16_t line);
 IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch, uint16_t line);
 WhileStmt* newWhileStmt(Expr* condition, Stmt* body, uint16_t line);
 SwitchStmt* newSwitchStmt(Node* caseConditions, Node* caseBodies, Stmt* defaultBranch, uint16_t line);
-VariableStmt* newVariableStmt(const char* name, Expr* initializer, uint16_t line);
-FunctionStmt* newFunctionStmt(const char* name, Stmt* body, Node* params, uint16_t line);
+VariableStmt* newVariableStmt(ObjString* name, Expr* initializer, uint16_t line);
+FunctionStmt* newFunctionStmt(ObjString* name, Stmt* body, Node* params, uint16_t line);
 ReturnStmt* newReturnStmt(Expr* value, uint16_t line);
 BreakStmt* newBreakStmt(uint16_t line);
 ContinueStmt* newContinueStmt(uint16_t line);
