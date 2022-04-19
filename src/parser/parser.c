@@ -578,20 +578,26 @@ static Stmt* whileStatement()
 static Stmt* ifStatement()
 {
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'if'.");
-    expression();
+    Expr* condition = expression();
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
 
-    int thenJump = emitJump(OP_JUMP_IF_FALSE);
-    emitByte(OP_POP);
-    statement();
+//    int thenJump = emitJump(OP_JUMP_IF_FALSE);
+//    emitByte(OP_POP);
+    Stmt* thenBranch = statement();
+    Stmt* elseBranch = NULL;
 
-    int elseJump = emitJump(OP_JUMP);
+    //int elseJump = emitJump(OP_JUMP);
 
-    patchJump(thenJump);
-    emitByte(OP_POP);
+    //patchJump(thenJump);
+    //emitByte(OP_POP);
 
-    if (match(TOKEN_ELSE)) statement();
-    patchJump(elseJump);
+    if (match(TOKEN_ELSE))
+    {
+        elseBranch = statement();
+    }
+
+    return (Stmt*)newIfStmt(condition, thenBranch, elseBranch, parser.line);
+    //patchJump(elseJump);
 }
 
 static Stmt* returnStatement()

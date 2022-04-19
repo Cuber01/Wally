@@ -53,6 +53,31 @@ static void emitConstant(Value value, uint16_t line)
     emitBytes(OP_CONSTANT, makeConstant(value), line);
 }
 
+static int emitJump(uint8_t instruction, uint16_t line)
+{
+    emitByte(instruction, line);
+
+    // Emit placeholder values we'll replace after compiling the body
+    emitByte(0xff, line);
+    emitByte(0xff, line);
+
+    return currentChunk()->count - 2;
+}
+
+static void patchJump(int offset)
+{
+    // -2 to adjust for the bytecode for the jump offset itself
+    int jump = currentChunk()->count - offset - 2;
+
+    if (jump > UINT16_MAX)
+    {
+        error("Too much code to jump over.");
+    }
+
+    currentChunk()->code[offset] = (jump >> 8) & 0xff;
+    currentChunk()->code[offset + 1] = jump & 0xff;
+}
+
 static void emitMultiplePop(int amount, uint16_t line)
 {
     emitConstant(NUMBER_VAL(amount), line);
@@ -200,6 +225,8 @@ static void compileExpressionStatement(ExpressionStmt* stmt)
 
 static void compileStatement(Stmt* stmt)
 {
+    uint16_t line = stmt->line;
+
     switch (stmt->type)
     {
         case EXPRESSION_STATEMENT:
@@ -224,7 +251,28 @@ static void compileStatement(Stmt* stmt)
         }
 
         case IF_STATEMENT:
+        {
+            IfStmt* statement = (IfStmt*) stmt;
+
+            compileExpression(statement->condition);
+
+            int thenJump = emitJump(OP_JUMP_IF_FALSE, line);
+            compileStatement(statement->thenBranch);
+
+
+            int elseJump = emitJump(OP_JUMP, line);
+            patchJump(thenJump);
+            if(statement->elseBranch != NULL) // todo if more statements will need it we can just check for null at the start of the function
+            {
+                compileStatement(statement->elseBranch);
+            }
+
+
+            patchJump(elseJump);
+
             break;
+        }
+
         case WHILE_STATEMENT:
             break;
         case SWITCH_STATEMENT:
