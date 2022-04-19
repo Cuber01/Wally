@@ -204,12 +204,25 @@ static void compileStatement(Stmt* stmt)
     {
         case EXPRESSION_STATEMENT:
         {
-            compileExpressionStatement((ExpressionStmt *) stmt);
+            compileExpressionStatement((ExpressionStmt*) stmt);
             break;
         }
 
         case BLOCK_STATEMENT:
+        {
+            BlockStmt* statement = (BlockStmt*)stmt;
+            Node* toExecute = statement->statements;
+
+            int length = getLength(toExecute);
+
+            for(int i = 0; i <= length - 1; i++)
+            {
+                compileStatement(listGet(toExecute, i).as.statement);
+            }
+
             break;
+        }
+
         case IF_STATEMENT:
             break;
         case WHILE_STATEMENT:

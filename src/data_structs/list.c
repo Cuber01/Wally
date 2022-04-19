@@ -47,14 +47,13 @@ NodeValue listGet(Node* root, unsigned int index)
     Node* node = root;
     while(index > 0)
     {
-        index--;
-
         if(node->next == NULL)
         {
             nativeError("Index %d is outside the bounds of the list.", index);
         }
 
         node = node->next;
+        index--;
     }
 
     return node->value;

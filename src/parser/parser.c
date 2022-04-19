@@ -370,12 +370,21 @@ static Stmt* expressionStatement()
 
 static Stmt* block()
 {
+    Node* statements = NULL;
     while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
     {
-        declaration();
+        if(statements == NULL)
+        {
+            statements = newNode(NODE_STATEMENT_VALUE(declaration()));
+        }
+        else
+        {
+            listAdd(statements, NODE_STATEMENT_VALUE(declaration()));
+        }
     }
 
     consume(TOKEN_RIGHT_BRACE, "Expect '}' after block.");
+    return (Stmt*)newBlockStmt(statements, parser.line);
 }
 
 static void endScope()

@@ -6,6 +6,9 @@
 #define AS_STATEMENT(node)  (node)->value.as.statement
 #define AS_EXPRESSION(node) (node)->value.as.expression
 
+#define NODE_STATEMENT_VALUE(value)  (NodeValue){.as.statement = value}
+#define NODE_EXPRESSION_VALUE(value) (NodeValue){.as.expression = value}
+
 typedef struct NodeValue
 {
     union {
@@ -25,5 +28,6 @@ void listAdd(Node* node, NodeValue value);
 NodeValue listGet(Node* root, unsigned int index);
 void listWriteValue(Node* root, int index, NodeValue value);
 void freeList(Node* root);
+int getLength(Node* root);
 
 #endif //WALLY_LIST_H
