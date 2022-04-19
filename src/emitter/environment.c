@@ -1,4 +1,5 @@
 #include "environment.h"
+#include "native_error.h"
 #include "memory.h"
 
 Environment* newEnvironment()
@@ -14,13 +15,22 @@ Environment* newEnvironment()
 
 void environmentDefine(Environment* env, ObjString* name, Value value)
 {
-    tableSet(env->values,name, value); // todo check overwrite
+    bool success = tableSetNoOverwrite(env->values,name, value);
+    if(!success)
+    {
+        nativeError("Tried to declare symbol %s, but it already exists.", name->chars);
+    }
 }
 
 Value* environmentGet(Environment* env, ObjString* name)
 {
     Value* result = NULL;
-    tableGet(env->values, name, result); // todo check if we actually returned anything
+    bool success = tableGet(env->values, name, result);
+    if(!success)
+    {
+        nativeError("Tried to get value of %s, but it doesn't exist.", name->chars);
+    }
+
     return result;
 }
 
