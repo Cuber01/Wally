@@ -1,8 +1,7 @@
-if(1)
+if(true)
 {
-
-}
-else
+8;
+} else if (true)
 {
 
 }

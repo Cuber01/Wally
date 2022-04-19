@@ -265,16 +265,17 @@ static void compileStatement(Stmt* statement)
             compileExpression(stmt->condition);
 
             int thenJump = emitJump(OP_JUMP_IF_FALSE, line);
-            compileStatement(stmt->thenBranch);
+            emitByte(OP_POP, line);
 
+            compileStatement(stmt->thenBranch);
 
             int elseJump = emitJump(OP_JUMP, line);
             patchJump(thenJump);
+            emitByte(OP_POP, line);
             if(stmt->elseBranch != NULL) // todo if more statements will need it we can just check for null at the start of the function
             {
                 compileStatement(stmt->elseBranch);
             }
-
 
             patchJump(elseJump);
 
