@@ -3,10 +3,11 @@
 
 #include "native_error.h"
 #include "list.h"
+#include "memory.h"
 
 Node* newNode(NodeValue value)
 {
-    Node* newNode = malloc(sizeof(Node));
+    Node* newNode = reallocate(NULL, 0, sizeof(Node));
     newNode->next = NULL;
     newNode->value = value;
 

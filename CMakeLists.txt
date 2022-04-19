@@ -26,4 +26,6 @@ add_executable(Wally src/main.c
                      src/data_structs/table.c
                      src/parser/ast_tree.c
                      src/data_structs/list.c
-                     src/debug/native_error.c src/emitter/emitter.c)
+                     src/debug/native_error.c
+                     src/emitter/emitter.c
+                     src/emitter/environment.c)

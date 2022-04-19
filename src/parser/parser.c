@@ -581,15 +581,8 @@ static Stmt* ifStatement()
     Expr* condition = expression();
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
 
-//    int thenJump = emitJump(OP_JUMP_IF_FALSE);
-//    emitByte(OP_POP);
     Stmt* thenBranch = statement();
     Stmt* elseBranch = NULL;
-
-    //int elseJump = emitJump(OP_JUMP);
-
-    //patchJump(thenJump);
-    //emitByte(OP_POP);
 
     if (match(TOKEN_ELSE))
     {
@@ -597,7 +590,6 @@ static Stmt* ifStatement()
     }
 
     return (Stmt*)newIfStmt(condition, thenBranch, elseBranch, parser.line);
-    //patchJump(elseJump);
 }
 
 static Stmt* returnStatement()
@@ -776,9 +768,11 @@ static void namedVariable(Token name, bool canAssign)
 //    }
 }
 
-static Expr * variable(bool canAssign)
+static Expr* variable(__attribute__((unused)) bool canAssign)
 {
-    namedVariable(parser.previous, canAssign);
+    const char* name = parser.previous.start;
+
+    return (Expr*)newVarExpr(name, parser.line);
 }
 
 static void addLocal(Token name)
@@ -849,8 +843,6 @@ static void declareVariable()
 
 static uint8_t parseVariable(const char* errorMessage)
 {
-    exit(1);
-
 //    consume(TOKEN_IDENTIFIER, errorMessage);
 //
 //    declareVariable();
@@ -907,25 +899,27 @@ static Stmt* functionDeclaration()
 
 static Stmt* varDeclaration()
 {
-    exit(1);
-
     // Get name
-    uint8_t global = parseVariable("Expect variable name.");
+    const char* name = parser.previous.start;
+    // uint8_t global = parseVariable("Expect variable name.");
 
     // Get initializer
+    Expr* initializer;
     if (match(TOKEN_EQUAL))
     {
-        expression();
+        initializer = expression();
     }
     else
     {
         // Else default to null
-        emitByte(OP_NULL);
+        initializer = NULL;
     }
 
     consume(TOKEN_SEMICOLON, "Expect ';' after variable declaration.");
 
-    defineVariable(global);
+    // defineVariable(global);
+
+    return (Stmt*)newVariableStmt(name, initializer, parser.line);
 }
 
 static Stmt* declaration()
