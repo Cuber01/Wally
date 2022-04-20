@@ -22,7 +22,7 @@ static void error(const char* message)
 
 static Chunk* currentChunk()
 {
-    return &current->function->chunk;
+    return &(current->function->chunk);
 }
 
 static void emitByte(uint8_t byte, uint16_t line)
@@ -339,7 +339,7 @@ static ObjFunction* endCompiler()
     }
     #endif
 
-    current = (Compiler*) current->enclosing;
+    current = (Compiler*) current->enclosing; // todo
     return function;
 }
 

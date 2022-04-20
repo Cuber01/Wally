@@ -66,6 +66,7 @@ void initVM()
 {
     resetStack();
     initTable(&vm.strings);
+    vm.currentEnvironment = newEnvironment();
 
     defineNative("print", printNative);
 
@@ -203,7 +204,7 @@ static int run()
 {
     CallFrame* frame = &vm.frames[vm.frameCount - 1];
 
-    #define READ_BYTE() (*frame->ip++)
+    #define READ_BYTE() (*(frame->ip)++)
     #define READ_SHORT() \
         (frame->ip += 2, (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
 
@@ -212,8 +213,8 @@ static int run()
         do { \
             if (!IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1))) \
             { \
-            runtimeError("Both operands must be numbers."); \
-            return INTERPRET_RUNTIME_ERROR; \
+                runtimeError("Both operands must be numbers."); \
+                return INTERPRET_RUNTIME_ERROR; \
             } \
             \
             double b = AS_NUMBER(pop()); \
@@ -339,14 +340,13 @@ static int run()
 
             case OP_DEFINE_GLOBAL:
             {
-                ObjString *name = READ_STRING();
-                bool success = tableSetNoOverwrite(vm.currentEnvironment->values, name, peek(0));
-                if (!success)
-                {
-                    runtimeError("Tried to redefine variable '%s'.", name->chars);
-                    return INTERPRET_RUNTIME_ERROR;
-                }
-                pop();
+                ObjString* name = READ_STRING();
+                ++(*(frame->ip));
+                Value initializer = READ_CONSTANT();
+
+                environmentDefine(vm.currentEnvironment, name, initializer); // todo research why peek is needed
+
+                //pop();
                 break;
             }
 

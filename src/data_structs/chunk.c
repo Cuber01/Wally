@@ -26,7 +26,7 @@ void writeChunk(Chunk* chunk, uint8_t byte, unsigned int line)
     }
 
     chunk->code[chunk->count] = byte;
-    chunk->lines[chunk->count] = line;
+    chunk->lines[chunk->count] = line; // todo
     chunk->count++;
 }
 

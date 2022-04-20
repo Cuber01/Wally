@@ -6,7 +6,7 @@ Environment* newEnvironment()
 {
     Environment* newEnv = reallocate(NULL, 0, sizeof(Environment));
 
-    Table* values = NULL;
+    Table* values;
     initTable(values);
     newEnv->values = values;
 

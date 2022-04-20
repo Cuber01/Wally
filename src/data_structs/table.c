@@ -136,7 +136,7 @@ bool tableSetNoOverwrite(Table* table, ObjString* key, Value value)
     Entry* entry = findEntry(table->entries, table->capacity, key);
     bool isNewKey = entry->key == NULL;
     // IS_NULL check makes sure that we're not examining a tombstone
-    if (!isNewKey || !IS_NULL(entry->value)) return false;
+    if (!isNewKey || IS_NULL(entry->value)) return false; // todo check these checks
 
     table->count++;
 

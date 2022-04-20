@@ -367,7 +367,7 @@ static Stmt* expressionStatement()
     consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
     return (Stmt*)newExpressionStmt(expr, parser.line);
 }
-
+ // todo ala;
 static Stmt* block()
 {
     Node* statements = NULL;
@@ -670,8 +670,7 @@ static Stmt* statement()
 
 static uint8_t identifierConstant(Token* name)
 {
-//    return makeConstant(
-//            OBJ_VAL(copyString(name->start,name->length)));
+    //return makeConstant(OBJ_VAL(copyString(name->start,name->length)));
 }
 
 static int resolveLocal(Compiler* compiler, Token* name)
@@ -770,7 +769,7 @@ static void namedVariable(Token name, bool canAssign)
 
 static Expr* variable(__attribute__((unused)) bool canAssign)
 {
-    ObjString* name = copyString(parser.previous.start, strlen(parser.previous.start));
+    ObjString* name = copyString(parser.previous.start, strlen(parser.previous.start - 1));
 
     return (Expr*)newVarExpr(name, parser.line);
 }
@@ -841,14 +840,11 @@ static void declareVariable()
 //    addLocal(*name);
 }
 
-static uint8_t parseVariable(const char* errorMessage)
+static ObjString* parseVariableName(const char* errorMessage)
 {
-//    consume(TOKEN_IDENTIFIER, errorMessage);
-//
-//    declareVariable();
-//    if (current->scopeDepth > 0) return 0;
-//
-//    return identifierConstant(&parser.previous);
+    consume(TOKEN_IDENTIFIER, errorMessage);
+
+    return copyString(parser.previous.start,parser.previous.length);
 }
 
 static void function(FunctionType type)
@@ -889,19 +885,18 @@ static void function(FunctionType type)
 
 static Stmt* functionDeclaration()
 {
-    exit(1);
-
-    uint8_t global = parseVariable("Expect function name.");
-    markInitialized();
-    function(TYPE_FUNCTION);
-    defineVariable(global);
+//    exit(1);
+//
+//    uint8_t global = parseVariableName("Expect function name.");
+//    markInitialized();
+//    function(TYPE_FUNCTION);
+//    defineVariable(global);
 }
 
 static Stmt* varDeclaration()
 {
     // Get name
-    ObjString* name = copyString(parser.previous.start, strlen(parser.previous.start));
-    // uint8_t global = parseVariable("Expect variable name.");
+    ObjString* name = parseVariableName("Expect variable name after 'var'.");
 
     // Get initializer
     Expr* initializer;
@@ -916,8 +911,6 @@ static Stmt* varDeclaration()
     }
 
     consume(TOKEN_SEMICOLON, "Expect ';' after variable declaration.");
-
-    // defineVariable(global);
 
     return (Stmt*)newVariableStmt(name, initializer, parser.line);
 }
@@ -950,7 +943,7 @@ Node* compile(const char* source)
 
     parser.hadError = false;
     parser.panicMode = false;
-    parser.line = 0;
+    parser.line = 1;
 
     #ifdef DEBUG_PRINT_TOKENS
     printTokens();
