@@ -229,9 +229,9 @@ static int run()
                 break;
             }
 
-            case OP_NULL:   push(NULL_VAL);       break;
-            case OP_TRUE:  push(BOOL_VAL(true));  break;
-            case OP_FALSE: push(BOOL_VAL(false)); break;
+            case OP_NULL:   push(NULL_VAL);        break;
+            case OP_TRUE:   push(BOOL_VAL(true));  break;
+            case OP_FALSE:  push(BOOL_VAL(false)); break;
 
             case OP_POP: pop(); break;
 
@@ -320,10 +320,11 @@ static int run()
                 ObjString* name = READ_STRING();
                 ++(*(vm.ip));
                 Value initializer = READ_CONSTANT();
+                //--(*(vm.ip));
+                //pop();
 
                 environmentDefine(vm.currentEnvironment, name, initializer);
 
-                //pop();
                 break;
             }
 
@@ -332,7 +333,7 @@ static int run()
                 ObjString* name = READ_STRING();
                 Value value;
 
-                if (!tableGet(vm.currentEnvironment->values, name, &value))
+                if (!tableGet(&vm.currentEnvironment->values, name, &value))
                 {
                     runtimeError("Undefined variable '%s'.", name->chars);
                     return INTERPRET_RUNTIME_ERROR;
@@ -346,9 +347,9 @@ static int run()
             {
                 ObjString* name = READ_STRING();
 
-                if (tableSet(vm.currentEnvironment->values, name, peek(0)))
+                if (tableSet(&vm.currentEnvironment->values, name, peek(0)))
                 {
-                    tableDelete(vm.currentEnvironment->values, name); // todo ???
+                    tableDelete(&vm.currentEnvironment->values, name); // todo ???
                     runtimeError("Undefined variable '%s'.", name->chars);
 
                     return INTERPRET_RUNTIME_ERROR;

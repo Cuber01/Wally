@@ -5,7 +5,7 @@
 
 typedef struct Environment
 {
-    Table* values;
+    Table values;
 } Environment;
 
 Environment* newEnvironment();

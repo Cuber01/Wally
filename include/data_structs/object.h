@@ -48,7 +48,7 @@ struct Obj {
 // but only as long as Obj is the first field in the child struct
 struct ObjString {
     Obj obj;
-    int length;
+    unsigned int length;
     char* chars;
 
     uint32_t hash; // Used in hashtables
