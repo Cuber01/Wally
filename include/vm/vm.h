@@ -14,17 +14,10 @@
 #define INTERPRET_COMPILE_ERROR 65
 
 typedef struct {
-    ObjClosure* closure;
-    uint8_t* ip;
-    Value* slots;
-} CallFrame;
-
-typedef struct {
     Environment* currentEnvironment;
+    Chunk* chunk;
 
-
-    CallFrame frames[FRAMES_MAX];
-    int frameCount; // Instruction pointer. Points towards the next instruction to be executed.
+    uint8_t* ip; // Instruction pointer. Points towards the next instruction to be executed.
 
     Value stack[STACK_MAX];
     Value* stackTop; // Points towards where the next pushed value will go, a.k.a. an empty place in the stack array.

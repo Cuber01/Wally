@@ -19,19 +19,11 @@ typedef struct {
     bool isLocal;
 } Upvalue;
 
-
 typedef struct {
     struct Compiler* enclosing;
-    ObjFunction* function;
-    FunctionType type;
-
-    Upvalue upvalues[UINT8_COUNT];
-    Local locals[UINT8_COUNT];
-
-    int localCount;
-    int scopeDepth;
+    Chunk* chunk;
 } Compiler;
 
-ObjFunction* emit(Node* statements);
+Chunk* emit(Node* statements);
 
 #endif //WALLY_EMITTER_H

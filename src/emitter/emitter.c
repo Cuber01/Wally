@@ -22,7 +22,7 @@ static void error(const char* message)
 
 static Chunk* currentChunk()
 {
-    return &(current->function->chunk);
+    return current->chunk;
 }
 
 static void emitByte(uint8_t byte, uint16_t line)
@@ -310,44 +310,34 @@ static void compileStatement(Stmt* statement)
 
 // region MAIN
 
-static void initCompiler(Compiler* compiler, FunctionType type)
+static void initCompiler(Compiler* compiler)
 {
     compiler->enclosing = (struct Compiler*) current;
-    compiler->function = NULL;
-    compiler->type = type;
-
-    compiler->localCount = 0;
-    compiler->scopeDepth = 0;
-    compiler->function = newFunction();
     current = compiler;
-
-    Local* local = &current->locals[current->localCount++];
-    local->depth = 0;
-    local->name.start = "";
-    local->name.length = 0;
+    initChunk(current->chunk);
 }
 
-static ObjFunction* endCompiler()
+static Chunk* endCompiler()
 {
     emitReturn();
-    ObjFunction* function = current->function;
+    Chunk* chunk = current->chunk;
 
     #ifdef DEBUG_PRINT_BYTECODE
     if (!hadError)
     {
-        disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
+        disassembleChunk(currentChunk(), "<script>");
     }
     #endif
 
     current = (Compiler*) current->enclosing; // todo
-    return function;
+    return chunk;
 }
 
 
-ObjFunction* emit(Node* statements)
+Chunk* emit(Node* statements)
 {
     Compiler compiler;
-    initCompiler(&compiler, TYPE_SCRIPT);
+    initCompiler(&compiler);
 
     Node* stmt = statements;
 
@@ -357,6 +347,6 @@ ObjFunction* emit(Node* statements)
         stmt = stmt->next;
     }
 
-    ObjFunction* function = endCompiler();
-    return hadError ? NULL : function;
+    Chunk* chunk = endCompiler();
+    return hadError ? NULL : chunk;
 }

@@ -675,43 +675,43 @@ static uint8_t identifierConstant(Token* name)
 
 static int resolveLocal(Compiler* compiler, Token* name)
 {
-
-    for (int i = compiler->localCount - 1; i >= 0; i--)
-    {
-        Local* local = &compiler->locals[i];
-
-        if (identifiersEqual(name, &local->name))
-        {
-            return i;
-        }
-    }
-
-    return -1;
+//
+//    for (int i = compiler->localCount - 1; i >= 0; i--)
+//    {
+//        Local* local = &compiler->locals[i];
+//
+//        if (identifiersEqual(name, &local->name))
+//        {
+//            return i;
+//        }
+//    }
+//
+//    return -1;
 }
 
 static int addUpvalue(Compiler* compiler, uint8_t index, bool isLocal)
 {
-    int upvalueCount = compiler->function->upvalueCount;
-
-    for (int i = 0; i < upvalueCount; i++)
-    {
-        Upvalue* upvalue = &compiler->upvalues[i];
-
-        if (upvalue->index == index && upvalue->isLocal == isLocal)
-        {
-            return i;
-        }
-    }
-
-    if (upvalueCount == UINT8_COUNT)
-    {
-        error("Too many closure variables in function.");
-        return 0;
-    }
-
-    compiler->upvalues[upvalueCount].isLocal = isLocal;
-    compiler->upvalues[upvalueCount].index = index;
-    return compiler->function->upvalueCount++;
+//    int upvalueCount = compiler->function->upvalueCount;
+//
+//    for (int i = 0; i < upvalueCount; i++)
+//    {
+//        Upvalue* upvalue = &compiler->upvalues[i];
+//
+//        if (upvalue->index == index && upvalue->isLocal == isLocal)
+//        {
+//            return i;
+//        }
+//    }
+//
+//    if (upvalueCount == UINT8_COUNT)
+//    {
+//        error("Too many closure variables in function.");
+//        return 0;
+//    }
+//
+//    compiler->upvalues[upvalueCount].isLocal = isLocal;
+//    compiler->upvalues[upvalueCount].index = index;
+//    return compiler->function->upvalueCount++;
 }
 
 static int resolveUpvalue(Compiler* compiler, Token* name)
