@@ -113,7 +113,7 @@ static void concatenate()
     push(OBJ_VAL(result));
 }
 
-static bool call(ObjClosure* closure, int argCount)
+static bool call(int argCount)
 {
 //    if (argCount != closure->function->arity)
 //    {
@@ -143,8 +143,9 @@ static bool callValue(Value callee, int argCount)
 
         switch (OBJ_TYPE(callee))
         {
-            case OBJ_CLOSURE:
-                return call(AS_CLOSURE(callee), argCount);
+//            case OBJ_CLOSURE:
+//                return call(AS_CLOSURE(callee), argCount);
+
             case OBJ_NATIVE:
             {
                 NativeFn native = AS_NATIVE(callee);
@@ -161,12 +162,6 @@ static bool callValue(Value callee, int argCount)
 
     runtimeError("Can only call functions and classes.");
     return false;
-}
-
-static ObjUpvalue* captureUpvalue(Value* local)
-{
-    ObjUpvalue* createdUpvalue = newUpvalue(local);
-    return createdUpvalue;
 }
 
 static void defineNative(const char* name, NativeFn function)

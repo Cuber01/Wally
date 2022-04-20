@@ -43,23 +43,6 @@ void freeObject(Obj* object)
 
         case OBJ_FUNCTION:
         {
-            ObjFunction* function = (ObjFunction*)object;
-            freeChunk(&function->chunk);
-            FREE(ObjFunction, object);
-            break;
-        }
-
-        case OBJ_UPVALUE:
-        {
-            FREE(ObjUpvalue, object);
-        }
-
-        case OBJ_CLOSURE:
-        {
-            ObjClosure* closure = (ObjClosure*)object;
-            FREE_ARRAY(ObjUpvalue*, closure->upvalues, closure->upvalueCount);
-            FREE(ObjClosure, object);
-            break;
         }
 
         case OBJ_NATIVE:

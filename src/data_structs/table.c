@@ -195,9 +195,3 @@ bool tableDelete(Table* table, ObjString* key)
     entry->value = BOOL_VAL(true);
     return true;
 }
-
-
-
-
-
-#include "table.h"

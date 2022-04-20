@@ -847,7 +847,7 @@ static ObjString* parseVariableName(const char* errorMessage)
     return copyString(parser.previous.start,parser.previous.length);
 }
 
-static void function(FunctionType type)
+static void function()
 {
     exit(1);
 

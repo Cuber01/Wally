@@ -161,10 +161,6 @@ static Token string()
     return makeToken(TOKEN_STRING);
 }
 
-static Token stringInterpolation()
-{
-
-}
 
 static TokenType checkKeyword(int start, int length, const char* rest, TokenType type)
 {
@@ -319,6 +315,10 @@ Token scanToken()
                     match('=') ? TOKEN_GREATER_EQUAL : TOKEN_GREATER);
 
         case '"': return string();
+
+        default:
+            printf("Reached unreachable.");
+            break;
     }
 
 
