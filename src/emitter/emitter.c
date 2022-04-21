@@ -208,8 +208,8 @@ static void compileExpression(Expr* expression)
         {
             VarExpr* expr = (VarExpr*)expression;
 
-            emitByte(OP_GET_GLOBAL, line);
             emitConstant(OBJ_VAL(expr->name), line);
+            emitByte(OP_GET_GLOBAL, line);
 
             break;
         }
@@ -286,9 +286,9 @@ static void compileStatement(Stmt* statement)
         {
             VariableStmt* stmt = (VariableStmt*) statement;
 
-            emitByte(OP_DEFINE_GLOBAL, line);
             emitConstant(OBJ_VAL(stmt->name), line);
             compileExpression(stmt->initializer);
+            emitByte(OP_DEFINE_GLOBAL, line);
 
             break;
         }

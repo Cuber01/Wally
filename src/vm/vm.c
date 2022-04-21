@@ -312,25 +312,22 @@ static int run()
 
             case OP_DEFINE_GLOBAL:
             {
-                ObjString* name = READ_STRING();
-                ++(*(vm.ip));
-                Value initializer = READ_CONSTANT();
-                //--(*(vm.ip));
-                //pop();
+                Value initializer = pop();
+                Value name = pop();
 
-                environmentDefine(vm.currentEnvironment, name, initializer);
+                environmentDefine(vm.currentEnvironment, AS_STRING(name), initializer);
 
                 break;
             }
 
             case OP_GET_GLOBAL:
             {
-                ObjString* name = READ_STRING();
+                Value name = pop();
                 Value value;
 
-                if (!tableGet(&vm.currentEnvironment->values, name, &value))
+                if (!tableGet(&vm.currentEnvironment->values, AS_STRING(name), &value))
                 {
-                    runtimeError("Undefined variable '%s'.", name->chars);
+                    runtimeError("Undefined variable '%s'.", AS_STRING(name));
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
