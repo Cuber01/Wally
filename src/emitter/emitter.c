@@ -344,12 +344,15 @@ Chunk* emit(Node* statements)
     initCompiler(&compiler);
 
     Node* stmt = statements;
+    Node* root = stmt;
 
     while (stmt != NULL)
     {
         compileStatement(AS_STATEMENT(stmt));
         stmt = stmt->next;
     }
+
+    freeList(root);
 
     Chunk* chunk = endCompiler();
     return hadError ? NULL : chunk;
