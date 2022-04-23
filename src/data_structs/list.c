@@ -5,7 +5,7 @@
 #include "list.h"
 #include "memory.h"
 
-Node* newNode(NodeValue value)
+static Node* newNode(NodeValue value)
 {
     Node* newNode = reallocate(NULL, 0, sizeof(Node));
     newNode->next = NULL;
@@ -14,14 +14,23 @@ Node* newNode(NodeValue value)
     return newNode;
 }
 
-void listAdd(Node* node, NodeValue value)
+void listAdd(Node** node, NodeValue value)
 {
-    while (node->next != NULL)
+
+    if((*node) == NULL)
     {
-        node = node->next;
+        *node = newNode(value);
+        return;
     }
 
-    node->next = newNode(value);
+    Node* lastNode = *node;
+
+    while (lastNode->next != NULL)
+    {
+        lastNode = lastNode->next;
+    }
+
+    lastNode->next = newNode(value);
 }
 
 void listWriteValue(Node* root, int index, NodeValue value)

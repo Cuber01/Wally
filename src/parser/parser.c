@@ -326,29 +326,23 @@ static Expr* grouping(__attribute__((unused)) bool canAssign)
     return expr;
 }
 
-static uint8_t argumentList()
+static Node* argumentList()
 {
-    uint8_t argCount = 0;
+    Node* root;
 
     if (!check(TOKEN_RIGHT_PAREN))
     {
         do {
             expression();
 
-            if (argCount == 255)
-            {
-                error("Can't have more than 255 arguments.");
-            }
 
-            argCount++;
         } while (match(TOKEN_COMMA));
     }
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after arguments.");
 
-    return argCount;
 }
 
-static Expr * call(Expr* canAssign, bool b)
+static Expr* call(Expr* previous, bool canAssign)
 {
     uint8_t argCount = argumentList();
     emitBytes(OP_CALL, argCount);
@@ -373,32 +367,11 @@ static Stmt* block()
     Node* statements = NULL;
     while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
     {
-        if(statements == NULL)
-        {
-            statements = newNode(NODE_STATEMENT_VALUE(declaration()));
-        }
-        else
-        {
-            listAdd(statements, NODE_STATEMENT_VALUE(declaration()));
-        }
+        listAdd(statements, NODE_STATEMENT_VALUE(declaration()));
     }
 
     consume(TOKEN_RIGHT_BRACE, "Expect '}' after block.");
     return (Stmt*)newBlockStmt(statements, parser.line);
-}
-
-static void endScope()
-{
-//    current->scopeDepth--;
-//
-//    // Remove all locals from the scope we left
-//    emitMultiplePop(current->localCount - 1);
-//    current->localCount = 0;
-}
-
-static void beginScope()
-{
-    //current->scopeDepth++;
 }
 
 static int emitJump(uint8_t instruction)
@@ -652,18 +625,11 @@ static Stmt* statement()
     if (match(TOKEN_IF))              return ifStatement();
     else if (match(TOKEN_WHILE))      return whileStatement();
     else if (match(TOKEN_FOR))        return forStatement();
+    else if (match(TOKEN_LEFT_BRACE)) return block();
     else if (match(TOKEN_BREAK))      return breakStatement();
     else if (match(TOKEN_CONTINUE))   return continueStatement();
     else if (match(TOKEN_SWITCH))     return switchStatement();
     else if (match(TOKEN_RETURN))     return returnStatement();
-    else if (match(TOKEN_LEFT_BRACE))
-    {
-        beginScope();
-        Stmt* stmt = block();
-        endScope();
-
-        return stmt;
-    }
     else return expressionStatement();
 
 }
@@ -690,50 +656,19 @@ static ObjString* parseVariableName(const char* errorMessage)
     return copyString(parser.previous.start,parser.previous.length);
 }
 
-static void function()
-{
-    exit(1);
-
-//    Compiler compiler;
-//    initCompiler(&compiler, type);
-//    beginScope();
-//
-//    consume(TOKEN_LEFT_PAREN, "Expect '(' after function name.");
-//
-//    if (!check(TOKEN_RIGHT_PAREN))
-//    {
-//        do {
-//            current->function->arity++;
-//            if (current->function->arity > 255)
-//            {
-//                errorAtCurrent("Can't have more than 255 parameters.");
-//            }
-//            uint8_t constant = parseVariable("Expect parameter name.");
-//            defineVariable(constant);
-//        } while (match(TOKEN_COMMA));
-//    }
-//
-//    consume(TOKEN_RIGHT_PAREN, "Expect ')' after parameters.");
-//    consume(TOKEN_LEFT_BRACE, "Expect '{' before function body.");
-//    block();
-//
-//    emitBytes(OP_CLOSURE, makeConstant(OBJ_VAL(function)));
-
-//    for (int i = 0; i < function->upvalueCount; i++)
-//    {
-//        emitByte(compiler.upvalues[i].isLocal ? 1 : 0);
-//        emitByte(compiler.upvalues[i].index);
-//    }
-}
-
 static Stmt* functionDeclaration()
 {
-//    exit(1);
-//
-//    uint8_t global = parseVariableName("Expect function name.");
-//    markInitialized();
-//    function(TYPE_FUNCTION);
-//    defineVariable(global);
+    ObjString* name = parseVariableName("Expect function name.");
+
+    consume(TOKEN_LEFT_PAREN, "Expect '(' after function name.");
+    // TODO args
+    consume(TOKEN_LEFT_PAREN, "Expect ')' after function arguments.");
+
+    consume(TOKEN_LEFT_BRACE, "Expect '{' after ')' in function.");
+
+    Stmt* body = block();
+
+    return (Stmt*)newFunctionStmt(name, body, NULL, parser.line);
 }
 
 static Stmt* varDeclaration()
@@ -799,14 +734,7 @@ Node* compile(const char* source)
 
     while (!match(TOKEN_EOF))
     {
-        if(statements == NULL)
-        {
-            statements = newNode((NodeValue){.as.statement = declaration()});
-        }
-        else
-        {
-            listAdd(statements, (NodeValue){.as.statement = declaration()});
-        }
+        listAdd(&statements, (NodeValue){.as.statement = declaration()});
     }
 
     consume(TOKEN_EOF, "Expect end of expression.");

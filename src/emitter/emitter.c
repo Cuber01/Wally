@@ -226,11 +226,18 @@ static void compileExpression(Expr* expression)
             break;
         }
 
+        case GROUPED_EXPRESSION:
+        {
+            GroupedExpr* expr = (GroupedExpr*)expression;
+
+            compileExpression(expr->in);
+            break;
+        }
+
 
         case LOGICAL_EXPRESSION:
             break;
-        case GROUPED_EXPRESSION:
-            break;
+
         case CALL_EXPRESSION:
             break;
 
