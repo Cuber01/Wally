@@ -328,24 +328,35 @@ static Expr* grouping(__attribute__((unused)) bool canAssign)
 
 static Node* argumentList()
 {
-    Node* root;
+    Node* root = NULL;
 
     if (!check(TOKEN_RIGHT_PAREN))
     {
-        do {
-            expression();
+        do
+        {
 
+            Expr* arg = expression();
+            listAdd(&root, NODE_EXPRESSION_VALUE(arg));
 
         } while (match(TOKEN_COMMA));
     }
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after arguments.");
 
+    return root;
+}
+
+static ObjString* parseVariableName(const char* errorMessage)
+{
+    consume(TOKEN_IDENTIFIER, errorMessage);
+
+    return copyString(parser.previous.start,parser.previous.length);
 }
 
 static Expr* call(Expr* previous, bool canAssign)
 {
-    uint8_t argCount = argumentList();
-    emitBytes(OP_CALL, argCount);
+    ObjString* name = parseVariableName("Expect function name in call expression.");
+    Node* args = argumentList();
+    return (Expr*) newCallExpr(name, args, parser.line);
 }
 
 // endregion
@@ -624,20 +635,17 @@ static Expr* variable(__attribute__((unused)) bool canAssign)
     }
 }
 
-static ObjString* parseVariableName(const char* errorMessage)
-{
-    consume(TOKEN_IDENTIFIER, errorMessage);
-
-    return copyString(parser.previous.start,parser.previous.length);
-}
-
 static Stmt* functionDeclaration()
 {
     ObjString* name = parseVariableName("Expect function name.");
 
     consume(TOKEN_LEFT_PAREN, "Expect '(' after function name.");
-    // TODO args
-    consume(TOKEN_LEFT_PAREN, "Expect ')' after function arguments.");
+
+    do
+    {
+
+    } while(!match(TOKEN_LEFT_PAREN))
+
 
     consume(TOKEN_LEFT_BRACE, "Expect '{' after ')' in function.");
 
