@@ -214,11 +214,17 @@ static void compileExpression(Expr* expression)
             break;
         }
 
+        case ASSIGN_EXPRESSION:
+        {
+            AssignExpr* expr = (AssignExpr*)expression;
+
+            break;
+        }
+
+
         case LOGICAL_EXPRESSION:
             break;
         case GROUPED_EXPRESSION:
-            break;
-        case ASSIGN_EXPRESSION:
             break;
         case CALL_EXPRESSION:
             break;

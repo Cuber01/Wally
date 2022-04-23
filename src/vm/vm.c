@@ -178,7 +178,7 @@ static int run()
 
     #define READ_BYTE() (*vm.ip++)
     #define READ_SHORT() \
-        (frame->ip += 2, (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
+        (vm.ip += 2, (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]))
 
     #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
     #define BINARY_OP(valueType, op) \
@@ -368,23 +368,23 @@ static int run()
 
             case OP_JUMP_IF_FALSE:
             {
-//                uint16_t offset = READ_SHORT();
-//                if (isFalsey(peek(0))) frame->ip += offset;
-//                break;
+                uint16_t offset = READ_SHORT();
+                if (isFalsey(peek(0))) vm.ip += offset;
+                break;
             }
 
             case OP_JUMP_IF_TRUE:
             {
-//                uint16_t offset = READ_SHORT();
-//                if (!isFalsey(peek(0))) frame->ip += offset;
-//                break;
+                uint16_t offset = READ_SHORT();
+                if (!isFalsey(peek(0))) vm.ip += offset;
+                break;
             }
 
             case OP_JUMP:
             {
-//                uint16_t offset = READ_SHORT();
-//                frame->ip += offset;
-//                break;
+                uint16_t offset = READ_SHORT();
+                vm.ip += offset;
+                break;
             }
 
             case OP_LOOP:

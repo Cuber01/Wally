@@ -5,6 +5,7 @@
 
 typedef struct Node Node; // todo
 
+
 typedef enum {
     BINARY_EXPRESSION,
     LITERAL_EXPRESSION,

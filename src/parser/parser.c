@@ -367,7 +367,7 @@ static Stmt* expressionStatement()
     consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
     return (Stmt*)newExpressionStmt(expr, parser.line);
 }
- // todo ala;
+
 static Stmt* block()
 {
     Node* statements = NULL;
@@ -594,55 +594,55 @@ static Stmt* ifStatement()
 
 static Stmt* returnStatement()
 {
-    if (match(TOKEN_SEMICOLON))
-    {
-        emitReturn();
-    }
-    else
-    {
-        expression();
-        consume(TOKEN_SEMICOLON, "Expect ';' after return value.");
-        emitByte(OP_RETURN);
-    }
+//    if (match(TOKEN_SEMICOLON))
+//    {
+//        emitReturn();
+//    }
+//    else
+//    {
+//        expression();
+//        consume(TOKEN_SEMICOLON, "Expect ';' after return value.");
+//        emitByte(OP_RETURN);
+//    }
 }
 
 static Stmt* switchStatement()
 {
-    consume(TOKEN_LEFT_PAREN, "Expect '(' after 'switch'.");
-    expression();
-    consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
-    consume(TOKEN_LEFT_BRACE, "Expect '{' after ')'.");
-
-    for(;;)
-    {
-        if(match(TOKEN_CASE))
-        {
-            expression();
-            emitByte(OP_SWITCH_EQUAL);
-
-            int thenJump = emitJump(OP_JUMP_IF_FALSE);
-
-            consume(TOKEN_COLON, "Expect ':' after expression.");
-
-            statement();
-
-            patchJump(thenJump);
-            emitByte(OP_POP);
-        }
-        else if (match(TOKEN_DEFAULT))
-        {
-            consume(TOKEN_COLON, "Expect ':' after 'default'.");
-
-            statement();
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    emitByte(OP_POP);
-    consume(TOKEN_RIGHT_BRACE, "Expect '}' at the end of switch statement.");
+//    consume(TOKEN_LEFT_PAREN, "Expect '(' after 'switch'.");
+//    expression();
+//    consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
+//    consume(TOKEN_LEFT_BRACE, "Expect '{' after ')'.");
+//
+//    for(;;)
+//    {
+//        if(match(TOKEN_CASE))
+//        {
+//            expression();
+//            emitByte(OP_SWITCH_EQUAL);
+//
+//            int thenJump = emitJump(OP_JUMP_IF_FALSE);
+//
+//            consume(TOKEN_COLON, "Expect ':' after expression.");
+//
+//            statement();
+//
+//            patchJump(thenJump);
+//            emitByte(OP_POP);
+//        }
+//        else if (match(TOKEN_DEFAULT))
+//        {
+//            consume(TOKEN_COLON, "Expect ':' after 'default'.");
+//
+//            statement();
+//        }
+//        else
+//        {
+//            break;
+//        }
+//    }
+//
+//    emitByte(OP_POP);
+//    consume(TOKEN_RIGHT_BRACE, "Expect '}' at the end of switch statement.");
 }
 
 static Stmt* statement()
@@ -668,176 +668,19 @@ static Stmt* statement()
 
 }
 
-static uint8_t identifierConstant(Token* name)
-{
-    //return makeConstant(OBJ_VAL(copyString(name->start,name->length)));
-}
-
-static int resolveLocal(Compiler* compiler, Token* name)
-{
-//
-//    for (int i = compiler->localCount - 1; i >= 0; i--)
-//    {
-//        Local* local = &compiler->locals[i];
-//
-//        if (identifiersEqual(name, &local->name))
-//        {
-//            return i;
-//        }
-//    }
-//
-//    return -1;
-}
-
-static int addUpvalue(Compiler* compiler, uint8_t index, bool isLocal)
-{
-//    int upvalueCount = compiler->function->upvalueCount;
-//
-//    for (int i = 0; i < upvalueCount; i++)
-//    {
-//        Upvalue* upvalue = &compiler->upvalues[i];
-//
-//        if (upvalue->index == index && upvalue->isLocal == isLocal)
-//        {
-//            return i;
-//        }
-//    }
-//
-//    if (upvalueCount == UINT8_COUNT)
-//    {
-//        error("Too many closure variables in function.");
-//        return 0;
-//    }
-//
-//    compiler->upvalues[upvalueCount].isLocal = isLocal;
-//    compiler->upvalues[upvalueCount].index = index;
-//    return compiler->function->upvalueCount++;
-}
-
-static int resolveUpvalue(Compiler* compiler, Token* name)
-{
-    if (compiler->enclosing == NULL) return -1;
-
-    int local = resolveLocal((Compiler*) compiler->enclosing, name);
-    if (local != -1)
-    {
-        return addUpvalue(compiler, (uint8_t)local, true);
-    }
-
-    int upvalue = resolveUpvalue((Compiler*) compiler->enclosing, name);
-    if (upvalue != -1)
-    {
-        return addUpvalue(compiler, (uint8_t)upvalue, false);
-    }
-
-    return -1;
-}
-
-
-static void namedVariable(Token name, bool canAssign)
-{
-//    uint8_t getOp, setOp;
-//    int arg = resolveLocal(current, &name);
-//
-//    if (arg != -1)
-//    {
-//        getOp = OP_GET_LOCAL;
-//        setOp = OP_SET_LOCAL;
-//    }
-//    else if ((arg = resolveUpvalue(current, &name)) != -1)
-//    {
-//        getOp = OP_GET_UPVALUE;
-//        setOp = OP_SET_UPVALUE;
-//    }
-//    else
-//    {
-//        arg = identifierConstant(&name);
-//        getOp = OP_GET_GLOBAL;
-//        setOp = OP_SET_GLOBAL;
-//    }
-//
-//    if (canAssign && match(TOKEN_EQUAL))
-//    {
-//        expression();
-//        emitBytes(setOp, (uint8_t)arg);
-//    }
-//    else
-//    {
-//        emitBytes(getOp, (uint8_t)arg);
-//    }
-}
-
 static Expr* variable(__attribute__((unused)) bool canAssign)
 {
     ObjString* name = copyString(parser.previous.start, strlen(parser.previous.start - 1));
 
-    return (Expr*)newVarExpr(name, parser.line);
-}
-
-static void addLocal(Token name)
-{
-//    if (current->localCount == UINT8_COUNT)
-//    {
-//        error("Too many local variables in function.");
-//        return;
-//    }
-//
-//    Local* local = &current->locals[current->localCount++];
-//    local->name = name;
-//    local->depth = -1;
-}
-
-static void markInitialized()
-{
-//
-//
-//    if (current->scopeDepth == 0) return;
-//
-//    current->locals[current->localCount - 1].depth = current->scopeDepth;
-}
-
-// Define = variable is available for use
-static void defineVariable(uint8_t global)
-{
-//    exit(1);
-//
-//    // If it's a local variable, don't do anything
-//    if (current->scopeDepth > 0)
-//    {
-//        markInitialized();
-//        return;
-//    }
-//
-//    emitBytes(OP_DEFINE_GLOBAL, global);
-}
-
-// Declare = variable is added to the scope
-static void declareVariable()
-{
-//    exit(1);
-//
-//    // If it's a global variable, don't do anything
-//    if (current->scopeDepth == 0) return;
-//
-//    Token* name = &parser.previous;
-//
-//    // Check if there's already an identifier with the same name in current scope
-//    for (int i = current->localCount - 1; i >= 0; i--)
-//    {
-//        Local* local = &current->locals[i];
-//        if (local->depth != -1 && local->depth < current->scopeDepth)
-//        {
-//            break;
-//        }
-//
-//        if (identifiersEqual(name, &local->name))
-//        {
-//            error("Already a variable with this name in this scope.");
-//        }
-//    }
-//
-//
-//    addLocal(*name);
+    if(!match(TOKEN_EQUAL))
+    {
+        return (Expr*)newVarExpr(name, parser.line);
+    }
+    else
+    {
+        Expr* value = expression();
+        return (Expr*)newAssignExpr(name, value, parser.line);
+    }
 }
 
 static ObjString* parseVariableName(const char* errorMessage)
