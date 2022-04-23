@@ -670,7 +670,7 @@ static Stmt* statement()
 
 static Expr* variable(__attribute__((unused)) bool canAssign)
 {
-    ObjString* name = copyString(parser.previous.start, strlen(parser.previous.start - 1));
+    ObjString* name = copyString(parser.previous.start, strlen(parser.previous.start) - 1); // TODO
 
     if(!match(TOKEN_EQUAL))
     {

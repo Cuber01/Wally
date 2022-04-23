@@ -218,6 +218,11 @@ static void compileExpression(Expr* expression)
         {
             AssignExpr* expr = (AssignExpr*)expression;
 
+            emitConstant(OBJ_VAL(expr->name), line);
+            compileExpression(expr->value);
+
+            emitByte(OP_SET_VARIABLE, line);
+
             break;
         }
 
