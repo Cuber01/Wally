@@ -310,7 +310,7 @@ static int run()
             case OP_MULTIPLY: BINARY_OP(NUMBER_VAL, *); break;
             case OP_DIVIDE:   BINARY_OP(NUMBER_VAL, /); break;
 
-            case OP_DEFINE_GLOBAL:
+            case OP_DEFINE_VARIABLE:
             {
                 Value initializer = pop();
                 Value name = pop();
@@ -320,7 +320,7 @@ static int run()
                 break;
             }
 
-            case OP_GET_GLOBAL:
+            case OP_GET_VARIABLE:
             {
                 Value name = pop();
                 Value value;
@@ -335,45 +335,35 @@ static int run()
                 break;
             }
 
-            case OP_SET_GLOBAL:
+            case OP_SET_VARIABLE:
             {
-                ObjString* name = READ_STRING();
+                Value value = pop();
+                Value name = pop();
 
-                if (tableSet(&vm.currentEnvironment->values, name, peek(0)))
+                if (!tableSetNoCreateEntry(&vm.currentEnvironment->values, AS_STRING(name), value))
                 {
-                    tableDelete(&vm.currentEnvironment->values, name); // todo ???
-                    runtimeError("Undefined variable '%s'.", name->chars);
-
+                    runtimeError("Undefined variable '%s'.", AS_STRING(name)->chars);
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
                 break;
             }
 
-            case OP_GET_LOCAL:
+            case OP_BLOCK_START:
             {
-//                uint8_t slot = READ_BYTE();
-//                push(frame->slots[slot]);
-//                break;
+                Environment* enclosing = vm.currentEnvironment;
+
+                vm.currentEnvironment = newEnvironment();
+                vm.currentEnvironment->enclosing = enclosing;
+                break;
             }
 
-            case OP_SET_LOCAL:
+            case OP_BLOCK_END:
             {
-//                uint8_t slot = READ_BYTE();
-//                frame->slots[slot] = peek(0);
-//                break;
-            }
-
-            case OP_GET_UPVALUE: {
-//                uint8_t slot = READ_BYTE();
-//                push(*frame->closure->upvalues[slot]->location);
-//                break;
-            }
-
-            case OP_SET_UPVALUE: {
-//                uint8_t slot = READ_BYTE();
-//                *frame->closure->upvalues[slot]->location = peek(0);
-//                break;
+                Environment* old = vm.currentEnvironment;
+                vm.currentEnvironment = vm.currentEnvironment->enclosing;
+                freeEnvironment(vm.currentEnvironment);
+                break;
             }
 
             case OP_JUMP_IF_FALSE:

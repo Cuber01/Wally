@@ -209,7 +209,7 @@ static void compileExpression(Expr* expression)
             VarExpr* expr = (VarExpr*)expression;
 
             emitConstant(OBJ_VAL(expr->name), line);
-            emitByte(OP_GET_GLOBAL, line);
+            emitByte(OP_GET_VARIABLE, line);
 
             break;
         }
@@ -248,12 +248,16 @@ static void compileStatement(Stmt* statement)
             BlockStmt* stmt = (BlockStmt*)statement;
             Node* toExecute = stmt->statements;
 
+            emitByte(OP_BLOCK_START, line);
+
             int length = getLength(toExecute);
 
             for(int i = 0; i <= length - 1; i++)
             {
                 compileStatement(listGet(toExecute, i).as.statement);
             }
+
+            emitByte(OP_BLOCK_END, line);
 
             break;
         }
@@ -288,7 +292,7 @@ static void compileStatement(Stmt* statement)
 
             emitConstant(OBJ_VAL(stmt->name), line);
             compileExpression(stmt->initializer);
-            emitByte(OP_DEFINE_GLOBAL, line);
+            emitByte(OP_DEFINE_VARIABLE, line);
 
             break;
         }

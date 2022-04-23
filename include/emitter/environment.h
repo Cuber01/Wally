@@ -6,6 +6,7 @@
 typedef struct Environment
 {
     Table values;
+    struct Environment* enclosing;
 } Environment;
 
 Environment* newEnvironment();

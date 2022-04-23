@@ -36,5 +36,5 @@ Value environmentGet(Environment* env, ObjString* name)
 
 void freeEnvironment(Environment* env)
 {
-
+    FREE(Environment, env);
 }

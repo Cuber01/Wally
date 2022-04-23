@@ -30,13 +30,13 @@ typedef enum {
     OP_DIVIDE,
 
     // Variables
-    OP_DEFINE_GLOBAL,
-    OP_GET_GLOBAL,
-    OP_SET_GLOBAL,
-    OP_GET_LOCAL,
-    OP_SET_LOCAL,
-    OP_GET_UPVALUE,
-    OP_SET_UPVALUE,
+    OP_DEFINE_VARIABLE,
+    OP_GET_VARIABLE,
+    OP_SET_VARIABLE,
+
+    // Block
+    OP_BLOCK_START,
+    OP_BLOCK_END,
 
     // Control flow
     OP_JUMP_IF_FALSE,

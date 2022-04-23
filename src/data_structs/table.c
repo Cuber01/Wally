@@ -145,6 +145,27 @@ bool tableSetNoOverwrite(Table* table, ObjString* key, Value value)
     return true;
 }
 
+bool tableSetNoCreateEntry(Table* table, ObjString* key, Value value)
+{
+    // Grow the table if it is at least 75% full
+    if (table->count + 1 > table->capacity * TABLE_MAX_LOAD)
+    {
+        int capacity = GROW_CAPACITY(table->capacity);
+        adjustCapacity(table, capacity);
+    }
+
+    // See if an entry already exists, if not, quit
+    Entry* entry = findEntry(table->entries, table->capacity, key);
+    bool isNewKey = entry->key == NULL;
+    // IS_NULL check makes sure that we're not examining a tombstone
+    if (isNewKey) return false;
+
+    entry->key = key;
+    entry->value = value;
+    return true;
+}
+
+
 bool tableSet(Table* table, ObjString* key, Value value)
 {
     // Grow the table if it is at least 75% full
