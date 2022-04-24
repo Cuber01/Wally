@@ -177,6 +177,7 @@ static int run()
 {
 
     #define READ_BYTE() (*vm.ip++)
+    #define READ_BYTE_NO_INCREMENT (*vm.ip)
     #define READ_SHORT() \
         (vm.ip += 2, (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]))
 
@@ -411,7 +412,7 @@ static int run()
                 break;
             }
 
-            case OP_CALL:
+            case OP_CALL_START:
             {
 //                int argCount = READ_BYTE();
 //
@@ -422,6 +423,10 @@ static int run()
 //
 //                frame = &vm.frames[vm.frameCount - 1];
 //                break;
+            }
+
+            case OP_CALL_END:
+            {
             }
 
             case OP_CLOSURE:
@@ -482,6 +487,7 @@ static int run()
     #undef BINARY_OP
     #undef READ_CONSTANT
     #undef READ_BYTE
+    #undef READ_BYTE_NO_INCREMENT
 }
 
 

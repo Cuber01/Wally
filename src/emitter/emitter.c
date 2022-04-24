@@ -234,11 +234,28 @@ static void compileExpression(Expr* expression)
             break;
         }
 
+        case CALL_EXPRESSION:
+        {
+            CallExpr* expr = (CallExpr*)expression;
+
+            emitByte(OP_CALL_START, line);
+            emitConstant(OBJ_VAL(expr->callee), line);
+
+            Node* node = expr->args;
+
+            do
+            {
+                compileExpression(node->value.as.expression);
+                node = node->next;
+            } while(node != NULL);
+
+            emitByte(OP_CALL_END);
+
+            break;
+        }
+
 
         case LOGICAL_EXPRESSION:
-            break;
-
-        case CALL_EXPRESSION:
             break;
 
     }
@@ -268,7 +285,7 @@ static void compileStatement(Stmt* statement)
 
             emitByte(OP_BLOCK_START, line);
 
-            int length = getLength(toExecute);
+            int length = listGetLength(toExecute);
 
             for(int i = 0; i <= length - 1; i++)
             {

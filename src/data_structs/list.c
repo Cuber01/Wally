@@ -69,7 +69,7 @@ NodeValue listGet(Node* root, unsigned int index)
     return node->value;
 }
 
-int getLength(Node* root)
+int listGetLength(Node* root)
 {
     Node* node = root;
     int length = 0;
