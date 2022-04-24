@@ -58,33 +58,6 @@ static char peekNext()
     return scanner.current[1];
 }
 
-static bool isValidIdentifierChar(char c)
-{
-    switch (c)
-    {
-        // Whitespace
-        case ' ':
-        case '\r':
-        case '\t':
-        case '\n':
-
-        // Special
-        case '/':
-        case '*':
-        case '+':
-        case '-':
-        case '{':
-        case '}':
-        case '(':
-        case ')':
-        case ';':
-            return false;
-
-        default:
-            return true;
-    }
-}
-
 static void skipWhitespace()
 {
     for (;;)
