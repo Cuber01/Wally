@@ -150,15 +150,6 @@ static bool isAlpha(char c)
            c == '_';
 }
 
-static bool isAlphaValidIdentifier(char c)
-{
-    if(!isValidIdentifierChar(c)) return false;
-
-    return (c >= 'a' && c <= 'z') ||
-           (c >= 'A' && c <= 'Z') ||
-           c == '_';
-}
-
 static Token number()
 {
     while (isDigit(peek())) advance();
@@ -284,7 +275,7 @@ static TokenType identifierType()
 
 static Token identifier()
 {
-    while (isAlphaValidIdentifier(peek()) || isDigit(peek())) advance();
+    while (isAlpha(peek()) || isDigit(peek())) advance();
     return makeToken(identifierType());
 }
 

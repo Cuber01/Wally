@@ -1,1 +1,9 @@
-print("Hello");
+
+var a = 1 + 7;
+
+{
+
+    var b = 2;
+    a;
+}
+
