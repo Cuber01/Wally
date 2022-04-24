@@ -58,6 +58,33 @@ static char peekNext()
     return scanner.current[1];
 }
 
+static bool isValidIdentifierChar(char c)
+{
+    switch (c)
+    {
+        // Whitespace
+        case ' ':
+        case '\r':
+        case '\t':
+        case '\n':
+
+        // Special
+        case '/':
+        case '*':
+        case '+':
+        case '-':
+        case '{':
+        case '}':
+        case '(':
+        case ')':
+        case ';':
+            return false;
+
+        default:
+            return true;
+    }
+}
+
 static void skipWhitespace()
 {
     for (;;)
@@ -118,6 +145,15 @@ static bool isDigit(char c)
 
 static bool isAlpha(char c)
 {
+    return (c >= 'a' && c <= 'z') ||
+           (c >= 'A' && c <= 'Z') ||
+           c == '_';
+}
+
+static bool isAlphaValidIdentifier(char c)
+{
+    if(!isValidIdentifierChar(c)) return false;
+
     return (c >= 'a' && c <= 'z') ||
            (c >= 'A' && c <= 'Z') ||
            c == '_';
@@ -248,7 +284,7 @@ static TokenType identifierType()
 
 static Token identifier()
 {
-    while (isAlpha(peek()) || isDigit(peek())) advance();
+    while (isAlphaValidIdentifier(peek()) || isDigit(peek())) advance();
     return makeToken(identifierType());
 }
 

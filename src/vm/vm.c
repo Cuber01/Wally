@@ -327,7 +327,7 @@ static int run()
 
                 if (!tableGet(&vm.currentEnvironment->values, AS_STRING(name), &value))
                 {
-                    runtimeError("Undefined variable '%s'.", AS_STRING(name));
+                    runtimeError("Undefined variable '%s'.", AS_STRING(name)->chars);
                     return INTERPRET_RUNTIME_ERROR;
                 }
 

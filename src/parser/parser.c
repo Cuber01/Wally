@@ -622,7 +622,7 @@ static Stmt* statement()
 
 static Expr* variable(__attribute__((unused)) bool canAssign)
 {
-    ObjString* name = copyString(parser.previous.start, strlen(parser.previous.start) - 1); // TODO
+    ObjString* name = copyString(parser.previous.start,parser.previous.length);
 
     if(!match(TOKEN_EQUAL))
     {
