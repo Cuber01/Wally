@@ -11,7 +11,7 @@ typedef struct Environment
 
 Environment* newEnvironment();
 void environmentDefine(Environment* env, ObjString* name, Value value);
-Value environmentGet(Environment* env, ObjString* name);
+bool environmentGet(Environment* env, ObjString* name, Value* result);
 void freeEnvironment(Environment* env);
 
 #endif //WALLY_ENVIRONMENT_H
