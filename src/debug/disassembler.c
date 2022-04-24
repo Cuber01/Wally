@@ -8,7 +8,7 @@ void disassembleChunk(Chunk* chunk, const char* name)
 {
     printf("== %s ==\n", name);
 
-    for (int offset = 0; offset < chunk->count;)
+    for (int offset = 0; offset < chunk->codeCount;)
     {
         offset = disassembleInstruction(chunk, offset);
     }

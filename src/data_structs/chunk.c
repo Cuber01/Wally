@@ -5,8 +5,10 @@
 
 void initChunk(Chunk* chunk)
 {
-    chunk->count = 0;
-    chunk->capacity = 0;
+    chunk->codeCount = 0;
+    chunk->codeCapacity = 0;
+    chunk->lineCount = 0;
+    chunk->lineCapacity = 0;
     chunk->code = NULL;
     chunk->lines = NULL;
 
@@ -15,25 +17,34 @@ void initChunk(Chunk* chunk)
 
 void writeChunk(Chunk* chunk, uint8_t byte, unsigned int line)
 {
-
     // Grow the array if we don't have enough space
-    if (chunk->capacity < chunk->count + 1)
+    if (chunk->codeCapacity < chunk->codeCount + 1)
     {
-        int oldCapacity = chunk->capacity;
-        chunk->capacity = GROW_CAPACITY(oldCapacity);
-        chunk->code = GROW_ARRAY(uint8_t, chunk->code, oldCapacity, chunk->capacity);
-        chunk->lines = GROW_ARRAY(unsigned int, chunk->lines, oldCapacity, chunk->capacity);
+        unsigned int oldCapacity = chunk->codeCapacity;
+        chunk->codeCapacity = GROW_CAPACITY(oldCapacity);
+        chunk->code = GROW_ARRAY(uint8_t, chunk->code, oldCapacity, chunk->codeCapacity);
     }
 
-    chunk->code[chunk->count] = byte;
-    chunk->lines[chunk->count] = line;
-    chunk->count++;
+    chunk->code[chunk->codeCount] = byte;
+    chunk->codeCount++;
+
+    if(chunk->lineCapacity < chunk->lineCount + 1)
+    {
+        uint32_t oldCapacity = chunk->lineCapacity;
+        chunk->lineCapacity = ((oldCapacity) < 32 ? 32 : (oldCapacity) * 2);
+        chunk->lines = (uint32_t*)reallocate(chunk->lines, sizeof(uint32_t) * (oldCapacity), sizeof(uint32_t) * (chunk->lineCapacity));
+    }
+
+    chunk->lines[chunk->lineCount] = line;
+    chunk->lineCount++;
 }
+
+
 
 void freeChunk(Chunk* chunk)
 {
-    FREE_ARRAY(uint8_t, chunk->code, chunk->capacity);
-    FREE_ARRAY(int, chunk->lines, chunk->capacity);
+    FREE_ARRAY(uint8_t, chunk->code, chunk->codeCapacity);
+    FREE_ARRAY(int, chunk->lines, chunk->codeCapacity);
 
     freeValueArray(&chunk->constants);
     initChunk(chunk);

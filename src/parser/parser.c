@@ -356,7 +356,7 @@ static Expr* call(Expr* previous, bool canAssign)
 {
     ObjString* name = parseVariableName("Expect function name in call expression.");
     Node* args = argumentList();
-    return (Expr*) newCallExpr(name, args, parser.line);
+    return (Expr*) newCallExpr(name, args, parser.line); // previous is unused
 }
 
 // endregion
@@ -644,7 +644,7 @@ static Stmt* functionDeclaration()
     do
     {
 
-    } while(!match(TOKEN_LEFT_PAREN))
+    } while(!match(TOKEN_LEFT_PAREN));
 
 
     consume(TOKEN_LEFT_BRACE, "Expect '{' after ')' in function.");

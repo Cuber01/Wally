@@ -57,11 +57,15 @@ typedef enum {
 } OpCode;
 
 typedef struct {
-    int count;
-    int capacity;
-    uint8_t* code;
+    unsigned int codeCount;
+    unsigned int codeCapacity;
 
-    unsigned int* lines;
+    unsigned int lineCount;
+    unsigned int lineCapacity;
+
+    uint8_t* code;
+    uint32_t* lines;
+
     ValueArray constants;
 } Chunk;
 

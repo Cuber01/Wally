@@ -61,13 +61,13 @@ static int emitJump(uint8_t instruction, uint16_t line)
     emitByte(0xff, line);
     emitByte(0xff, line);
 
-    return currentChunk()->count - 2;
+    return currentChunk()->codeCount - 2;
 }
 
 static void patchJump(int offset)
 {
     // -2 to adjust for the bytecode for the jump offset itself
-    int jump = currentChunk()->count - offset - 2;
+    int jump = currentChunk()->codeCount - offset - 2;
 
     if (jump > UINT16_MAX)
     {
