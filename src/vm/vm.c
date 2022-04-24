@@ -362,7 +362,7 @@ static int run()
             {
                 Environment* old = vm.currentEnvironment;
                 vm.currentEnvironment = vm.currentEnvironment->enclosing;
-                freeEnvironment(vm.currentEnvironment);
+                freeEnvironment(old);
                 break;
             }
 
