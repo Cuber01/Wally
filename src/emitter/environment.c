@@ -6,7 +6,7 @@ Environment* newEnvironment()
 {
     Environment* newEnv = reallocate(NULL, 0, sizeof(Environment));
 
-    Table* values;
+    Table* values = reallocate(NULL, 0, sizeof(Table));
     initTable(values);
     newEnv->values = *values;
 
@@ -36,5 +36,7 @@ Value environmentGet(Environment* env, ObjString* name)
 
 void freeEnvironment(Environment* env)
 {
+    FREE_ARRAY(Entry, env->values.entries, env->values.capacity);
+    FREE(Table, &env->values);
     FREE(Environment, env);
 }

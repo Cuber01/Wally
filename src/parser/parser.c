@@ -378,7 +378,7 @@ static Stmt* block()
     Node* statements = NULL;
     while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
     {
-        listAdd(statements, NODE_STATEMENT_VALUE(declaration()));
+        listAdd(&statements, NODE_STATEMENT_VALUE(declaration()));
     }
 
     consume(TOKEN_RIGHT_BRACE, "Expect '}' after block.");

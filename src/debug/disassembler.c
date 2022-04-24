@@ -130,6 +130,10 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_SET_GLOBAL", offset);
         case OP_GET_VARIABLE:
             return simpleInstruction("OP_GET_GLOBAL", offset);
+        case OP_BLOCK_START:
+            return simpleInstruction("OP_BLOCK_START", offset);
+        case OP_BLOCK_END:
+            return simpleInstruction("OP_BLOCK_END", offset);
 
 
         case OP_CALL:
