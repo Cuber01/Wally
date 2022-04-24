@@ -37,6 +37,5 @@ Value environmentGet(Environment* env, ObjString* name)
 void freeEnvironment(Environment* env)
 {
     FREE_ARRAY(Entry, env->values.entries, env->values.capacity);
-    FREE(Table, &env->values);
     FREE(Environment, env);
 }
