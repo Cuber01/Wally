@@ -37,8 +37,8 @@ typedef enum {
     PREC_PRIMARY
 } Precedence;
 
-typedef Expr* (*ParsePrefixFn)(bool canAssign);
-typedef Expr* (*ParseInfixFn)(Expr* previous, bool canAssign) ;
+typedef Expr* (*ParsePrefixFn)();
+typedef Expr* (*ParseInfixFn)(Expr* previous);
 
 typedef struct {
     ParsePrefixFn prefix;

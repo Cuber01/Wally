@@ -157,7 +157,7 @@ static Expr* parsePrecedence(Precedence precedence)
     {
         advance();
         ParseInfixFn infixRule = getRule(parser.previous.type)->infix;
-        expr = (Expr*)infixRule(expr, canAssign);
+        expr = (Expr*)infixRule(expr);
     }
 
     if (canAssign && match(TOKEN_EQUAL))
@@ -196,7 +196,7 @@ static void emitReturn()
 
 // region EXPRESSIONS
 
-static Expr* binary(Expr* previous, __attribute__((unused)) bool canAssign)
+static Expr* binary(Expr* previous)
 {
     TokenType operatorType = parser.previous.type;
     ParseRule* rule = getRule(operatorType);
@@ -206,7 +206,7 @@ static Expr* binary(Expr* previous, __attribute__((unused)) bool canAssign)
     return (Expr*)newBinaryExpr(previous, operatorType, right, parser.line);
 }
 
-static Expr* ternary(Expr* previous, __attribute__((unused)) bool canAssign)
+static Expr* ternary(Expr* previous)
 {
     Expr* thenBranch = parsePrecedence(PREC_TERNARY);
     consume(TOKEN_COLON, "Expect ':' after first ternary branch.");
@@ -214,7 +214,7 @@ static Expr* ternary(Expr* previous, __attribute__((unused)) bool canAssign)
     return (Expr*)newTernaryExpr(previous, thenBranch, elseBranch, parser.line);
 }
 
-static Expr* literal(__attribute__((unused)) bool canAssign)
+static Expr* literal()
 {
     switch (parser.previous.type)
     {
@@ -226,7 +226,7 @@ static Expr* literal(__attribute__((unused)) bool canAssign)
     }
 }
 
-static Expr* number(__attribute__((unused)) bool canAssign)
+static Expr* number()
 {
     double value = strtod(parser.previous.start, NULL);
     return (Expr*)newLiteralExpr(NUMBER_VAL(value), parser.line);
@@ -291,7 +291,7 @@ static void escapeSequences(char* destination, char* source)
 
 }
 
-static Expr* string(__attribute__((unused)) bool canAssign)
+static Expr* string()
 {
     // Math is for trimming ""
     uint32_t length = strlen(parser.previous.start);
@@ -305,12 +305,12 @@ static Expr* string(__attribute__((unused)) bool canAssign)
     return (Expr*)newLiteralExpr(OBJ_VAL(copyString(str, parser.previous.length - 2)), parser.line);
 }
 
-static Expr* interpolatedString(__attribute__((unused)) bool canAssign)
+static Expr* interpolatedString()
 {
 
 }
 
-static Expr* unary(__attribute__((unused)) bool canAssign)
+static Expr* unary()
 {
     TokenType operatorType = parser.previous.type;
 
@@ -319,7 +319,7 @@ static Expr* unary(__attribute__((unused)) bool canAssign)
     return (Expr*) newUnaryExpr(expr, operatorType, parser.line);
 }
 
-static Expr* grouping(__attribute__((unused)) bool canAssign)
+static Expr* grouping()
 {
     Expr* expr = expression();
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
@@ -352,11 +352,10 @@ static ObjString* parseVariableName(const char* errorMessage)
     return copyString(parser.previous.start,parser.previous.length);
 }
 
-static Expr* call(Expr* previous, bool canAssign)
+static Expr* call(Expr* previous)
 {
-    ObjString* name = parseVariableName("Expect function name in call expression.");
     Node* args = argumentList();
-    return (Expr*) newCallExpr(name, args, parser.line); // previous is unused
+    return (Expr*) newCallExpr(((VarExpr*)previous)->name, args, parser.line); // previous is unused
 }
 
 // endregion
@@ -620,7 +619,7 @@ static Stmt* statement()
 
 }
 
-static Expr* variable(__attribute__((unused)) bool canAssign)
+static Expr* variable()
 {
     ObjString* name = copyString(parser.previous.start,parser.previous.length);
 
