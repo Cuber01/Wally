@@ -326,7 +326,7 @@ static Expr* grouping()
     return expr;
 }
 
-static Node* argumentList()
+static Node* argumentList(uint16_t* argCount)
 {
     Node* root = NULL;
 
@@ -337,6 +337,7 @@ static Node* argumentList()
 
             Expr* arg = expression();
             listAdd(&root, NODE_EXPRESSION_VALUE(arg));
+            (*argCount)++;
 
         } while (match(TOKEN_COMMA));
     }
@@ -354,8 +355,9 @@ static ObjString* parseVariableName(const char* errorMessage)
 
 static Expr* call(Expr* previous)
 {
-    Node* args = argumentList();
-    return (Expr*) newCallExpr(((VarExpr*)previous)->name, args, parser.line); // previous is unused
+    uint16_t argCount;
+    Node* args = argumentList(&argCount);
+    return (Expr*) newCallExpr(((VarExpr*)previous)->name, argCount, args, parser.line); // previous is unused
 }
 
 // endregion

@@ -238,9 +238,6 @@ static void compileExpression(Expr* expression)
         {
             CallExpr* expr = (CallExpr*)expression;
 
-            emitByte(OP_CALL_START, line);
-            emitConstant(OBJ_VAL(expr->callee), line);
-
             Node* node = expr->args;
 
             do
@@ -249,7 +246,9 @@ static void compileExpression(Expr* expression)
                 node = node->next;
             } while(node != NULL);
 
-            emitByte(OP_CALL_END);
+            emitConstant(NUMBER_VAL(expr->argCount), line);
+            emitConstant(OBJ_VAL(expr->callee), line);
+            emitByte(OP_CALL, line);
 
             break;
         }

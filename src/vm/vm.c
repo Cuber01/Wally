@@ -412,7 +412,7 @@ static int run()
                 break;
             }
 
-            case OP_CALL_START:
+            case OP_CALL:
             {
 //                int argCount = READ_BYTE();
 //
@@ -423,10 +423,6 @@ static int run()
 //
 //                frame = &vm.frames[vm.frameCount - 1];
 //                break;
-            }
-
-            case OP_CALL_END:
-            {
             }
 
             case OP_CLOSURE:

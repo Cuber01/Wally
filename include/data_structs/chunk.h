@@ -45,8 +45,7 @@ typedef enum {
     OP_LOOP,
 
     // Functions
-    OP_CALL_START,
-    OP_CALL_END,
+    OP_CALL,
     OP_RETURN,
     OP_CLOSURE,
 
