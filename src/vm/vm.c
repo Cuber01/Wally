@@ -414,15 +414,20 @@ static int run()
 
             case OP_CALL:
             {
-//                int argCount = READ_BYTE();
-//
-//                if (!callValue(peek(argCount), argCount))
-//                {
-//                    return INTERPRET_RUNTIME_ERROR;
-//                }
-//
-//                frame = &vm.frames[vm.frameCount - 1];
-//                break;
+                ObjString* name = AS_STRING(pop());
+                uint8_t argCount = AS_NUMBER(pop());
+
+                Node* args = NULL;
+
+                while (argCount > 0)
+                {
+                    argCount--;
+                  //  listAdd(&args, NODE_VAL_VALUE(pop()));
+                }
+
+                //print(args);
+
+                break;
             }
 
             case OP_CLOSURE:
