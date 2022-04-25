@@ -9,6 +9,7 @@
 #include "object.h"
 #include "memory.h"
 #include "emitter.h"
+#include "core.h"
 
 
 VM vm;
@@ -422,10 +423,11 @@ static int run()
                 while (argCount > 0)
                 {
                     argCount--;
-                  //  listAdd(&args, NODE_VAL_VALUE(pop()));
+                    Value value = pop();
+                    listAdd(&args, NODE_VAL_VALUE(&value)); // It is possibly that this value will get yeeted out after exiting while scope
                 }
 
-                //print(args);
+                print(args);
 
                 break;
             }

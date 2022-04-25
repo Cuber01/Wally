@@ -12,7 +12,9 @@ if(TOKEN_PRINT_ENABLED)
 endif(TOKEN_PRINT_ENABLED)
 
 include_directories(Wally PRIVATE include/ include/data_structs/ include/misc/ include/debug/
-                    include/memory/ include/scanner/ include/parser include/vm/ include/emitter)
+                    include/memory/ include/scanner/ include/parser include/vm/ include/emitter
+                    include/std/)
+
 add_executable(Wally src/main.c
                      src/memory/memory.c
                      src/data_structs/chunk.c
@@ -28,4 +30,5 @@ add_executable(Wally src/main.c
                      src/data_structs/list.c
                      src/debug/native_error.c
                      src/emitter/emitter.c
-                     src/emitter/environment.c)
+                     src/emitter/environment.c
+                     src/std/core.c)
