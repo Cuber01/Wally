@@ -79,7 +79,7 @@ void freeExpression(Expr* expr)
         {
             CallExpr* expression = (CallExpr*) expr;
 
-            freeExpression(expression->callee);
+            freeObject((Obj*)expression->callee);
             freeList(expression->args);
 
             FREE(CallExpr, expr);
