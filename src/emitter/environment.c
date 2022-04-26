@@ -22,6 +22,23 @@ void environmentDefine(Environment* env, ObjString* name, Value value)
     }
 }
 
+bool environmentSet(Environment* env, ObjString* name, Value value)
+{
+    bool success = tableSetNoCreateEntry(&env->values, name, value);
+    if(!success)
+    {
+        if(env->enclosing != NULL)
+        {
+            return environmentSet(env->enclosing, name, value);
+        }
+
+        nativeError("Tried to set value of %s, but it doesn't exist.", name->chars);
+        return false;
+    }
+
+    return true;
+}
+
 bool environmentGet(Environment* env, ObjString* name, Value* result)
 {
     bool success = tableGet(&env->values, name, result);

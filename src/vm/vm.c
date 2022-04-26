@@ -333,9 +333,8 @@ static int run()
                 Value value = pop();
                 Value name = pop();
 
-                if (!tableSetNoCreateEntry(&vm.currentEnvironment->values, AS_STRING(name), value))
+                if (!environmentSet(vm.currentEnvironment, AS_STRING(name), value))
                 {
-                    runtimeError("Undefined variable '%s'.", AS_STRING(name)->chars);
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
