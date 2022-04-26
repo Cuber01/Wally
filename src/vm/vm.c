@@ -381,9 +381,9 @@ static int run()
 
             case OP_LOOP:
             {
-//                uint16_t offset = READ_SHORT();
-//                frame->ip -= offset;
-//                break;
+                uint16_t offset = READ_SHORT();
+                vm.ip -= offset;
+                break;
             }
 
             case OP_TERNARY:
@@ -430,29 +430,6 @@ static int run()
                 print(args);
 
                 break;
-            }
-
-            case OP_CLOSURE:
-            {
-//                ObjFunction* function = AS_FUNCTION(READ_CONSTANT());
-//                ObjClosure* closure = newClosure(function);
-//                push(OBJ_VAL(closure));
-//
-//                for (int i = 0; i < closure->upvalueCount; i++)
-//                {
-//                    uint8_t isLocal = READ_BYTE();
-//                    uint8_t index = READ_BYTE();
-//                    if (isLocal)
-//                    {
-//                        closure->upvalues[i] =
-//                                captureUpvalue(frame->slots + index);
-//                    } else
-//                    {
-//                        closure->upvalues[i] = frame->closure->upvalues[index];
-//                    }
-//                }
-//
-//                break;
             }
 
             case OP_RETURN:
