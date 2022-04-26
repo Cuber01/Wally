@@ -8,14 +8,12 @@
 
 #define NODE_STATEMENT_VALUE(value)  (NodeValue){.as.statement = value}
 #define NODE_EXPRESSION_VALUE(value) (NodeValue){.as.expression = value}
-#define NODE_VAL_VALUE(value)        (NodeValue){.as.val = value}
 
 typedef struct NodeValue
 {
     union {
         Expr* expression;
         Stmt* statement;
-        Value* val; // Changing this to a non-pointer causes a segfault
     } as;
 } NodeValue;
 

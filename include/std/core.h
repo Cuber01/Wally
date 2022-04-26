@@ -3,6 +3,6 @@
 
 #include "list.h"
 
-void print(Node* args);
+void print(Value* args);
 
 #endif //WALLY_CORE_H

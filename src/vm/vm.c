@@ -32,14 +32,6 @@ void runtimeError(const char* format, ...)
     resetStack();
 }
 
-// TODO organize native functions
-static Value printNative(int argCount, Value* args)
-{
-    printRawValue(*args);
-    putchar('\n');
-    return NULL_VAL;
-}
-
 static void defineNative(const char* name, NativeFn function);
 void initVM()
 {
@@ -418,16 +410,25 @@ static int run()
                 ObjString* name = AS_STRING(pop());
                 uint8_t argCount = AS_NUMBER(pop());
 
-                Node* args = NULL;
+                Value* args = NULL;
 
-                while (argCount > 0)
+                for(uint16_t i = 1; i <= argCount; i++)
                 {
-                    argCount--;
                     Value value = pop();
-                    listAdd(&args, NODE_VAL_VALUE(&value)); // It is possibly that this value will get yeeted out after exiting while scope
+
+                    if(args == NULL)
+                    {
+                        args = &value;
+                    }
+                    else
+                    {
+                        args[i] = value;
+                    }
+
                 }
 
-                print(args);
+                // todo if this is uncommented the release build doesn't work
+                // print(args);
 
                 break;
             }

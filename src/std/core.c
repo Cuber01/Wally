@@ -1,7 +1,16 @@
 #include "core.h"
 
-void print(Node* args)
+/*
+static Value printNative(int argCount, Value* args)
 {
-    printRawValue(* (listGet(args, 0).as.val) );
+    printRawValue(*args);
+    putchar('\n');
+    return NULL_VAL;
+}
+ */
+
+void print(Value* args)
+{
+    printRawValue(args[0]);
     putchar('\n');
 }
