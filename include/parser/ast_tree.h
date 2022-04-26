@@ -181,7 +181,6 @@ typedef struct
     Expr* initializer;
 } VariableStmt;
 
-
 typedef struct
 {
     Stmt stmt;

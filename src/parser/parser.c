@@ -406,17 +406,6 @@ static Expr* and(Expr *canAssign, bool b)
 //    patchJump(endJump);
 }
 
-static void emitLoop(int loopStart)
-{
-//    emitByte(OP_LOOP);
-//
-//    int offset = currentChunk()->count - loopStart + 2;
-//    if (offset > UINT16_MAX) error("Loop body too large.");
-//
-//    emitByte((offset >> 8) & 0xff);
-//    emitByte(offset & 0xff);
-}
-
 static Stmt* forStatement()
 {
 //    beginScope();
@@ -518,21 +507,13 @@ static Stmt* continueStatement()
 
 static Stmt* whileStatement()
 {
-//    innermostLoopDepth = current->scopeDepth;
-//    innermostLoopStart = currentChunk()->count;
-//
-//    consume(TOKEN_LEFT_PAREN, "Expect '(' after 'while'.");
-//    expression();
-//    consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
-//
-//    int exitJump = emitJump(OP_JUMP_IF_FALSE);
-//    emitByte(OP_POP);
-//
-//    statement();
-//    emitLoop(innermostLoopStart);
-//
-//    patchJump(exitJump);
-//    emitByte(OP_POP);
+    consume(TOKEN_LEFT_PAREN, "Expect '(' after 'while'.");
+    Expr* condition = expression();
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
+
+    Stmt* body = statement();
+
+    return (Stmt*)newWhileStmt(condition, body, parser.line);
 }
 
 static Stmt* ifStatement()

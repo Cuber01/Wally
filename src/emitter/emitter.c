@@ -53,7 +53,7 @@ static void emitConstant(Value value, uint16_t line)
     emitBytes(OP_CONSTANT, makeConstant(value), line);
 }
 
-static int emitJump(uint8_t instruction, uint16_t line)
+static unsigned int emitJump(uint8_t instruction, uint16_t line)
 {
     emitByte(instruction, line);
 
@@ -64,10 +64,10 @@ static int emitJump(uint8_t instruction, uint16_t line)
     return currentChunk()->codeCount - 2;
 }
 
-static void patchJump(int offset)
+static void patchJump(unsigned int offset)
 {
     // -2 to adjust for the bytecode for the jump offset itself
-    int jump = currentChunk()->codeCount - offset - 2;
+    unsigned int jump = currentChunk()->codeCount - offset - 2;
 
     if (jump > UINT16_MAX)
     {
@@ -76,6 +76,17 @@ static void patchJump(int offset)
 
     currentChunk()->code[offset] = (jump >> 8) & 0xff;
     currentChunk()->code[offset + 1] = jump & 0xff;
+}
+
+static void emitLoop(unsigned int loopStart, uint16_t line)
+{
+    emitByte(OP_LOOP, line);
+
+    unsigned int offset = currentChunk()->codeCount - loopStart + 2;
+    if (offset > UINT16_MAX) error("Loop body too large.");
+
+    emitByte((offset >> 8) & 0xff, line);
+    emitByte(offset & 0xff, line);
 }
 
 static void emitMultiplePop(int amount, uint16_t line)
@@ -302,12 +313,12 @@ static void compileStatement(Stmt* statement)
 
             compileExpression(stmt->condition);
 
-            int thenJump = emitJump(OP_JUMP_IF_FALSE, line);
+            unsigned int thenJump = emitJump(OP_JUMP_IF_FALSE, line);
             emitByte(OP_POP, line);
 
             compileStatement(stmt->thenBranch);
 
-            int elseJump = emitJump(OP_JUMP, line);
+            unsigned int elseJump = emitJump(OP_JUMP, line);
             patchJump(thenJump);
             emitByte(OP_POP, line);
             if(stmt->elseBranch != NULL) // todo if more statements will need it we can just check for null at the start of the function
@@ -332,7 +343,23 @@ static void compileStatement(Stmt* statement)
         }
 
         case WHILE_STATEMENT:
+        {
+            WhileStmt* stmt = (WhileStmt*) statement;
+
+            unsigned int loopStart = currentChunk()->codeCount;
+
+            compileExpression(stmt->condition);
+            unsigned int exitJump = emitJump(OP_JUMP_IF_FALSE, line);
+            emitByte(OP_POP, line);
+
+            compileStatement(stmt->body);
+            emitLoop(loopStart, line);
+
+            patchJump(exitJump);
+            emitByte(OP_POP, line);
             break;
+        }
+
         case SWITCH_STATEMENT:
             break;
         case CONTINUE_STATEMENT:

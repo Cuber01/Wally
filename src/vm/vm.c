@@ -428,7 +428,7 @@ static int run()
                 }
 
                 // todo if this is uncommented the release build doesn't work
-                // print(args);
+                print(args);
 
                 break;
             }
