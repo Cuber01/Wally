@@ -441,9 +441,7 @@ static Stmt* forStatement()
         consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
     }
 
-    consume(TOKEN_LEFT_BRACE, "Expect '{' after for clauses.");
     Stmt* body = statement();
-    consume(TOKEN_RIGHT_BRACE, "Expect '} after for body.");
 
     return (Stmt*)newForStmt(declaration, condition, increment, body, parser.line);
 }
