@@ -104,6 +104,11 @@ static void emitReturn()
 
 static void compileExpression(Expr* expression)
 {
+    if(expression == NULL)
+    {
+        return;
+    }
+
     uint16_t line = expression->line;
 
     switch (expression->type)
@@ -278,6 +283,11 @@ static void compileExpressionStatement(ExpressionStmt* statement)
 
 static void compileStatement(Stmt* statement)
 {
+    if(statement == NULL)
+    {
+        return;
+    }
+
     uint16_t line = statement->line;
 
     switch (statement->type)
@@ -321,10 +331,8 @@ static void compileStatement(Stmt* statement)
             unsigned int elseJump = emitJump(OP_JUMP, line);
             patchJump(thenJump);
             emitByte(OP_POP, line);
-            if(stmt->elseBranch != NULL) // todo if more statements will need it we can just check for null at the start of the function
-            {
-                compileStatement(stmt->elseBranch);
-            }
+
+            compileStatement(stmt->elseBranch);
 
             patchJump(elseJump);
 
@@ -359,6 +367,51 @@ static void compileStatement(Stmt* statement)
             emitByte(OP_POP, line);
             break;
         }
+
+        case FOR_STATEMENT:
+        {
+            ForStmt* stmt = (ForStmt*) statement;
+
+            emitByte(OP_BLOCK_START, line);
+
+            // Declaration/Initializer
+            compileStatement(stmt->declaration);
+
+            // Start the loop before condition
+            unsigned int loopStart = currentChunk()->codeCount;
+            int exitJump = -1;
+
+            // Condition
+            if(stmt->condition == NULL)
+            {
+                emitConstant(BOOL_VAL(true), line);
+            }
+            else
+            {
+                compileExpression(stmt->condition);
+            }
+
+            // Jump out of the loop if the condition is false.
+            exitJump = emitJump(OP_JUMP_IF_FALSE, line);
+            emitByte(OP_POP, line); // Pop Condition
+
+            compileStatement(stmt->body);
+
+            compileExpression(stmt->increment);
+
+            emitLoop(loopStart, line);
+
+            emitByte(OP_BLOCK_END, line);
+
+            if (exitJump != -1)
+            {
+                patchJump(exitJump);
+                emitByte(OP_POP, line); // Pop Condition
+            }
+
+            break;
+        }
+
 
         case SWITCH_STATEMENT:
             break;

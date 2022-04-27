@@ -459,7 +459,9 @@ static Stmt* forStatement()
         //patchJump(bodyJump);
     }
 
+    consume(TOKEN_LEFT_BRACE, "Expect '{' after for clauses.");
     Stmt* body = statement();
+    consume(TOKEN_RIGHT_BRACE, "Expect '} after for body.");
     //emitLoop(innermostLoopStart);
 
     //if (exitJump != -1)
