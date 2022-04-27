@@ -186,7 +186,7 @@ typedef struct
 {
     Stmt stmt;
 
-    Expr* declaration;
+    Stmt* declaration;
     Expr* condition;
     Expr* increment;
     Stmt* body;
@@ -237,7 +237,7 @@ ExpressionStmt* newExpressionStmt(Expr* expr, uint16_t line);
 BlockStmt* newBlockStmt(Node* statements, uint16_t line);
 IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch, uint16_t line);
 WhileStmt* newWhileStmt(Expr* condition, Stmt* body, uint16_t line);
-ForStmt* newForStmt(Expr* declaration, Expr* condition, Expr* increment, Stmt* body, uint16_t line);
+ForStmt* newForStmt(Stmt* declaration, Expr* condition, Expr* increment, Stmt* body, uint16_t line);
 SwitchStmt* newSwitchStmt(Node* caseConditions, Node* caseBodies, Stmt* defaultBranch, uint16_t line);
 VariableStmt* newVariableStmt(ObjString* name, Expr* initializer, uint16_t line);
 FunctionStmt* newFunctionStmt(ObjString* name, Stmt* body, Node* params, uint16_t line);

@@ -312,7 +312,7 @@ WhileStmt* newWhileStmt(Expr* condition, Stmt* body, uint16_t line)
     return stmt;
 }
 
-ForStmt* newForStmt(Expr* declaration, Expr* condition, Expr* increment, Stmt* body, uint16_t line)
+ForStmt* newForStmt(Stmt* declaration, Expr* condition, Expr* increment, Stmt* body, uint16_t line)
 {
     ForStmt* stmt = (ForStmt*) ALLOCATE_STATEMENT(ForStmt, FOR_STATEMENT, line);
 
