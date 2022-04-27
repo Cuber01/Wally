@@ -408,7 +408,6 @@ static Expr* and(Expr *canAssign, bool b)
 
 static Stmt* forStatement()
 {
-    // beginScope();
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
 
     // Initializer clause
@@ -426,54 +425,26 @@ static Stmt* forStatement()
         declaration = expressionStatement();
     }
 
-//    int surroundingLoopStart = innermostLoopStart;
-//    int surroundingLoopScopeDepth = innermostLoopDepth;
-//    innermostLoopStart = currentChunk()->count;
-//    innermostLoopDepth = current->scopeDepth;
-
-    // Condition clause
-    // int exitJump = -1;
     Expr* condition = NULL;
     if (!match(TOKEN_SEMICOLON))
     {
         condition = expression();
         consume(TOKEN_SEMICOLON, "Expect ';' after loop condition.");
-
-        // Jump out of the loop if the condition is false.
-        //exitJump = emitJump(OP_JUMP_IF_FALSE);
-        //emitByte(OP_POP); // Condition.
     }
 
     // Increment clause
     Expr* increment = NULL;
     if (!match(TOKEN_RIGHT_PAREN))
     {
-        //int bodyJump = emitJump(OP_JUMP);
-        //int incrementStart = currentChunk()->count;
         increment = expression();
-        //emitByte(OP_POP);
-        consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
 
-        //emitLoop(innermostLoopStart);
-        //innermostLoopStart = incrementStart;
-        //patchJump(bodyJump);
+        consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
     }
 
     consume(TOKEN_LEFT_BRACE, "Expect '{' after for clauses.");
     Stmt* body = statement();
     consume(TOKEN_RIGHT_BRACE, "Expect '} after for body.");
-    //emitLoop(innermostLoopStart);
 
-    //if (exitJump != -1)
-    //{
-    //    patchJump(exitJump);
-    //    emitByte(OP_POP); // Condition.
-    //}
-
-    //innermostLoopStart = surroundingLoopStart;
-    //innermostLoopDepth = surroundingLoopScopeDepth;
-
-    //endScope();
     return (Stmt*)newForStmt(declaration, condition, increment, body, parser.line);
 }
 
