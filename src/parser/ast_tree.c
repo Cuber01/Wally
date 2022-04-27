@@ -179,6 +179,28 @@ void freeStatement(Stmt* stmt)
             break;
         }
 
+        case FOR_STATEMENT:
+        {
+            ForStmt* statement = (ForStmt*) stmt;
+
+            if(statement->condition != NULL)
+            {
+                freeExpression(statement->condition);
+            }
+
+            if(statement->declaration != NULL)
+            {
+                freeExpression(statement->declaration);
+            }
+
+            if(statement->increment != NULL)
+            {
+                freeExpression(statement->increment);
+            }
+
+            freeStatement(statement->body);
+            break;
+        }
 
         case CONTINUE_STATEMENT:
         {
@@ -289,6 +311,19 @@ WhileStmt* newWhileStmt(Expr* condition, Stmt* body, uint16_t line)
 
     return stmt;
 }
+
+ForStmt* newForStmt(Expr* declaration, Expr* condition, Expr* increment, Stmt* body, uint16_t line)
+{
+    ForStmt* stmt = (ForStmt*) ALLOCATE_STATEMENT(ForStmt, FOR_STATEMENT, line);
+
+    stmt->declaration = declaration;
+    stmt->increment = increment;
+    stmt->condition = condition;
+    stmt->body = body;
+
+    return stmt;
+}
+
 
 IfStmt* newIfStmt(Expr* condition, Stmt* thenBranch, Stmt* elseBranch, uint16_t line)
 {
