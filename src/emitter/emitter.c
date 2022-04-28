@@ -269,9 +269,42 @@ static void compileExpression(Expr* expression)
             break;
         }
 
-
         case LOGICAL_EXPRESSION:
+        {
+            LogicalExpr* expr = (LogicalExpr*)expression;
+
+            switch (expr->operator)
+            {
+                case TOKEN_AND:
+                {
+                    compileExpression(expr->left);
+                    unsigned int endJump = emitJump(OP_JUMP_IF_FALSE, line);
+
+                    emitByte(OP_POP, line);
+                    compileExpression(expr->right);
+
+                    patchJump(endJump);
+                    break;
+                }
+
+                case TOKEN_OR:
+                {
+                    compileExpression(expr->left);
+                    unsigned int endJump = emitJump(OP_JUMP_IF_TRUE, line);
+
+                    emitByte(OP_POP, line);
+                    compileExpression(expr->right);
+
+                    patchJump(endJump);
+                    break;
+                }
+
+                default:
+                    printf("Reached unreachable");
+            }
+
             break;
+        }
 
     }
 }

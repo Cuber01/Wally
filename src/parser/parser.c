@@ -386,24 +386,13 @@ static Stmt* block()
     return (Stmt*)newBlockStmt(statements, parser.line);
 }
 
-static Expr * or(Expr *canAssign, bool b)
+static Expr* logical(Expr* previous)
 {
-//    int endJump = emitJump(OP_JUMP_IF_TRUE);
-//
-//    emitByte(OP_POP);
-//    parsePrecedence(PREC_OR);
-//
-//    patchJump(endJump);
-}
+    TokenType operatorType = parser.previous.type;
+    ParseRule* rule = getRule(operatorType);
+    Expr* right = parsePrecedence((Precedence)(rule->precedence + 1));
 
-static Expr* and(Expr *canAssign, bool b)
-{
-//    int endJump = emitJump(OP_JUMP_IF_FALSE);
-//
-//    emitByte(OP_POP);
-//    parsePrecedence(PREC_AND);
-//
-//    patchJump(endJump);
+    return (Expr*)newLogicalExpr(previous, operatorType, right, parser.line);
 }
 
 static Stmt* forStatement()
@@ -716,7 +705,7 @@ ParseRule rules[] =
         [TOKEN_DOLLAR]        = {interpolatedString,   NULL,   PREC_NONE},
         [TOKEN_STRING]        = {string,               NULL,   PREC_NONE},
         [TOKEN_NUMBER]        = {number,               NULL,   PREC_NONE},
-        [TOKEN_AND]           = {NULL,                 and,    PREC_AND},
+        [TOKEN_AND]           = {NULL,                 logical,PREC_AND},
         [TOKEN_CLASS]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_ELSE]          = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_QUESTION_MARK] = {NULL,                 ternary,PREC_TERNARY},
@@ -726,7 +715,7 @@ ParseRule rules[] =
         [TOKEN_FUNCTION]      = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_IF]            = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_NULL]          = {literal,              NULL,   PREC_NONE},
-        [TOKEN_OR]            = {NULL,                 or,     PREC_OR},
+        [TOKEN_OR]            = {NULL,                 logical,PREC_OR},
         [TOKEN_RETURN]        = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_SUPER]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_THIS]          = {NULL,                 NULL,   PREC_NONE},
