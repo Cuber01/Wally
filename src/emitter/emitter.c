@@ -101,6 +101,8 @@ static void emitReturn()
 }
 
 // endregion
+static void initCompiler(Compiler* compiler, ObjString* functionName, FunctionType type);
+static ObjFunction* endCompiler();
 
 static void compileExpression(Expr* expression)
 {
@@ -449,13 +451,14 @@ static void compileStatement(Stmt* statement)
         {
             FunctionStmt* stmt = (FunctionStmt*) statement;
 
+            // todo begin scope for arguments
             Compiler compiler;
-            //initCompiler(&compiler, type);
+            initCompiler(&compiler, stmt->name, TYPE_FUNCTION);
 
             compileStatement(stmt->body);
 
-            //ObjFunction* function = endCompiler();
-            //emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)));
+            ObjFunction* function = endCompiler();
+            emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)), line);
 
             break;
         }
@@ -474,15 +477,23 @@ static void compileStatement(Stmt* statement)
 
 // region MAIN
 
-static void initCompiler(Compiler* compiler, FunctionType type)
+static void initCompiler(Compiler* compiler, ObjString* functionName, FunctionType type)
 {
     compiler->function = NULL;
     compiler->type = type;
     compiler->enclosing = (struct Compiler*) current;
+
     current = compiler;
+
     compiler->function = newFunction();
 
-    initChunk(current->chunk);
+    if(functionName != NULL)
+    {
+        current->function->name = copyString(functionName->chars,
+                                             functionName->length);
+    }
+
+    initChunk(&compiler->function->chunk);
 }
 
 static ObjFunction* endCompiler()
@@ -499,14 +510,14 @@ static ObjFunction* endCompiler()
     }
     #endif
 
-    current = (Compiler*) current->enclosing; // todo
+    current = (Compiler*) current->enclosing;
     return function;
 }
 
 ObjFunction* emit(Node* statements)
 {
     Compiler compiler;
-    initCompiler(&compiler, TYPE_SCRIPT);
+    initCompiler(&compiler, NULL, TYPE_SCRIPT);
 
     Node* stmt = statements;
     Node* root = stmt;

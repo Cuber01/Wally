@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdarg.h>
-#include <time.h>
 
 #include "common.h"
 #include "vm.h"

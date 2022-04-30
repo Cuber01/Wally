@@ -90,8 +90,8 @@ ObjString* copyString(const char* chars, unsigned int length)
 
 static void printFunction(ObjFunction* function)
 {
-
-    if (function->name == NULL) {
+    if (function->name == NULL)
+    {
         printf("<script>");
         return;
     }
