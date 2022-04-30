@@ -590,11 +590,8 @@ static Stmt* functionDeclaration()
 
     do
     {
-
+        // TODO parse params
     } while(!match(TOKEN_LEFT_PAREN));
-
-
-    consume(TOKEN_LEFT_BRACE, "Expect '{' after ')' in function.");
 
     Stmt* body = block();
 

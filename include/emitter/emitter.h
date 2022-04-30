@@ -4,11 +4,20 @@
 #ifndef WALLY_EMITTER_H
 #define WALLY_EMITTER_H
 
+typedef enum
+{
+    TYPE_FUNCTION,
+    TYPE_SCRIPT
+} FunctionType;
+
 typedef struct {
+    ObjFunction* function;
+    FunctionType type;
+
     struct Compiler* enclosing;
     Chunk* chunk;
 } Compiler;
 
-Chunk* emit(Node* statements);
+ObjFunction* emit(Node* statements);
 
 #endif //WALLY_EMITTER_H

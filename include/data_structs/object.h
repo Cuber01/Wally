@@ -52,6 +52,13 @@ struct ObjString {
     uint32_t hash; // Used in hashtables
 };
 
+typedef struct {
+    Obj obj;
+
+    int arity;
+    Chunk chunk;
+    ObjString* name;
+} ObjFunction;
 
 typedef struct {
     Obj obj;
@@ -70,5 +77,7 @@ void printObject(Value value);
 ObjString* objectToString(Value value);
 
 ObjNative* newNative(NativeFn function);
+ObjFunction* newFunction();
+
 
 #endif //WALLY_OBJECT_H

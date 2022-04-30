@@ -174,7 +174,7 @@ static int run()
     #define READ_SHORT() \
         (vm.ip += 2, (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]))
 
-    #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
+    #define READ_CONSTANT() (vm.function->chunk.constants.values[READ_BYTE()])
     #define BINARY_OP(valueType, op) \
         do { \
             if (!IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1))) \
@@ -193,8 +193,8 @@ static int run()
     for (;;)
     {
         #ifdef DEBUG_TRACE_EXECUTION
-        disassembleInstruction(vm.chunk,
-        (int)(vm.ip - vm.chunk->code));
+        disassembleInstruction(&vm.function->chunk,
+        (int)(vm.ip - vm.function->chunk.code));
 
         // Print the whole stack
         printf("        |  ");
@@ -451,7 +451,7 @@ static int run()
 //                    {
 //                        return INTERPRET_OK;
 //                    }
-//
+//r
 //                }
 //
 //                vm.stackTop = frame->slots;
@@ -476,8 +476,13 @@ int interpret(const char* source)
     Node* statements = compile(source);
     if (statements == NULL) return INTERPRET_COMPILE_ERROR;
 
-    vm.chunk = emit(statements);
-    vm.ip = vm.chunk->code;
+    ObjFunction* function = emit(statements);
+    if (function == NULL) return INTERPRET_COMPILE_ERROR;
+
+    push(OBJ_VAL(function));
+
+    vm.function = function;
+    vm.ip = vm.function->chunk.code;
 
     return run();
 }

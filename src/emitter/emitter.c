@@ -22,7 +22,7 @@ static void error(const char* message)
 
 static Chunk* currentChunk()
 {
-    return current->chunk;
+    return &current->function->chunk;
 }
 
 static void emitByte(uint8_t byte, uint16_t line)
@@ -445,14 +445,27 @@ static void compileStatement(Stmt* statement)
             break;
         }
 
+        case FUNCTION_STATEMENT:
+        {
+            FunctionStmt* stmt = (FunctionStmt*) statement;
+
+            Compiler compiler;
+            //initCompiler(&compiler, type);
+
+            compileStatement(stmt->body);
+
+            //ObjFunction* function = endCompiler();
+            //emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)));
+
+            break;
+        }
+
 
         case SWITCH_STATEMENT:
             break;
         case CONTINUE_STATEMENT:
             break;
         case BREAK_STATEMENT:
-            break;
-        case FUNCTION_STATEMENT:
             break;
         case RETURN_STATEMENT:
             break;
@@ -461,34 +474,39 @@ static void compileStatement(Stmt* statement)
 
 // region MAIN
 
-static void initCompiler(Compiler* compiler)
+static void initCompiler(Compiler* compiler, FunctionType type)
 {
+    compiler->function = NULL;
+    compiler->type = type;
     compiler->enclosing = (struct Compiler*) current;
     current = compiler;
+    compiler->function = newFunction();
+
     initChunk(current->chunk);
 }
 
-static Chunk* endCompiler()
+static ObjFunction* endCompiler()
 {
     emitReturn();
     Chunk* chunk = current->chunk;
+    ObjFunction* function = current->function;
 
     #ifdef DEBUG_PRINT_BYTECODE
     if (!hadError)
     {
-        disassembleChunk(currentChunk(), "<script>");
+        disassembleChunk(currentChunk(), function->name != NULL
+                                         ? function->name->chars : "<script>");
     }
     #endif
 
     current = (Compiler*) current->enclosing; // todo
-    return chunk;
+    return function;
 }
 
-
-Chunk* emit(Node* statements)
+ObjFunction* emit(Node* statements)
 {
     Compiler compiler;
-    initCompiler(&compiler);
+    initCompiler(&compiler, TYPE_SCRIPT);
 
     Node* stmt = statements;
     Node* root = stmt;
@@ -501,6 +519,6 @@ Chunk* emit(Node* statements)
 
     freeList(root);
 
-    Chunk* chunk = endCompiler();
-    return hadError ? NULL : chunk;
+    ObjFunction* function = endCompiler();
+    return hadError ? NULL : function;
 }
