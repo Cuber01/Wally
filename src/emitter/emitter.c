@@ -95,14 +95,14 @@ static void emitMultiplePop(int amount, uint16_t line)
     emitByte(OP_POP_N, line);
 }
 
-static void emitReturn()
+static void emitReturn(uint16_t line)
 {
-    emitByte(OP_RETURN, 999);
+    emitByte(OP_RETURN, line);
 }
 
 // endregion
 static void initCompiler(Compiler* compiler, ObjString* functionName, FunctionType type);
-static ObjFunction* endCompiler();
+static ObjFunction* endCompiler(uint16_t line);
 
 static void compileExpression(Expr* expression)
 {
@@ -316,11 +316,11 @@ static void compileExpressionStatement(ExpressionStmt* statement)
     compileExpression(statement->expr);
 }
 
-static void compileStatement(Stmt* statement)
+static uint16_t compileStatement(Stmt* statement)
 {
     if(statement == NULL)
     {
-        return;
+        return 0;
     }
 
     uint16_t line = statement->line;
@@ -457,7 +457,7 @@ static void compileStatement(Stmt* statement)
 
             compileStatement(stmt->body);
 
-            ObjFunction* function = endCompiler();
+            ObjFunction* function = endCompiler(line);
             emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)), line);
 
             break;
@@ -473,6 +473,8 @@ static void compileStatement(Stmt* statement)
         case RETURN_STATEMENT:
             break;
     }
+
+    return line;
 }
 
 // region MAIN
@@ -496,9 +498,9 @@ static void initCompiler(Compiler* compiler, ObjString* functionName, FunctionTy
     initChunk(&compiler->function->chunk);
 }
 
-static ObjFunction* endCompiler()
+static ObjFunction* endCompiler(uint16_t line)
 {
-    emitReturn();
+    emitReturn(line);
     Chunk* chunk = current->chunk;
     ObjFunction* function = current->function;
 
@@ -522,14 +524,15 @@ ObjFunction* emit(Node* statements)
     Node* stmt = statements;
     Node* root = stmt;
 
+    uint16_t lastLine = 0;
     while (stmt != NULL)
     {
-        compileStatement(AS_STATEMENT(stmt));
+        lastLine = compileStatement(AS_STATEMENT(stmt));
         stmt = stmt->next;
     }
 
     freeList(root);
 
-    ObjFunction* function = endCompiler();
+    ObjFunction* function = endCompiler(lastLine);
     return hadError ? NULL : function;
 }
