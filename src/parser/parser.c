@@ -377,12 +377,13 @@ static Stmt* expressionStatement()
 static Stmt* block()
 {
     Node* statements = NULL;
-    while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
+    consume(TOKEN_LEFT_BRACE, "Expect '{' at the start of block statement.");
+
+    while (!match(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
     {
         listAdd(&statements, NODE_STATEMENT_VALUE(declaration()));
     }
 
-    consume(TOKEN_RIGHT_BRACE, "Expect '}' after block.");
     return (Stmt*)newBlockStmt(statements, parser.line);
 }
 
@@ -591,7 +592,7 @@ static Stmt* functionDeclaration()
     do
     {
         // TODO parse params
-    } while(!match(TOKEN_LEFT_PAREN));
+    } while(!match(TOKEN_RIGHT_PAREN));
 
     Stmt* body = block();
 

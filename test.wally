@@ -1,1 +1,4 @@
-print(true && false);
+function hello()
+{
+    print("Hello World!");
+}
