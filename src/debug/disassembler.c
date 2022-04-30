@@ -136,6 +136,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_BLOCK_END", offset);
         case OP_CALL:
             return simpleInstruction("OP_CALL", offset);
+        case OP_DEFINE_FUNCTION:
+            return simpleInstruction("OP_DEFINE_FUNCTION", offset);
 
 
         case OP_JUMP:

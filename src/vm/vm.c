@@ -340,6 +340,15 @@ static int run()
                 break;
             }
 
+            case OP_DEFINE_FUNCTION:
+            {
+                ObjFunction* function = AS_FUNCTION(pop());
+
+                environmentDefine(vm.currentEnvironment, function->name, OBJ_VAL(function->name));
+
+                break;
+            }
+
             case OP_BLOCK_START:
             {
                 Environment* enclosing = vm.currentEnvironment;

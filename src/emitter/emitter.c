@@ -459,6 +459,7 @@ static uint16_t compileStatement(Stmt* statement)
 
             ObjFunction* function = endCompiler(line);
             emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)), line);
+            emitByte(OP_DEFINE_FUNCTION, line);
 
             break;
         }

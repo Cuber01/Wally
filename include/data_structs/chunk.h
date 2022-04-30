@@ -47,7 +47,7 @@ typedef enum {
     // Functions
     OP_CALL,
     OP_RETURN,
-    OP_CLOSURE,
+    OP_DEFINE_FUNCTION,
 
     // Misc
     OP_POP,
