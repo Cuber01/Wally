@@ -482,9 +482,9 @@ static uint16_t compileStatement(Stmt* statement)
 
 static void initCompiler(Compiler* compiler, ObjString* functionName, FunctionType type)
 {
+    compiler->enclosing = (struct Compiler*) current;
     compiler->function = NULL;
     compiler->type = type;
-    compiler->enclosing = (struct Compiler*) current;
 
     current = compiler;
 

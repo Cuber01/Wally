@@ -1,1 +1,6 @@
-1;
+function helloWorld()
+{
+    print("Help me");
+}
+
+helloWorld();

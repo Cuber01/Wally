@@ -122,7 +122,8 @@ static bool call(ObjFunction* function, int argCount)
     // CallFrame* frame = &vm.frames[vm.frameCount++];
 
     // frame->closure = closure;
-    vm.ip = function->chunk.code; // todo +1
+    vm.ip = function->chunk.code;
+    vm.currentFunction = function;
     // set vm function?
 
     // frame->slots = vm.stackTop - argCount - 1;
@@ -175,7 +176,7 @@ static int run()
     #define READ_SHORT() \
         (vm.ip += 2, (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]))
 
-    #define READ_CONSTANT() (vm.function->chunk.constants.values[READ_BYTE()])
+    #define READ_CONSTANT() (vm.currentFunction->chunk.constants.values[READ_BYTE()])
     #define BINARY_OP(valueType, op) \
         do { \
             if (!IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1))) \
@@ -194,8 +195,8 @@ static int run()
     for (;;)
     {
         #ifdef DEBUG_TRACE_EXECUTION
-        disassembleInstruction(&vm.function->chunk,
-        (int)(vm.ip - vm.function->chunk.code));
+        disassembleInstruction(&vm.currentFunction->chunk,
+        (int)(vm.ip - vm.currentFunction->chunk.code));
 
         // Print the whole stack
         printf("        |  ");
@@ -498,7 +499,7 @@ int interpret(const char* source)
 
     push(OBJ_VAL(function));
 
-    vm.function = function;
+    vm.currentFunction = function;
     call(function, 0);
 
     return run();
