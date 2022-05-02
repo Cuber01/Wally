@@ -3,7 +3,7 @@
 #include "object.h"
 #include "list.h"
 
-typedef struct Node Node; // todo
+typedef struct Node Node;
 
 typedef enum {
     BINARY_EXPRESSION,

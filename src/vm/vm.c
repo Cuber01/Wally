@@ -105,38 +105,39 @@ static void concatenate()
     push(OBJ_VAL(result));
 }
 
-static bool call(int argCount)
+static bool call(ObjFunction* function, int argCount)
 {
 //    if (argCount != closure->function->arity)
 //    {
 //        runtimeError("Expected %d arguments but got %d.", closure->function->arity, argCount);
 //        return false;
 //    }
-//
+
 //    if (vm.frameCount == FRAMES_MAX)
 //    {
 //        runtimeError("Stack overflow.");
 //        return false;
 //    }
-//
-//    CallFrame* frame = &vm.frames[vm.frameCount++];
-//
-//    frame->closure = closure;
-//    frame->ip = closure->function->chunk.code;
-//    frame->slots = vm.stackTop - argCount - 1;
-//
-//    return true;
+
+    // CallFrame* frame = &vm.frames[vm.frameCount++];
+
+    // frame->closure = closure;
+    vm.ip = function->chunk.code; // todo +1
+    // set vm function?
+
+    // frame->slots = vm.stackTop - argCount - 1;
+
+    return true;
 }
 
 static bool callValue(Value callee, int argCount)
 {
     if (IS_OBJ(callee))
     {
-
         switch (OBJ_TYPE(callee))
         {
-//            case OBJ_CLOSURE:
-//                return call(AS_CLOSURE(callee), argCount);
+            case OBJ_FUNCTION:
+                return call(AS_FUNCTION(callee), argCount);
 
             case OBJ_NATIVE:
             {
@@ -146,6 +147,7 @@ static bool callValue(Value callee, int argCount)
                 push(result);
                 return true;
             }
+
             default:
                 break; // Non-callable object type.
         }
@@ -344,7 +346,7 @@ static int run()
             {
                 ObjFunction* function = AS_FUNCTION(pop());
 
-                environmentDefine(vm.currentEnvironment, function->name, OBJ_VAL(function->name));
+                environmentDefine(vm.currentEnvironment, function->name, OBJ_VAL(function));
 
                 break;
             }
@@ -431,11 +433,18 @@ static int run()
                     {
                         args[i] = value;
                     }
-
                 }
 
-                // todo if this is uncommented the release build doesn't work
-                print(args);
+                Value function;
+
+                if(!environmentGet(vm.currentEnvironment, name, &function))
+                {
+                    print(args); // todo if this is uncommented the release build doesn't work
+                }
+                else
+                {
+                    callValue(function, argCount);
+                }
 
                 break;
             }
@@ -490,7 +499,7 @@ int interpret(const char* source)
     push(OBJ_VAL(function));
 
     vm.function = function;
-    vm.ip = vm.function->chunk.code;
+    call(function, 0);
 
     return run();
 }

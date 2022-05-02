@@ -1,8 +1,6 @@
 #include "memory.h"
 #include "chunk.h"
 
-
-
 void initChunk(Chunk* chunk)
 {
     chunk->codeCount = 0;
@@ -38,8 +36,6 @@ void writeChunk(Chunk* chunk, uint8_t byte, unsigned int line)
     chunk->lines[chunk->lineCount] = line;
     chunk->lineCount++;
 }
-
-
 
 void freeChunk(Chunk* chunk)
 {

@@ -16,7 +16,6 @@ typedef struct {
     FunctionType type;
 
     struct Compiler* enclosing;
-    Chunk* chunk;
 } Compiler;
 
 ObjFunction* emit(Node* statements);

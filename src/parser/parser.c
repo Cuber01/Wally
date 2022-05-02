@@ -515,42 +515,83 @@ static Stmt* returnStatement()
 
 static Stmt* switchStatement()
 {
-//    consume(TOKEN_LEFT_PAREN, "Expect '(' after 'switch'.");
-//    expression();
-//    consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
-//    consume(TOKEN_LEFT_BRACE, "Expect '{' after ')'.");
-//
-//    for(;;)
-//    {
-//        if(match(TOKEN_CASE))
-//        {
-//            expression();
-//            emitByte(OP_SWITCH_EQUAL);
-//
-//            int thenJump = emitJump(OP_JUMP_IF_FALSE);
-//
-//            consume(TOKEN_COLON, "Expect ':' after expression.");
-//
-//            statement();
-//
-//            patchJump(thenJump);
-//            emitByte(OP_POP);
-//        }
-//        else if (match(TOKEN_DEFAULT))
-//        {
-//            consume(TOKEN_COLON, "Expect ':' after 'default'.");
-//
-//            statement();
-//        }
-//        else
-//        {
-//            break;
-//        }
-//    }
-//
-//    emitByte(OP_POP);
-//    consume(TOKEN_RIGHT_BRACE, "Expect '}' at the end of switch statement.");
+    consume(TOKEN_LEFT_PAREN, "Expect '(' after 'switch'.");
+    Expr* value = expression();
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
+
+    consume(TOKEN_LEFT_BRACE, "Expect '{' after ')'.");
+
+    Stmt* defaultCase = NULL;
+    Node* caseConditions = NULL;
+    Node* caseBodies = NULL;
+
+    for(;;)
+    {
+        if(match(TOKEN_CASE))
+        {
+            listAdd(&caseConditions, NODE_EXPRESSION_VALUE(expression()));
+
+            consume(TOKEN_COLON, "Expect ':' after expression.");
+
+            listAdd(&caseBodies, NODE_STATEMENT_VALUE(statement()));
+        }
+        else if (match(TOKEN_DEFAULT))
+        {
+            consume(TOKEN_COLON, "Expect ':' after 'default'.");
+
+            defaultCase = statement();
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    consume(TOKEN_RIGHT_BRACE, "Expect '}' at the end of switch statement.");
+
+    return (Stmt*)newSwitchStmt(caseConditions, caseBodies, defaultCase, parser.line);
 }
+
+/*
+ *
+ *   consume(TOKEN_LEFT_PAREN, "Expect '(' after 'switch'.");
+    expression();
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
+    consume(TOKEN_LEFT_BRACE, "Expect '{' after ')'.");
+
+    for(;;)
+    {
+        if(match(TOKEN_CASE))
+        {
+            expression();
+            emitByte(OP_SWITCH_EQUAL);
+
+            int thenJump = emitJump(OP_JUMP_IF_FALSE);
+
+            consume(TOKEN_COLON, "Expect ':' after expression.");
+
+            statement();
+
+            patchJump(thenJump);
+            emitByte(OP_POP);
+        }
+        else if (match(TOKEN_DEFAULT))
+        {
+            consume(TOKEN_COLON, "Expect ':' after 'default'.");
+
+            statement();
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    emitByte(OP_POP);
+    consume(TOKEN_RIGHT_BRACE, "Expect '}' at the end of switch statement.");
+}
+ *
+ */
 
 static Stmt* statement()
 {

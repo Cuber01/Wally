@@ -258,11 +258,11 @@ static void compileExpression(Expr* expression)
 
             Node* node = expr->args;
 
-            do
+            while(node != NULL)
             {
                 compileExpression(node->value.as.expression);
                 node = node->next;
-            } while(node != NULL);
+            }
 
             emitConstant(NUMBER_VAL(expr->argCount), line);
             emitConstant(OBJ_VAL(expr->callee), line);
@@ -495,14 +495,11 @@ static void initCompiler(Compiler* compiler, ObjString* functionName, FunctionTy
         current->function->name = copyString(functionName->chars,
                                              functionName->length);
     }
-
-    initChunk(&compiler->function->chunk);
 }
 
 static ObjFunction* endCompiler(uint16_t line)
 {
     emitReturn(line);
-    Chunk* chunk = current->chunk;
     ObjFunction* function = current->function;
 
     #ifdef DEBUG_PRINT_BYTECODE
