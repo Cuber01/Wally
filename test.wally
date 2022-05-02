@@ -1,6 +1,6 @@
-function helloWorld()
+function helloWorld(hey)
 {
-    print("Help me");
+    print(hey);
 }
 
-helloWorld();
+helloWorld("Hello!");

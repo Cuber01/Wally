@@ -15,13 +15,9 @@
 #include "token_printer.h"
 #endif
 
-
 Parser parser;
 
 ParseRule rules[];
-
-int innermostLoopStart = -1;
-int innermostLoopDepth = 0;
 
 // region ERROR
 
@@ -630,14 +626,43 @@ static Stmt* functionDeclaration()
 
     consume(TOKEN_LEFT_PAREN, "Expect '(' after function name.");
 
-    do
+    // Params
+    ObjString* * params;
+    *params = NULL;
+    uint16_t paramCount = 0;
+
+
+    if(!match(TOKEN_RIGHT_PAREN))
     {
-        // TODO parse params
-    } while(!match(TOKEN_RIGHT_PAREN));
+        while(true)
+        {
+            if (*params == NULL)
+            {
+                *params = parseVariableName("Expect parameter name.");
+            }
+            else
+            {
+                params[paramCount] = parseVariableName("Expect parameter name.");
+            }
 
-    Stmt* body = block();
+            paramCount++;
 
-    return (Stmt*)newFunctionStmt(name, body, NULL, parser.line);
+            if(match(TOKEN_RIGHT_PAREN)) break;
+
+            consume(TOKEN_COMMA, "Expect ',' after parameter in function.");
+        }
+    }
+
+    // Body, can't be handled with 'block' because we need to emit scope start at custom locations
+    Node* body = NULL;
+    consume(TOKEN_LEFT_BRACE, "Expect '{' at the start of function body.");
+
+    while (!match(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
+    {
+        listAdd(&body, NODE_STATEMENT_VALUE(declaration()));
+    }
+
+    return (Stmt*)newFunctionStmt(name, body, params, paramCount, parser.line);
 }
 
 static Stmt* varDeclaration()

@@ -101,7 +101,7 @@ static void emitReturn(uint16_t line)
 }
 
 // endregion
-static void initCompiler(Compiler* compiler, ObjString* functionName, FunctionType type);
+static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t functionArity, FunctionType type);
 static ObjFunction* endCompiler(uint16_t line);
 
 static void compileExpression(Expr* expression)
@@ -316,6 +316,13 @@ static void compileExpressionStatement(ExpressionStmt* statement)
     compileExpression(statement->expr);
 }
 
+static void compileVariable(ObjString* name, Expr* initializer, uint16_t line)
+{
+    emitConstant(OBJ_VAL(name), line);
+    compileExpression(initializer);
+    emitByte(OP_DEFINE_VARIABLE, line);
+}
+
 static uint16_t compileStatement(Stmt* statement)
 {
     if(statement == NULL)
@@ -378,9 +385,7 @@ static uint16_t compileStatement(Stmt* statement)
         {
             VariableStmt* stmt = (VariableStmt*) statement;
 
-            emitConstant(OBJ_VAL(stmt->name), line);
-            compileExpression(stmt->initializer);
-            emitByte(OP_DEFINE_VARIABLE, line);
+            compileVariable(stmt->name, stmt->initializer, line);
 
             break;
         }
@@ -451,19 +456,39 @@ static uint16_t compileStatement(Stmt* statement)
         {
             FunctionStmt* stmt = (FunctionStmt*) statement;
 
-            // todo begin scope for arguments
             Compiler compiler;
-            initCompiler(&compiler, stmt->name, TYPE_FUNCTION);
+            initCompiler(&compiler, stmt->name, stmt->paramCount, TYPE_FUNCTION);
 
-            compileStatement(stmt->body);
+            emitByte(OP_BLOCK_START, line);
+
+            // Params
+            ObjString** params = stmt->params;
+
+            while (*params != NULL)
+            {
+                compileVariable(*params, NULL, line);
+                params++;
+            }
+
+            // Body
+            Node* body = stmt->body;
+
+            while (body != NULL)
+            {
+                compileStatement(AS_STATEMENT(body));
+                body = body->next;
+            }
+
+            emitByte(OP_BLOCK_END, line);
 
             ObjFunction* function = endCompiler(line);
+
+            // Function definition data
             emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)), line);
             emitByte(OP_DEFINE_FUNCTION, line);
 
             break;
         }
-
 
         case SWITCH_STATEMENT:
             break;
@@ -480,7 +505,7 @@ static uint16_t compileStatement(Stmt* statement)
 
 // region MAIN
 
-static void initCompiler(Compiler* compiler, ObjString* functionName, FunctionType type)
+static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t functionArity, FunctionType type)
 {
     compiler->enclosing = (struct Compiler*) current;
     compiler->function = NULL;
@@ -489,6 +514,7 @@ static void initCompiler(Compiler* compiler, ObjString* functionName, FunctionTy
     current = compiler;
 
     compiler->function = newFunction();
+    compiler->function->arity = functionArity;
 
     if(functionName != NULL)
     {
@@ -517,7 +543,7 @@ static ObjFunction* endCompiler(uint16_t line)
 ObjFunction* emit(Node* statements)
 {
     Compiler compiler;
-    initCompiler(&compiler, NULL, TYPE_SCRIPT);
+    initCompiler(&compiler, NULL, 0, TYPE_SCRIPT);
 
     Node* stmt = statements;
     Node* root = stmt;

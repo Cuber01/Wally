@@ -107,26 +107,14 @@ static void concatenate()
 
 static bool call(ObjFunction* function, int argCount)
 {
-//    if (argCount != closure->function->arity)
-//    {
-//        runtimeError("Expected %d arguments but got %d.", closure->function->arity, argCount);
-//        return false;
-//    }
-
-//    if (vm.frameCount == FRAMES_MAX)
-//    {
-//        runtimeError("Stack overflow.");
-//        return false;
-//    }
-
-    // CallFrame* frame = &vm.frames[vm.frameCount++];
-
-    // frame->closure = closure;
     vm.ip = function->chunk.code;
     vm.currentFunction = function;
-    // set vm function?
 
-    // frame->slots = vm.stackTop - argCount - 1;
+    if(argCount != function->arity)
+    {
+        runtimeError("Expected %d arguments but got %d.", function->arity, argCount);
+        return false;
+    }
 
     return true;
 }
@@ -440,7 +428,7 @@ static int run()
 
                 if(!environmentGet(vm.currentEnvironment, name, &function))
                 {
-                    print(args); // todo if this is uncommented the release build doesn't work
+                    print(args);
                 }
                 else
                 {

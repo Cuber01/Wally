@@ -269,13 +269,14 @@ ReturnStmt* newReturnStmt(Expr* value, uint16_t line)
     return stmt;
 }
 
-FunctionStmt* newFunctionStmt(ObjString* name, Stmt* body, Node* params, uint16_t line)
+FunctionStmt* newFunctionStmt(ObjString* name, Node* body, ObjString** params, uint16_t paramCount, uint16_t line)
 {
     FunctionStmt* stmt = (FunctionStmt*) ALLOCATE_STATEMENT(FunctionStmt, FUNCTION_STATEMENT, line);
 
     stmt->name = name;
     stmt->body = body;
     stmt->params = params;
+    stmt->paramCount = paramCount;
 
     return stmt;
 }

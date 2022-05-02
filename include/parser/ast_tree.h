@@ -197,8 +197,10 @@ typedef struct
     Stmt stmt;
 
     ObjString* name;
-    Node* params;
-    Stmt* body;
+    Node* body;
+
+    ObjString** params;
+    uint16_t paramCount;
 
 } FunctionStmt;
 
@@ -240,7 +242,7 @@ WhileStmt* newWhileStmt(Expr* condition, Stmt* body, uint16_t line);
 ForStmt* newForStmt(Stmt* declaration, Expr* condition, Expr* increment, Stmt* body, uint16_t line);
 SwitchStmt* newSwitchStmt(Node* caseConditions, Node* caseBodies, Stmt* defaultBranch, uint16_t line);
 VariableStmt* newVariableStmt(ObjString* name, Expr* initializer, uint16_t line);
-FunctionStmt* newFunctionStmt(ObjString* name, Stmt* body, Node* params, uint16_t line);
+FunctionStmt* newFunctionStmt(ObjString* name, Node* body, ObjString** params, uint16_t paramCount, uint16_t line);
 ReturnStmt* newReturnStmt(Expr* value, uint16_t line);
 BreakStmt* newBreakStmt(uint16_t line);
 ContinueStmt* newContinueStmt(uint16_t line);
