@@ -74,15 +74,6 @@ static void repl()
 int main(int argc, const char* argv[])
 {
 
-//    Node* root = newNode((NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(1))});
-//    listAdd(root, (NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(2))});
-//    listAdd(root, (NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(3))});
-//    printf("%f %f %f", AS_NUMBER(((LiteralExpr*)listGet(root, 0).as.expression)->value), AS_NUMBER(((LiteralExpr*)listGet(root, 1).as.expression)->value),
-//           AS_NUMBER(((LiteralExpr*)listGet(root, 2).as.expression)->value) );
-//    listWriteValue(root, 0, (NodeValue){.as.expression = (Expr*)newLiteralExpr(NUMBER_VAL(3))});
-//    printf(" %f", AS_NUMBER(((LiteralExpr*)listGet(root, 0).as.expression)->value));
-//    freeList(root);
-
     initVM();
 
     if (argc == 1)
