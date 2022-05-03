@@ -1,5 +1,6 @@
 function helloWorld()
 {
+    return 9;
     print("Hello World!");
 }
 

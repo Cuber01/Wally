@@ -503,6 +503,7 @@ static Stmt* returnStatement()
     if (!match(TOKEN_SEMICOLON))
     {
         returnValue = expression();
+        consume(TOKEN_SEMICOLON, "Expect ';' after return value.");
     }
 
     return (Stmt*)newReturnStmt(returnValue, parser.line);

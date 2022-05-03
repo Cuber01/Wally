@@ -499,6 +499,11 @@ static uint16_t compileStatement(Stmt* statement)
 
         case RETURN_STATEMENT:
         {
+            if (current->type == TYPE_SCRIPT)
+            {
+                error("Can't return from top-level code.");
+            }
+
             ReturnStmt* stmt = (ReturnStmt*) statement;
 
             compileExpression(stmt->value);
