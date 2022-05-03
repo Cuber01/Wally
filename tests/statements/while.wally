@@ -2,7 +2,7 @@ var i = 0;
 
 while(i < 5)
 {
-    print i;
+    print(i);
     i = i + 1;
 }
 
@@ -21,7 +21,7 @@ while(n < 5)
 
     while(i < 5)
     {
-        print i;
+        print(i);
         i = i + 1;
         continue;
 

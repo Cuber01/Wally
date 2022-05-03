@@ -1,6 +1,10 @@
-function ala(param)
+function betterDoublePrintUltraDeluxe(first, second)
 {
-    print param;
+    print(first);
+    print(second);
 }
 
-ala("hello"); // Expect: hello
+betterDoublePrintUltraDeluxe("Hello ", "World!");
+
+// Expect: Hello
+// Expect: World!

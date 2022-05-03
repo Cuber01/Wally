@@ -1,1 +1,6 @@
-var a = 2;
+function areWeHavingItYet()
+{
+    print("Yes we are!");
+}
+
+areWeHavingItYet();

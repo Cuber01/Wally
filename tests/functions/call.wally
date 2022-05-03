@@ -1,5 +1,6 @@
-function areWeHavingItYet() {
- print "Yes we are!";
+function areWeHavingItYet()
+{
+    print("Yes we are!");
 }
 
 areWeHavingItYet();

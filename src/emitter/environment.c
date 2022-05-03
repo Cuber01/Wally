@@ -49,7 +49,7 @@ bool environmentGet(Environment* env, ObjString* name, Value* result)
             return environmentGet(env->enclosing, name, result);
         }
 
-        nativeError("Tried to get value of %s, but it doesn't exist.", name->chars);
+        //nativeError("Tried to get value of %s, but it doesn't exist.", name->chars);
         return false;
     }
 

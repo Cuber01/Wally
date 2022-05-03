@@ -352,7 +352,7 @@ static ObjString* parseVariableName(const char* errorMessage)
 
 static Expr* call(Expr* previous)
 {
-    uint16_t argCount;
+    uint16_t argCount = 0;
     Node* args = argumentList(&argCount);
     return (Expr*) newCallExpr(((VarExpr*)previous)->name, argCount, args, parser.line);
 }
@@ -374,7 +374,6 @@ static Stmt* expressionStatement()
 static Stmt* block()
 {
     Node* statements = NULL;
-    consume(TOKEN_LEFT_BRACE, "Expect '{' at the start of block statement.");
 
     while (!match(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
     {

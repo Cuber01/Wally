@@ -3,10 +3,10 @@ var b = 3;
 
 if(a == 3)
 {
-    print "bad";
+    print("bad");
 }
 else if (b == 3)
 {
-    print "good"; // Expect: good
+    print("good"); // Expect: good
 }
 

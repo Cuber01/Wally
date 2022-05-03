@@ -1,10 +1,10 @@
 switch(true)
 {
 
-    case true: print "good";
-    case false: print "bad";
-    case true: print "good";
-    default: print "good";
+    case true:  print("good");
+    case false: print("bad");
+    case true:  print("good");
+    default:    print("good");
 
 }
 
