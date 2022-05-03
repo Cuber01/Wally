@@ -446,10 +446,12 @@ static uint16_t compileStatement(Stmt* statement)
 
             emitByte(OP_SCOPE_END, line);
 
+            // Jump out of the loop
             if (exitJump != -1)
             {
                 patchJump(exitJump);
-                emitByte(OP_POP, line); // Pop Condition
+                emitByte(OP_SCOPE_END, line);
+                emitByte(OP_POP, line);
             }
 
             break;
