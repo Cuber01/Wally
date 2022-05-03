@@ -498,16 +498,14 @@ static Stmt* ifStatement()
 
 static Stmt* returnStatement()
 {
-//    if (match(TOKEN_SEMICOLON))
-//    {
-//        emitReturn();
-//    }
-//    else
-//    {
-//        expression();
-//        consume(TOKEN_SEMICOLON, "Expect ';' after return value.");
-//        emitByte(OP_RETURN);
-//    }
+    Expr* returnValue = NULL;
+
+    if (!match(TOKEN_SEMICOLON))
+    {
+        returnValue = expression();
+    }
+
+    return (Stmt*)newReturnStmt(returnValue, parser.line);
 }
 
 static Stmt* switchStatement()

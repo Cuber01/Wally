@@ -497,13 +497,21 @@ static uint16_t compileStatement(Stmt* statement)
             break;
         }
 
+        case RETURN_STATEMENT:
+        {
+            ReturnStmt* stmt = (ReturnStmt*) statement;
+
+            compileExpression(stmt->value);
+            emitByte(OP_RETURN, line);
+
+            break;
+        }
+
         case SWITCH_STATEMENT:
             break;
         case CONTINUE_STATEMENT:
             break;
         case BREAK_STATEMENT:
-            break;
-        case RETURN_STATEMENT:
             break;
     }
 
