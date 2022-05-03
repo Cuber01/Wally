@@ -35,7 +35,7 @@ typedef enum {
     OP_GET_VARIABLE,
     OP_SET_VARIABLE,
 
-    // Block
+    // Scope
     OP_SCOPE_START,
     OP_SCOPE_END,
 
