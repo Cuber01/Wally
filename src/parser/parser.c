@@ -8,6 +8,7 @@
 #ifdef DEBUG_PRINT_BYTECODE
 #include "disassembler.h"
 #include "emitter.h"
+#include "memory.h"
 
 #endif
 
@@ -353,7 +354,7 @@ static Expr* call(Expr* previous)
 {
     uint16_t argCount;
     Node* args = argumentList(&argCount);
-    return (Expr*) newCallExpr(((VarExpr*)previous)->name, argCount, args, parser.line); // previous is unused
+    return (Expr*) newCallExpr(((VarExpr*)previous)->name, argCount, args, parser.line);
 }
 
 // endregion
@@ -627,21 +628,21 @@ static Stmt* functionDeclaration()
     consume(TOKEN_LEFT_PAREN, "Expect '(' after function name.");
 
     // Params
-    ObjString* * params;
-    *params = NULL;
+    ObjString** params = reallocate(NULL, 0, sizeof(*params));
     uint16_t paramCount = 0;
-
 
     if(!match(TOKEN_RIGHT_PAREN))
     {
+
         while(true)
         {
-            if (*params == NULL)
+            if (paramCount == 0)
             {
                 *params = parseVariableName("Expect parameter name.");
             }
             else
             {
+                params = reallocate(params, sizeof(params), (paramCount + 1) * sizeof(*params));
                 params[paramCount] = parseVariableName("Expect parameter name.");
             }
 
@@ -662,7 +663,7 @@ static Stmt* functionDeclaration()
         listAdd(&body, NODE_STATEMENT_VALUE(declaration()));
     }
 
-    return (Stmt*)newFunctionStmt(name, body, params, paramCount, parser.line);
+    return (Stmt*)newFunctionStmt(name, body, params, 1, parser.line);
 }
 
 static Stmt* varDeclaration()

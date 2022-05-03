@@ -8,7 +8,7 @@ typedef struct ObjString ObjString;
 
 // C value => Wally value
 #define BOOL_VAL(value)   ((Value){VAL_BOOL, {.boolean = (value)}})
-#define NULL_VAL           ((Value){VAL_NULL, {.number = 0}})
+#define NULL_VAL          ((Value){VAL_NULL, {.number = 0}})
 #define NUMBER_VAL(value) ((Value){VAL_NUMBER, {.number = (value)}})
 #define OBJ_VAL(object)   ((Value){VAL_OBJ, {.obj = (Obj*)(object)}})
 

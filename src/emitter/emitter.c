@@ -319,7 +319,16 @@ static void compileExpressionStatement(ExpressionStmt* statement)
 static void compileVariable(ObjString* name, Expr* initializer, uint16_t line)
 {
     emitConstant(OBJ_VAL(name), line);
-    compileExpression(initializer);
+
+    if(initializer == NULL)
+    {
+        emitConstant(NULL_VAL, line);
+    }
+    else
+    {
+        compileExpression(initializer);
+    }
+
     emitByte(OP_DEFINE_VARIABLE, line);
 }
 
@@ -463,11 +472,13 @@ static uint16_t compileStatement(Stmt* statement)
 
             // Params
             ObjString** params = stmt->params;
+            uint16_t compiledParams = 0;
+            uint16_t paramCount = stmt->paramCount;
 
-            while (*params != NULL)
+            while (compiledParams < paramCount)
             {
-                compileVariable(*params, NULL, line);
-                params++;
+                compileVariable(params[compiledParams], NULL, line);
+                compiledParams++;
             }
 
             // Body
