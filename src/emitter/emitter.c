@@ -89,12 +89,6 @@ static void emitLoop(unsigned int loopStart, uint16_t line)
     emitByte(offset & 0xff, line);
 }
 
-static void emitMultiplePop(int amount, uint16_t line)
-{
-    emitConstant(NUMBER_VAL(amount), line);
-    emitByte(OP_POP_N, line);
-}
-
 static void emitReturn(uint16_t line)
 {
     emitByte(OP_RETURN, line);

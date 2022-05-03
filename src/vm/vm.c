@@ -214,17 +214,6 @@ static int run()
 
             case OP_POP: pop(); break;
 
-            case OP_POP_N:
-            {
-                int amount = AS_NUMBER(pop());
-                while(amount > 0)
-                {
-                    amount--;
-                    pop();
-                }
-                break;
-            }
-
             case OP_EQUAL:
             {
                 Value b = pop();

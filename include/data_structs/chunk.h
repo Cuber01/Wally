@@ -52,7 +52,6 @@ typedef enum {
 
     // Misc
     OP_POP,
-    OP_POP_N,
     OP_TERNARY,
     OP_SWITCH_EQUAL,
 } OpCode;

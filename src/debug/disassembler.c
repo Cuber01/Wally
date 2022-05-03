@@ -122,8 +122,6 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_TERNARY", offset);
         case OP_SWITCH_EQUAL:
             return simpleInstruction("OP_SWITCH_EQUAL", offset);
-        case OP_POP_N:
-            return simpleInstruction("OP_POP_N", offset);
         case OP_DEFINE_VARIABLE:
             return simpleInstruction("OP_DEFINE_VARIABLE", offset);
         case OP_SET_VARIABLE:
