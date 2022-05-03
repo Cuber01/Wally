@@ -1,0 +1,8 @@
+function helloWorld()
+{
+    print("Hello World!");
+}
+
+helloWorld();
+
+print("Hello function!");

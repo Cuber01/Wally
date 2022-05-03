@@ -126,7 +126,14 @@ static bool callValue(Value callee, uint16_t argCount)
         switch (OBJ_TYPE(callee))
         {
             case OBJ_FUNCTION:
-                return call(AS_FUNCTION(callee), argCount);
+            {
+                ObjFunction* function = AS_FUNCTION(callee);
+
+                function->calledFromFunction = vm.currentFunction;
+                function->calledFromIp = vm.ip;
+
+                return call(function, argCount);
+            }
 
             case OBJ_NATIVE:
             {
@@ -424,7 +431,16 @@ static int run()
 
             case OP_RETURN:
             {
-                return INTERPRET_OK;
+                ObjFunction* oldFunction = vm.currentFunction;
+
+                if(oldFunction->calledFromFunction == NULL)
+                {
+                    return INTERPRET_OK;
+                }
+
+                vm.currentFunction = oldFunction->calledFromFunction;
+                vm.ip = oldFunction->calledFromIp;
+
 
 //                Value result = popNullable();
 //                vm.frameCount--;

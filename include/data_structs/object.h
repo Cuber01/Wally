@@ -52,12 +52,15 @@ struct ObjString {
     uint32_t hash; // Used in hashtables
 };
 
-typedef struct {
+typedef struct ObjFunction{
     Obj obj;
 
     int arity;
     Chunk chunk;
     ObjString* name;
+
+    struct ObjFunction* calledFromFunction;
+    uint8_t* calledFromIp;
 } ObjFunction;
 
 typedef struct {
