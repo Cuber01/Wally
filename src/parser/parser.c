@@ -663,7 +663,7 @@ static Stmt* functionDeclaration()
         listAdd(&body, NODE_STATEMENT_VALUE(declaration()));
     }
 
-    return (Stmt*)newFunctionStmt(name, body, params, 1, parser.line);
+    return (Stmt*)newFunctionStmt(name, body, params, paramCount, parser.line);
 }
 
 static Stmt* varDeclaration()

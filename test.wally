@@ -1,6 +1,7 @@
-function helloWorld(hey)
+function helloWorld(hey, bye)
 {
     print(hey);
+    print(bye);
 }
 
-helloWorld("Hello!");
+helloWorld("Hello ", 1);

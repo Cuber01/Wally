@@ -472,14 +472,13 @@ static uint16_t compileStatement(Stmt* statement)
 
             // Params
             ObjString** params = stmt->params;
-            uint16_t compiledParams = 0;
-            uint16_t paramCount = stmt->paramCount;
+            int paramCount = stmt->paramCount - 1;
 
-            while (compiledParams < paramCount)
+            while (paramCount >= 0)
             {
-                emitConstant(OBJ_VAL(params[compiledParams]), line);
+                emitConstant(OBJ_VAL(params[paramCount]), line);
                 emitByte(OP_DEFINE_VARIABLE, line);
-                compiledParams++;
+                paramCount--;
             }
 
             // Body
