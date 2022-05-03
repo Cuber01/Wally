@@ -14,18 +14,16 @@ while(i < 5)
 
 var n = 0;
 
-while(n < 5)
+while(n < 1)
 {
     n = n + 1;
+
     var i = 0;
 
     while(i < 5)
     {
         print(i);
         i = i + 1;
-        continue;
-
-        print "error!";
     }
 }
 
