@@ -463,6 +463,12 @@ static int run()
 
 int interpret(const char* source)
 {
+    if(*source == '\0')
+    {
+        printf("Source is empty.");
+        return INTERPRET_OK;
+    }
+
     Node* statements = compile(source);
     if (statements == NULL) return INTERPRET_COMPILE_ERROR;
 
