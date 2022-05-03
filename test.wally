@@ -1,7 +1,2 @@
-function helloWorld(hey, bye)
-{
-    print(hey);
-    print(bye);
-}
-
-helloWorld("Hello ", 1);
+var ala = 2;
+print(ala);

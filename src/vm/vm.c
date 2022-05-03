@@ -299,7 +299,7 @@ static int run()
                 Value initializer = pop();
                 Value name = pop();
 
-                environmentDefine(vm.currentEnvironment, AS_STRING(initializer), name);
+                environmentDefine(vm.currentEnvironment, AS_STRING(name), initializer);
 
                 break;
             }
