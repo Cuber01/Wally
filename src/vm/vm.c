@@ -304,6 +304,16 @@ static int run()
                 break;
             }
 
+            case OP_DEFINE_ARGUMENT:
+            {
+                Value name = pop();
+                Value initializer = pop();
+
+                environmentDefine(vm.currentEnvironment, AS_STRING(name), initializer);
+
+                break;
+            }
+
             case OP_GET_VARIABLE:
             {
                 Value name = pop();

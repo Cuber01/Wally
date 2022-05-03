@@ -477,7 +477,7 @@ static uint16_t compileStatement(Stmt* statement)
             while (paramCount >= 0)
             {
                 emitConstant(OBJ_VAL(params[paramCount]), line);
-                emitByte(OP_DEFINE_VARIABLE, line);
+                emitByte(OP_DEFINE_ARGUMENT, line);
                 paramCount--;
             }
 

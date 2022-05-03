@@ -31,6 +31,7 @@ typedef enum {
 
     // Variables
     OP_DEFINE_VARIABLE,
+    OP_DEFINE_ARGUMENT,
     OP_GET_VARIABLE,
     OP_SET_VARIABLE,
 

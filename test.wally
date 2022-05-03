@@ -1,2 +1,1 @@
-var ala = 2;
-print(ala);
+var a = 2;
