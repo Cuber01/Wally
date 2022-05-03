@@ -354,7 +354,7 @@ static uint16_t compileStatement(Stmt* statement)
             BlockStmt* stmt = (BlockStmt*)statement;
             Node* toExecute = stmt->statements;
 
-            emitByte(OP_BLOCK_START, line);
+            emitByte(OP_SCOPE_START, line);
 
             int length = listGetLength(toExecute);
 
@@ -363,7 +363,7 @@ static uint16_t compileStatement(Stmt* statement)
                 compileStatement(listGet(toExecute, i).as.statement);
             }
 
-            emitByte(OP_BLOCK_END, line);
+            emitByte(OP_SCOPE_END, line);
 
             break;
         }
@@ -421,7 +421,7 @@ static uint16_t compileStatement(Stmt* statement)
         {
             ForStmt* stmt = (ForStmt*) statement;
 
-            emitByte(OP_BLOCK_START, line);
+            emitByte(OP_SCOPE_START, line);
 
             // Declaration/Initializer
             compileStatement(stmt->declaration);
@@ -450,7 +450,7 @@ static uint16_t compileStatement(Stmt* statement)
 
             emitLoop(loopStart, line);
 
-            emitByte(OP_BLOCK_END, line);
+            emitByte(OP_SCOPE_END, line);
 
             if (exitJump != -1)
             {
@@ -468,7 +468,7 @@ static uint16_t compileStatement(Stmt* statement)
             Compiler compiler;
             initCompiler(&compiler, stmt->name, stmt->paramCount, TYPE_FUNCTION);
 
-            emitByte(OP_BLOCK_START, line);
+            emitByte(OP_SCOPE_START, line);
 
             // Params
             ObjString** params = stmt->params;
@@ -490,7 +490,7 @@ static uint16_t compileStatement(Stmt* statement)
                 body = body->next;
             }
 
-            emitByte(OP_BLOCK_END, line);
+            emitByte(OP_SCOPE_END, line);
 
             ObjFunction* function = endCompiler(line);
 

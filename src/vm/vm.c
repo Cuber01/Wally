@@ -350,7 +350,7 @@ static int run()
                 break;
             }
 
-            case OP_BLOCK_START:
+            case OP_SCOPE_START:
             {
                 Environment* enclosing = vm.currentEnvironment;
 
@@ -359,7 +359,7 @@ static int run()
                 break;
             }
 
-            case OP_BLOCK_END:
+            case OP_SCOPE_END:
             {
                 Environment* old = vm.currentEnvironment;
                 vm.currentEnvironment = vm.currentEnvironment->enclosing;

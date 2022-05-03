@@ -36,8 +36,8 @@ typedef enum {
     OP_SET_VARIABLE,
 
     // Block
-    OP_BLOCK_START,
-    OP_BLOCK_END,
+    OP_SCOPE_START,
+    OP_SCOPE_END,
 
     // Control flow
     OP_JUMP_IF_FALSE,
