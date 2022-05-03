@@ -4,6 +4,7 @@
 #include "scanner.h"
 #include "chunk.h"
 #include "object.h"
+#include "memory.h"
 
 #ifdef DEBUG_PRINT_BYTECODE
 #include "disassembler.h"

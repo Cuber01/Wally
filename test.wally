@@ -1,34 +1,10 @@
-var i = 0;
-
-while(i < 5)
+function betterDoublePrintUltraDeluxe(first, second)
 {
-    print(i);
-    i = i + 1;
+    print(first);
+    print(second);
 }
 
-// Expect: 0
-// Expect: 1
-// Expect: 2
-// Expect: 3
-// Expect: 4
+betterDoublePrintUltraDeluxe("Hello ", "World!");
 
-var n = 0;
-
-while(n < 1)
-{
-    n = n + 1;
-
-    var i = 0;
-
-    while(i < 5)
-    {
-        print(i);
-        i = i + 1;
-    }
-}
-
-// Expect: 0
-// Expect: 1
-// Expect: 2
-// Expect: 3
-// Expect: 4
+// Expect: Hello
+// Expect: World!

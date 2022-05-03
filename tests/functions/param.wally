@@ -4,7 +4,7 @@ function betterDoublePrintUltraDeluxe(first, second)
     print(second);
 }
 
-betterDoublePrintUltraDeluxe("Hello ", "World!");
+betterDoublePrintUltraDeluxe("Hello", "World!");
 
 // Expect: Hello
 // Expect: World!
