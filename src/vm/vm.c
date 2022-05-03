@@ -105,7 +105,7 @@ static void concatenate()
     push(OBJ_VAL(result));
 }
 
-static bool call(ObjFunction* function, int argCount)
+static bool call(ObjFunction* function, uint16_t argCount)
 {
     vm.ip = function->chunk.code;
     vm.currentFunction = function;
@@ -119,7 +119,7 @@ static bool call(ObjFunction* function, int argCount)
     return true;
 }
 
-static bool callValue(Value callee, int argCount)
+static bool callValue(Value callee, uint16_t argCount)
 {
     if (IS_OBJ(callee))
     {
@@ -299,7 +299,7 @@ static int run()
                 Value initializer = pop();
                 Value name = pop();
 
-                environmentDefine(vm.currentEnvironment, AS_STRING(name), initializer);
+                environmentDefine(vm.currentEnvironment, AS_STRING(initializer), name);
 
                 break;
             }
@@ -408,27 +408,12 @@ static int run()
                 ObjString* name = AS_STRING(pop());
                 uint8_t argCount = AS_NUMBER(pop());
 
-                Value* args = NULL;
-
-                for(uint16_t i = 1; i <= argCount; i++)
-                {
-                    Value value = pop();
-
-                    if(args == NULL)
-                    {
-                        args = &value;
-                    }
-                    else
-                    {
-                        args[i] = value;
-                    }
-                }
-
                 Value function;
 
                 if(!environmentGet(vm.currentEnvironment, name, &function))
                 {
-                    print(args);
+                    printRawValue(pop());
+                    putchar('\n');
                 }
                 else
                 {
