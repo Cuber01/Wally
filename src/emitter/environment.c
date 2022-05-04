@@ -13,26 +13,39 @@ Environment* newEnvironment()
     return newEnv;
 }
 
-void environmentDefine(Environment* env, ObjString* name, Value value)
+bool environmentDefine(Environment* env, ObjString* name, Value value)
 {
-    bool success = tableSetNoOverwrite(&env->values,name, value);
-    if(!success)
+    uint8_t success = tableDefineEntry(&env->values, name, value);
+
+    if(success != TABLE_SUCCESS)
     {
         nativeError("Tried to declare symbol %s, but it already exists.", name->chars);
+        return false;
     }
+
+    return true;
 }
 
 bool environmentSet(Environment* env, ObjString* name, Value value)
 {
-    bool success = tableSetNoCreateEntry(&env->values, name, value);
-    if(!success)
+    uint8_t success = tableSetExistingEntry(&env->values, name, value);
+    if(success != TABLE_SUCCESS)
     {
         if(env->enclosing != NULL)
         {
             return environmentSet(env->enclosing, name, value);
         }
 
-        nativeError("Tried to set value of %s, but it doesn't exist.", name->chars);
+        if(success == TABLE_ERROR_UNDEFINED_SET)
+        {
+            nativeError("Tried to set value of %s, but it doesn't exist.", name->chars);
+        }
+
+        if(success == TABLE_ERROR_FUNCTION_SET)
+        {
+            nativeError("Changing value of functions is illegal.", name->chars);
+        }
+
         return false;
     }
 
@@ -49,7 +62,7 @@ bool environmentGet(Environment* env, ObjString* name, Value* result)
             return environmentGet(env->enclosing, name, result);
         }
 
-        //nativeError("Tried to get value of %s, but it doesn't exist.", name->chars);
+        nativeError("Tried to get value of %s, but it doesn't exist.", name->chars);
         return false;
     }
 

@@ -122,7 +122,7 @@ ObjString* tableFindString(Table* table, const char* chars, unsigned int length,
     }
 }
 
-bool tableSetNoOverwrite(Table* table, ObjString* key, Value value)
+uint8_t tableDefineEntry(Table* table, ObjString* key, Value value)
 {
     // Grow the table if it is at least 75% full
     if (table->count + 1 > table->capacity * TABLE_MAX_LOAD)
@@ -136,16 +136,16 @@ bool tableSetNoOverwrite(Table* table, ObjString* key, Value value)
     Entry* entry = findEntry(table->entries, table->capacity, key);
     bool isNewKey = entry->key == NULL;
     // IS_NULL check makes sure that we're not examining a tombstone
-    if (!isNewKey) return false; // used to be: !isNewKey || IS_NULL(entry->value)
+    if (!isNewKey) return TABLE_ERROR_REDEFINE; // used to be: !isNewKey || IS_NULL(entry->value)
 
     table->count++;
 
     entry->key = key;
     entry->value = value;
-    return true;
+    return TABLE_SUCCESS;
 }
 
-bool tableSetNoCreateEntry(Table* table, ObjString* key, Value value)
+uint8_t tableSetExistingEntry(Table* table, ObjString* key, Value value)
 {
     // Grow the table if it is at least 75% full
     if (table->count + 1 > table->capacity * TABLE_MAX_LOAD)
@@ -157,16 +157,17 @@ bool tableSetNoCreateEntry(Table* table, ObjString* key, Value value)
     // See if an entry already exists, if not, quit
     Entry* entry = findEntry(table->entries, table->capacity, key);
     bool isNewKey = entry->key == NULL;
-    // IS_NULL check makes sure that we're not examining a tombstone
-    if (isNewKey) return false;
+
+    if (isNewKey) return TABLE_ERROR_UNDEFINED_SET;
+    if (IS_FUNCTION(entry->value)) return TABLE_ERROR_FUNCTION_SET; // Setting functions is illegal!
 
     entry->key = key;
     entry->value = value;
-    return true;
+    return TABLE_SUCCESS;
 }
 
 
-bool tableSet(Table* table, ObjString* key, Value value)
+uint8_t tableSet(Table* table, ObjString* key, Value value)
 {
     // Grow the table if it is at least 75% full
     if (table->count + 1 > table->capacity * TABLE_MAX_LOAD)
@@ -184,7 +185,7 @@ bool tableSet(Table* table, ObjString* key, Value value)
 
     entry->key = key;
     entry->value = value;
-    return isNewKey;
+    return TABLE_SUCCESS;
 }
 
 bool tableGet(Table* table, ObjString* key, Value* value)

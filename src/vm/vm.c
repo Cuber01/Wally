@@ -305,7 +305,10 @@ static int run()
                 Value name = pop();
                 Value initializer = pop();
 
-                environmentDefine(vm.currentEnvironment, AS_STRING(name), initializer);
+                if(!environmentDefine(vm.currentEnvironment, AS_STRING(name), initializer))
+                {
+                    return INTERPRET_RUNTIME_ERROR;
+                }
 
                 break;
             }

@@ -1,9 +1,1 @@
-function helloWorld()
-{
-    return 9;
-    print("Hello World!");
-}
-
-helloWorld();
-
-print("Hello function!");
+baka;

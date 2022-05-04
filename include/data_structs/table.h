@@ -4,6 +4,11 @@
 #include "common.h"
 #include "value.h"
 
+#define TABLE_SUCCESS 0
+#define TABLE_ERROR_REDEFINE 1
+#define TABLE_ERROR_FUNCTION_SET 2
+#define TABLE_ERROR_UNDEFINED_SET 3
+
 typedef struct {
     ObjString* key;
     Value value;
@@ -18,9 +23,9 @@ typedef struct {
 void initTable(Table* table);
 void freeTable(Table* table);
 
-bool tableSetNoOverwrite(Table* table, ObjString* key, Value value);
-bool tableSetNoCreateEntry(Table* table, ObjString* key, Value value);
-bool tableSet(Table* table, ObjString* key, Value value);
+uint8_t tableDefineEntry(Table* table, ObjString* key, Value value);
+uint8_t tableSetExistingEntry(Table* table, ObjString* key, Value value);
+uint8_t tableSet(Table* table, ObjString* key, Value value);
 
 bool tableGet(Table* table, ObjString* key, Value* value);
 bool tableDelete(Table* table, ObjString* key);

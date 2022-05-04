@@ -10,7 +10,7 @@ typedef struct Environment
 } Environment;
 
 Environment* newEnvironment();
-void environmentDefine(Environment* env, ObjString* name, Value value);
+bool environmentDefine(Environment* env, ObjString* name, Value value);
 bool environmentGet(Environment* env, ObjString* name, Value* result);
 bool environmentSet(Environment* env, ObjString* name, Value value);
 void freeEnvironment(Environment* env);
