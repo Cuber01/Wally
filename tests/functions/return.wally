@@ -3,6 +3,6 @@ function ala(param)
     return param;
 }
 
-print ala("hello");
+print(ala("hello"));
 
 // Expect: hello

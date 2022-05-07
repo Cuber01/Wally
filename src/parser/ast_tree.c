@@ -1,15 +1,16 @@
 #include "list.h"
 #include "memory.h"
 
-#define ALLOCATE_EXPRESSION(objectType, enumType, line) \
-    newExpression(sizeof(objectType), enumType, line)
+#define ALLOCATE_EXPRESSION(objectType, enumType, pop, line) \
+    newExpression(sizeof(objectType), enumType, pop, line)
 
-static Expr* newExpression(size_t size, ExprType type, uint16_t line)
+static Expr* newExpression(size_t size, ExprType type, bool pop, uint16_t line)
 {
     Expr* object = reallocate(NULL, 0, size);
 
     object->type = type;
     object->line = line;
+    object->pop = pop;
 
     return object;
 }
@@ -190,7 +191,7 @@ void freeStatement(Stmt* stmt)
 
             if(statement->declaration != NULL)
             {
-                freeExpression(statement->declaration);
+                freeStatement(statement->declaration);
             }
 
             if(statement->increment != NULL)
@@ -218,8 +219,8 @@ void freeStatement(Stmt* stmt)
         {
             FunctionStmt* statement = (FunctionStmt*) stmt;
 
-            freeList(statement->params);
-            freeStatement(statement->body);
+            // todo i think gc will take care of strings but if not then we have to clean them up here
+            freeList(statement->body);
 
             FREE(FunctionStmt, stmt);
             break;
@@ -357,7 +358,7 @@ ExpressionStmt* newExpressionStmt(Expr* expr, uint16_t line)
 
 CallExpr* newCallExpr(ObjString* callee, uint16_t argCount, Node* args, uint16_t line)
 {
-    CallExpr* expr = (CallExpr*) ALLOCATE_EXPRESSION(CallExpr, CALL_EXPRESSION, line);
+    CallExpr* expr = (CallExpr*) ALLOCATE_EXPRESSION(CallExpr, CALL_EXPRESSION, false, line);
 
     expr->callee = callee;
     expr->args = args;
@@ -368,7 +369,7 @@ CallExpr* newCallExpr(ObjString* callee, uint16_t argCount, Node* args, uint16_t
 
 AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line)
 {
-    AssignExpr* expr = (AssignExpr*) ALLOCATE_EXPRESSION(AssignExpr, ASSIGN_EXPRESSION, line);
+    AssignExpr* expr = (AssignExpr*) ALLOCATE_EXPRESSION(AssignExpr, ASSIGN_EXPRESSION, false, line);
 
     expr->name = name;
     expr->value = value;
@@ -378,7 +379,7 @@ AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line)
 
 VarExpr* newVarExpr(ObjString* name, uint16_t line)
 {
-    VarExpr* expr = (VarExpr*) ALLOCATE_EXPRESSION(VarExpr, VAR_EXPRESSION, line);
+    VarExpr* expr = (VarExpr*) ALLOCATE_EXPRESSION(VarExpr, VAR_EXPRESSION, false, line);
 
     expr->name = name;
 
@@ -387,7 +388,7 @@ VarExpr* newVarExpr(ObjString* name, uint16_t line)
 
 UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line)
 {
-    UnaryExpr* expr = (UnaryExpr*) ALLOCATE_EXPRESSION(UnaryExpr, UNARY_EXPRESSION, line);
+    UnaryExpr* expr = (UnaryExpr*) ALLOCATE_EXPRESSION(UnaryExpr, UNARY_EXPRESSION, false, line);
 
     expr->target = target;
     expr->operator = operator;
@@ -397,14 +398,14 @@ UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line)
 
 GroupedExpr* newGroupedExpr(Expr* in, uint16_t line)
 {
-    GroupedExpr* expr = (GroupedExpr*) ALLOCATE_EXPRESSION(GroupedExpr, GROUPED_EXPRESSION, line);
+    GroupedExpr* expr = (GroupedExpr*) ALLOCATE_EXPRESSION(GroupedExpr, GROUPED_EXPRESSION, false, line);
     expr->in = in;
     return expr;
 }
 
 TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch, uint16_t line)
 {
-    TernaryExpr* expr = (TernaryExpr*) ALLOCATE_EXPRESSION(TernaryExpr, TERNARY_EXPRESSION, line);
+    TernaryExpr* expr = (TernaryExpr*) ALLOCATE_EXPRESSION(TernaryExpr, TERNARY_EXPRESSION, false, line);
 
     expr->condition = condition;
     expr->thenBranch = thenBranch;
@@ -415,7 +416,7 @@ TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch,
 
 LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right, uint16_t line)
 {
-    LogicalExpr* expr = (LogicalExpr*) ALLOCATE_EXPRESSION(LogicalExpr, LOGICAL_EXPRESSION, line);
+    LogicalExpr* expr = (LogicalExpr*) ALLOCATE_EXPRESSION(LogicalExpr, LOGICAL_EXPRESSION, false, line);
 
     expr->left = left;
     expr->operator = operator;
@@ -426,7 +427,7 @@ LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right, uint16_
 
 BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right, uint16_t line)
 {
-    BinaryExpr* expr = (BinaryExpr*) ALLOCATE_EXPRESSION(BinaryExpr, BINARY_EXPRESSION, line);
+    BinaryExpr* expr = (BinaryExpr*) ALLOCATE_EXPRESSION(BinaryExpr, BINARY_EXPRESSION, false, line);
 
     expr->left = left;
     expr->operator = operator;
@@ -437,7 +438,7 @@ BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right, uint16_t 
 
 LiteralExpr* newLiteralExpr(Value value, uint16_t line)
 {
-    LiteralExpr* expr = (LiteralExpr*) ALLOCATE_EXPRESSION(LiteralExpr, LITERAL_EXPRESSION, line);
+    LiteralExpr* expr = (LiteralExpr*) ALLOCATE_EXPRESSION(LiteralExpr, LITERAL_EXPRESSION, false, line);
     expr->value = value;
     return expr;
 }

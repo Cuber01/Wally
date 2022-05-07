@@ -1,7 +1,7 @@
-function foo()
-{
-    return 1;
-}
+var i = 0;
 
-var a = foo();
-print(a);
+while(i < 5)
+{
+    print(i);
+    i = i + 1;
+}

@@ -36,6 +36,7 @@ typedef enum {
 typedef struct {
     ExprType type;
     uint16_t line;
+    bool pop;
 } Expr;
 
 typedef struct
