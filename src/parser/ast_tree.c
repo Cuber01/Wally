@@ -358,7 +358,7 @@ ExpressionStmt* newExpressionStmt(Expr* expr, uint16_t line)
 
 CallExpr* newCallExpr(ObjString* callee, uint16_t argCount, Node* args, uint16_t line)
 {
-    CallExpr* expr = (CallExpr*) ALLOCATE_EXPRESSION(CallExpr, CALL_EXPRESSION, false, line);
+    CallExpr* expr = (CallExpr*) ALLOCATE_EXPRESSION(CallExpr, CALL_EXPRESSION, true, line);
 
     expr->callee = callee;
     expr->args = args;

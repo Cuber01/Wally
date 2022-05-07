@@ -423,6 +423,7 @@ static int run()
                 {
                     printRawValue(pop());
                     putchar('\n');
+                    push(NULL_VAL);
                 }
                 else
                 {
