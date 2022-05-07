@@ -308,6 +308,7 @@ static void compileExpression(Expr* expression)
 static void compileExpressionStatement(ExpressionStmt* statement)
 {
     compileExpression(statement->expr);
+    emitByte(OP_POP, 0);
 }
 
 static void compileVariable(ObjString* name, Expr* initializer, uint16_t line)
