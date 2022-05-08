@@ -173,25 +173,6 @@ static Expr* expression()
 
 // endregion
 
-// region EMITTING BYTES (LEGACY)
-
-static void emitByte(uint8_t byte)
-{
-
-}
-
-static void emitBytes(uint8_t byte1, uint8_t byte2)
-{
-
-}
-
-static void emitReturn()
-{
-
-}
-
-// endregion
-
 // region EXPRESSIONS
 
 static Expr* binary(Expr* previous)
