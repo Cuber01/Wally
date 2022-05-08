@@ -263,22 +263,53 @@ Token scanToken()
     if (isDigit(c)) return number();
     if (isAlpha(c)) return identifier();
 
-    switch (c)
-    {
-        case '(': return makeToken(TOKEN_LEFT_PAREN);
-        case ')': return makeToken(TOKEN_RIGHT_PAREN);
-        case '{': return makeToken(TOKEN_LEFT_BRACE);
-        case '}': return makeToken(TOKEN_RIGHT_BRACE);
-        case ';': return makeToken(TOKEN_SEMICOLON);
-        case ':': return makeToken(TOKEN_COLON);
-        case ',': return makeToken(TOKEN_COMMA);
-        case '.': return makeToken(TOKEN_DOT);
-        case '-': return makeToken(TOKEN_MINUS);
-        case '+': return makeToken(TOKEN_PLUS);
-        case '/': return makeToken(TOKEN_SLASH);
-        case '*': return makeToken(TOKEN_STAR);
-        case '$': return makeToken(TOKEN_DOLLAR);
-        case '?': return makeToken(TOKEN_QUESTION_MARK);
+    switch (c) {
+        case '(':
+            return makeToken(TOKEN_LEFT_PAREN);
+        case ')':
+            return makeToken(TOKEN_RIGHT_PAREN);
+        case '{':
+            return makeToken(TOKEN_LEFT_BRACE);
+        case '}':
+            return makeToken(TOKEN_RIGHT_BRACE);
+        case ';':
+            return makeToken(TOKEN_SEMICOLON);
+        case ':':
+            return makeToken(TOKEN_COLON);
+        case ',':
+            return makeToken(TOKEN_COMMA);
+        case '.':
+            return makeToken(TOKEN_DOT);
+        case '/':
+            return makeToken(TOKEN_SLASH);
+        case '*':
+            return makeToken(TOKEN_STAR);
+        case '$':
+            return makeToken(TOKEN_DOLLAR);
+        case '?':
+            return makeToken(TOKEN_QUESTION_MARK);
+
+        case '+':
+            if (match('='))
+            {
+                return makeToken(TOKEN_PLUS_EQUAL);
+            }
+            else if (match('+'))
+            {
+                return makeToken(TOKEN_PLUS_PLUS);
+            }
+            else return makeToken(TOKEN_PLUS);
+
+        case '-':
+            if (match('='))
+            {
+                return makeToken(TOKEN_MINUS_EQUAL);
+            }
+            else if (match('-'))
+            {
+                return makeToken(TOKEN_MINUS_MINUS);
+            }
+            else return makeToken(TOKEN_MINUS);
 
         case '&':
             if(match('&'))
