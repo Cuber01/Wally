@@ -148,19 +148,13 @@ static Expr* parsePrecedence(Precedence precedence)
         return NULL;
     }
 
-    bool canAssign = precedence <= PREC_ASSIGNMENT;
-    Expr* expr = prefixRule(canAssign);
+    Expr* expr = prefixRule();
 
     while (precedence <= getRule(parser.current.type)->precedence)
     {
         advance();
         ParseInfixFn infixRule = getRule(parser.previous.type)->infix;
         expr = (Expr*)infixRule(expr);
-    }
-
-    if (canAssign && match(TOKEN_EQUAL))
-    {
-        error("Invalid assignment target.");
     }
 
     return expr;
