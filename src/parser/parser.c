@@ -118,6 +118,11 @@ static TokenType matchMultiple(TokenType first, ...)
     return 0;
 }
 
+static bool doubleMatch(TokenType type)
+{
+    return ( match(type) && match(type) );
+}
+
 static bool identifiersEqual(Token* a, Token* b)
 {
     if (a->length != b->length) return false;
@@ -606,15 +611,9 @@ static Expr* variable()
 {
     ObjString* name = copyString(parser.previous.start,parser.previous.length);
 
-    if(!match(TOKEN_EQUAL))
-    {
-        return (Expr*)newVarExpr(name, parser.line);
-    }
-    else
+    if(match(TOKEN_EQUAL))
     {
         TokenType operator = matchMultiple(TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
-
-        //consume(TOKEN_EQUAL, "Expect '=' after sugar operator in assign expression.")
 
         if(operator == 0)
         {
@@ -624,15 +623,37 @@ static Expr* variable()
         else
         {
             return (Expr*)newAssignExpr(name, (Expr*)newBinaryExpr(
-                                                    (Expr*)newVarExpr(name, parser.line),
-                                                    operator,
-                                                    expression(),
-                                                    parser.line),
-                                               parser.line);
+                                                (Expr*)newVarExpr(name, parser.line),
+                                                operator,
+                                                expression(),
+                                                parser.line),
+                                        parser.line);
         }
 
-
     }
+    else if(doubleMatch(TOKEN_PLUS))
+    {
+        return (Expr*)newAssignExpr(name, (Expr*)newBinaryExpr(
+                                            (Expr*)newVarExpr(name, parser.line),
+                                            TOKEN_PLUS,
+                                            (Expr*)newLiteralExpr(NUMBER_VAL(1), parser.line),
+                                            parser.line),
+                                    parser.line);
+    }
+    else if(doubleMatch(TOKEN_MINUS))
+    {
+        return (Expr*)newAssignExpr(name, (Expr*)newBinaryExpr(
+                                            (Expr*)newVarExpr(name, parser.line),
+                                            TOKEN_MINUS,
+                                            (Expr*)newLiteralExpr(NUMBER_VAL(1), parser.line),
+                                            parser.line),
+                                    parser.line);
+    }
+    else
+    {
+        return (Expr*)newVarExpr(name, parser.line);
+    }
+
 }
 
 static Stmt* functionDeclaration()

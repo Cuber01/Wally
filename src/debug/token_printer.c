@@ -53,8 +53,7 @@ char* tokenEnumToChar(TokenType type)
         case TOKEN_CASE:    return "TOKEN_CASE";
         case TOKEN_DEFAULT: return "TOKEN_DEFAULT";
         case TOKEN_SWITCH:  return "TOKEN_SWITCH";
-        case TOKEN_MINUS_MINUS: return "TOKEN_MINUS_MINUS";
-        case TOKEN_PLUS_PLUS: return "TOKEN_PLUS_PLUS";
+        default: return "! PRINTED THE UNPRINTABLE !";
     }
 }
 
