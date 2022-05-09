@@ -55,8 +55,6 @@ char* tokenEnumToChar(TokenType type)
         case TOKEN_SWITCH:  return "TOKEN_SWITCH";
         case TOKEN_MINUS_MINUS: return "TOKEN_MINUS_MINUS";
         case TOKEN_PLUS_PLUS: return "TOKEN_PLUS_PLUS";
-        case TOKEN_PLUS_EQUAL:  return "TOKEN_PLUS_EQUAL";
-        case TOKEN_MINUS_EQUAL: return "TOKEN_MINUS_EQUAL";
     }
 }
 
