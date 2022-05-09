@@ -7,6 +7,8 @@
 #include "common.h"
 
 typedef enum {
+    TOKEN_NONE,
+
     // Single-character tokens.
     TOKEN_LEFT_PAREN, TOKEN_RIGHT_PAREN,
     TOKEN_LEFT_BRACE, TOKEN_RIGHT_BRACE,
@@ -50,6 +52,8 @@ typedef struct {
     const char* start;
     const char* current;
     unsigned int line;
+
+    TokenType returnNext;
 } Scanner;
 
 Scanner scanner;

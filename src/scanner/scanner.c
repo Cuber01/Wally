@@ -5,8 +5,8 @@ void initScanner(const char* source)
     scanner.start = source;
     scanner.current = source;
     scanner.line = 1;
+    scanner.returnNext = TOKEN_NONE;
 }
-
 
 static Token makeToken(TokenType type)
 {
@@ -254,6 +254,14 @@ static Token identifier()
 
 Token scanToken()
 {
+    if(scanner.returnNext != TOKEN_NONE)
+    {
+        TokenType type = scanner.returnNext;
+        scanner.returnNext = TOKEN_NONE;
+
+        return makeToken(type);
+    }
+
     skipWhitespace();
     scanner.start = scanner.current;
 
@@ -280,10 +288,6 @@ Token scanToken()
             return makeToken(TOKEN_COMMA);
         case '.':
             return makeToken(TOKEN_DOT);
-        case '/':
-            return makeToken(TOKEN_SLASH);
-        case '*':
-            return makeToken(TOKEN_STAR);
         case '$':
             return makeToken(TOKEN_DOLLAR);
         case '?':
@@ -292,24 +296,34 @@ Token scanToken()
         case '+':
             if (match('='))
             {
-                return makeToken(TOKEN_PLUS_EQUAL);
-            }
-            else if (match('+'))
-            {
-                return makeToken(TOKEN_PLUS_PLUS);
+                scanner.returnNext = TOKEN_PLUS;
+                return makeToken(TOKEN_EQUAL);
             }
             else return makeToken(TOKEN_PLUS);
 
         case '-':
             if (match('='))
             {
-                return makeToken(TOKEN_MINUS_EQUAL);
-            }
-            else if (match('-'))
-            {
-                return makeToken(TOKEN_MINUS_MINUS);
+                scanner.returnNext = TOKEN_MINUS;
+                return makeToken(TOKEN_EQUAL);
             }
             else return makeToken(TOKEN_MINUS);
+
+        case '/':
+            if (match('='))
+            {
+                scanner.returnNext = TOKEN_SLASH;
+                return makeToken(TOKEN_EQUAL);
+            }
+            else return makeToken(TOKEN_SLASH);
+
+        case '*':
+            if (match('='))
+            {
+                scanner.returnNext = TOKEN_STAR;
+                return makeToken(TOKEN_EQUAL);
+            }
+            else return makeToken(TOKEN_STAR);
 
         case '&':
             if(match('&'))

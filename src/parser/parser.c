@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "parser.h"
 #include "scanner.h"
@@ -94,6 +95,27 @@ static bool match(TokenType type)
 
     advance();
     return true;
+}
+
+static TokenType matchMultiple(TokenType first, ...)
+{
+    TokenType next = first;
+    va_list lst;
+    va_start(lst, first);
+
+    while((void *) next != NULL)
+    {
+        if(match(next))
+        {
+            return next;
+        }
+
+        next = va_arg(lst, TokenType);
+    }
+
+    va_end(lst);
+
+    return 0;
 }
 
 static bool identifiersEqual(Token* a, Token* b)
@@ -590,8 +612,26 @@ static Expr* variable()
     }
     else
     {
-        Expr* value = expression();
-        return (Expr*)newAssignExpr(name, value, parser.line);
+        TokenType operator = matchMultiple(TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
+
+        //consume(TOKEN_EQUAL, "Expect '=' after sugar operator in assign expression.")
+
+        if(operator == 0)
+        {
+            Expr* value = expression();
+            return (Expr*)newAssignExpr(name, value, parser.line);
+        }
+        else
+        {
+            return (Expr*)newAssignExpr(name, (Expr*)newBinaryExpr(
+                                                    (Expr*)newVarExpr(name, parser.line),
+                                                    operator,
+                                                    expression(),
+                                                    parser.line),
+                                               parser.line);
+        }
+
+
     }
 }
 
