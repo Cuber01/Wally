@@ -118,11 +118,6 @@ static TokenType matchMultiple(TokenType first, ...)
     return 0;
 }
 
-static bool doubleMatch(TokenType type)
-{
-    return ( match(type) && match(type) );
-}
-
 static bool identifiersEqual(Token* a, Token* b)
 {
     if (a->length != b->length) return false;
@@ -204,6 +199,30 @@ static Expr* binary(Expr* previous)
     Expr* right = parsePrecedence((Precedence)(rule->precedence + 1));
 
     return (Expr*)newBinaryExpr(previous, operatorType, right, parser.line);
+}
+
+static Expr* increment(Expr* previous)
+{
+    VarExpr* prev = (VarExpr*)previous;
+
+    return (Expr*)newAssignExpr(prev->name, (Expr*)newBinaryExpr(
+                                            (Expr*)newVarExpr(prev->name, parser.line),
+                                            TOKEN_PLUS,
+                                            (Expr*)newLiteralExpr(NUMBER_VAL(1), parser.line),
+                                             parser.line),
+                                parser.line);
+}
+
+static Expr* decrement(Expr* previous)
+{
+    VarExpr* prev = (VarExpr*)previous;
+
+    return (Expr*)newAssignExpr(prev->name, (Expr*)newBinaryExpr(
+                                        (Expr*)newVarExpr(prev->name, parser.line),
+                                        TOKEN_MINUS,
+                                        (Expr*)newLiteralExpr(NUMBER_VAL(1), parser.line),
+                                        parser.line),
+                                parser.line);
 }
 
 static Expr* ternary(Expr* previous)
@@ -631,24 +650,6 @@ static Expr* variable()
         }
 
     }
-    else if(doubleMatch(TOKEN_PLUS))
-    {
-        return (Expr*)newAssignExpr(name, (Expr*)newBinaryExpr(
-                                            (Expr*)newVarExpr(name, parser.line),
-                                            TOKEN_PLUS,
-                                            (Expr*)newLiteralExpr(NUMBER_VAL(1), parser.line),
-                                            parser.line),
-                                    parser.line);
-    }
-    else if(doubleMatch(TOKEN_MINUS))
-    {
-        return (Expr*)newAssignExpr(name, (Expr*)newBinaryExpr(
-                                            (Expr*)newVarExpr(name, parser.line),
-                                            TOKEN_MINUS,
-                                            (Expr*)newLiteralExpr(NUMBER_VAL(1), parser.line),
-                                            parser.line),
-                                    parser.line);
-    }
     else
     {
         return (Expr*)newVarExpr(name, parser.line);
@@ -821,6 +822,8 @@ ParseRule rules[] =
         [TOKEN_THIS]          = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_TRUE]          = {literal,              NULL,   PREC_NONE},
         [TOKEN_VAR]           = {NULL,                 NULL,   PREC_NONE},
+        [TOKEN_PLUS_PLUS]     = {NULL,                 increment, PREC_INCREMENT_DECREMENT},
+        [TOKEN_MINUS_MINUS]    = {NULL,                 decrement, PREC_INCREMENT_DECREMENT},
         [TOKEN_WHILE]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_ERROR]         = {NULL,                 NULL,   PREC_NONE},
         [TOKEN_EOF]           = {NULL,                 NULL,   PREC_NONE},

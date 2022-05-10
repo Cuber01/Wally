@@ -24,16 +24,17 @@ and PREC_PRIMARY is 10
 */
 typedef enum {
     PREC_NONE,
-    PREC_ASSIGNMENT,  // =
-    PREC_TERNARY,     // ?:
-    PREC_OR,          // or
-    PREC_AND,         // and
-    PREC_EQUALITY,    // == !=
-    PREC_COMPARISON,  // < > <= >=
-    PREC_TERM,        // + -
-    PREC_FACTOR,      // * /
-    PREC_UNARY,       // ! -
-    PREC_CALL,        // . ()
+    PREC_ASSIGNMENT,          // =
+    PREC_TERNARY,             // ?:
+    PREC_OR,                  // or
+    PREC_AND,                 // and
+    PREC_EQUALITY,            // == !=
+    PREC_COMPARISON,          // < > <= >=
+    PREC_TERM,                // + -
+    PREC_FACTOR,              // * /
+    PREC_UNARY,               // ! -
+    PREC_CALL,                // . ()
+    PREC_INCREMENT_DECREMENT, // ++ --
     PREC_PRIMARY
 } Precedence;
 

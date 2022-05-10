@@ -299,6 +299,10 @@ Token scanToken()
                 scanner.returnNext = TOKEN_PLUS;
                 return makeToken(TOKEN_EQUAL);
             }
+            else if (match('+'))
+            {
+                return makeToken(TOKEN_PLUS_PLUS);
+            }
             else return makeToken(TOKEN_PLUS);
 
         case '-':
@@ -306,6 +310,10 @@ Token scanToken()
             {
                 scanner.returnNext = TOKEN_MINUS;
                 return makeToken(TOKEN_EQUAL);
+            }
+            else if (match('-'))
+            {
+                return makeToken(TOKEN_MINUS_MINUS);
             }
             else return makeToken(TOKEN_MINUS);
 
