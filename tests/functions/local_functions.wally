@@ -1,0 +1,17 @@
+var a = 2;
+
+function foo()
+{
+
+    function boo()
+    {
+        print(a);
+    }
+
+    boo();
+
+}
+
+foo();
+
+// Expect: 2
