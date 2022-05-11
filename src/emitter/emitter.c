@@ -6,6 +6,7 @@
 #include "list.h"
 #include "disassembler.h"
 #include "memory.h"
+#include "garbage_collector.h"
 
 Compiler* current = NULL;
 bool hadError = false;
@@ -595,6 +596,6 @@ void markCompilerRoots()
     while (compiler != NULL)
     {
         markObject((Obj*)compiler->function);
-        compiler = compiler->enclosing;
+        compiler = (Compiler *) compiler->enclosing;
     }
 }

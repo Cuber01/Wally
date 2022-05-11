@@ -138,7 +138,6 @@ static bool callValue(Value callee, uint16_t argCount)
 
                 function->calledFromFunction = vm.currentFunction;
                 function->calledFromIp = vm.ip;
-                function->calledFromEnvironment = vm.currentEnvironment;
 
                 return call(function, argCount);
             }

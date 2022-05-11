@@ -5,6 +5,7 @@
 #include "object.h"
 #include "table.h"
 #include "value.h"
+#include "garbage_collector.h"
 
 #define TABLE_MAX_LOAD 0.75
 
