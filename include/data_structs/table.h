@@ -33,5 +33,8 @@ bool tableDelete(Table* table, ObjString* key);
 ObjString* tableFindString(Table* table, const char* chars, unsigned int length, uint32_t hash);
 void tableAddAll(Table* from, Table* to);
 
+void markTable(Table* table);
+void tableRemoveWhite(Table* table);
+
 
 #endif //WALLY_TABLE_H

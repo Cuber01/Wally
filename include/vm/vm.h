@@ -25,6 +25,10 @@ typedef struct {
 
     Table strings;
     Obj* objects;
+
+    int grayCount;
+    int grayCapacity;
+    Obj** grayStack;
 } VM;
 
 extern VM vm;

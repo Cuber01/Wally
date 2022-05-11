@@ -38,6 +38,10 @@ void initVM()
     vm.currentEnvironment = newEnvironment();
     vm.currentClosure = vm.currentEnvironment;
 
+    vm.grayCount = 0;
+    vm.grayCapacity = 0;
+    vm.grayStack = NULL;
+
     // defineNative("print", printNative);
 
     vm.objects = NULL;

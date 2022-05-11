@@ -20,5 +20,7 @@ void freeObjects();
 void freeObject(Obj* object);
 
 void collectGarbage();
+void markValue(Value value);
+void markObject(Obj* object);
 
 #endif //WALLY_MEMORY_H

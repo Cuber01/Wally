@@ -12,6 +12,7 @@ static Obj* allocateObject(size_t size, ObjType type)
     // Allocate new object and set fields
     Obj* object = (Obj*)reallocate(NULL, 0, size);
     object->type = type;
+    object->isMarked = false;
 
     object->next = vm.objects;
     vm.objects = object;

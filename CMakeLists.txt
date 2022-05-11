@@ -32,5 +32,4 @@ add_executable(Wally src/main.c
                      src/emitter/emitter.c
                      src/emitter/environment.c
                      src/std/core.c
-                     src/debug/gc_logger.c
         )

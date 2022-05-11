@@ -27,7 +27,6 @@
 #define AS_CSTRING(value)       (((ObjString*)AS_OBJ(value))->chars)
 #define AS_FUNCTION(value)      ((ObjFunction*)AS_OBJ(value))
 #define AS_NATIVE(value)        (((ObjNative*)AS_OBJ(value))->function)
-#define AS_CLOSURE(value)       ((ObjClosure*)AS_OBJ(value))
 
 typedef Value (*NativeFn)(int argCount, Value* args);
 
@@ -40,6 +39,8 @@ typedef enum {
 struct Obj {
     ObjType type;
     struct Obj* next;
+
+    bool isMarked;
 };
 
 // "Struct Inheritance"
@@ -64,7 +65,6 @@ typedef struct ObjFunction {
     Environment* closure;
 
     struct ObjFunction* calledFromFunction;
-    Environment* calledFromEnvironment;
     uint8_t* calledFromIp;
 } ObjFunction;
 

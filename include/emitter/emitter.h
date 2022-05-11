@@ -19,5 +19,6 @@ typedef struct {
 } Compiler;
 
 ObjFunction* emit(Node* statements);
+void markCompilerRoots();
 
 #endif //WALLY_EMITTER_H

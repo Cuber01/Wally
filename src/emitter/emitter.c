@@ -5,6 +5,7 @@
 #include "chunk.h"
 #include "list.h"
 #include "disassembler.h"
+#include "memory.h"
 
 Compiler* current = NULL;
 bool hadError = false;
@@ -585,4 +586,15 @@ ObjFunction* emit(Node* statements)
 
     ObjFunction* function = endCompiler(lastLine);
     return hadError ? NULL : function;
+}
+
+void markCompilerRoots()
+{
+    Compiler* compiler = current;
+
+    while (compiler != NULL)
+    {
+        markObject((Obj*)compiler->function);
+        compiler = compiler->enclosing;
+    }
 }
