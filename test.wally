@@ -1,15 +1,2 @@
-
-
-function foo()
-{
-
-    function boo()
-    {
-        var a = 2;
-    }
-
-    print(a);
-
-}
-
-foo();
+var i = 0;
+i = i + 1;

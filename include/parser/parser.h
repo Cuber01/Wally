@@ -34,7 +34,7 @@ typedef enum {
     PREC_FACTOR,              // * /
     PREC_UNARY,               // ! -
     PREC_CALL,                // . ()
-    PREC_INCREMENT_DECREMENT, // ++ --
+    PREC_INCR_DECR,           // ++ --
     PREC_PRIMARY
 } Precedence;
 
