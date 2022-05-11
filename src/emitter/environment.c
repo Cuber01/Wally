@@ -1,3 +1,4 @@
+#include <string.h>
 #include "environment.h"
 #include "native_error.h"
 #include "memory.h"
@@ -62,7 +63,11 @@ bool environmentGet(Environment* env, ObjString* name, Value* result)
             return environmentGet(env->enclosing, name, result);
         }
 
-        nativeError("Tried to get value of '%s', but it doesn't exist.", name->chars);
+        if(strcmp("print", name->chars) != 0) // todo temporary code
+        {
+            nativeError("Tried to get value of '%s', but it doesn't exist.", name->chars);
+        }
+
         return false;
     }
 
