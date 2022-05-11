@@ -347,7 +347,7 @@ static int run()
             case OP_DEFINE_FUNCTION:
             {
                 ObjFunction* function = AS_FUNCTION(pop());
-                vm.currentClosure = vm.currentEnvironment; // todo ten update nie powinien być potrzebny
+                vm.currentClosure = vm.currentEnvironment;
                 function->closure = vm.currentClosure;
 
                 environmentDefine(vm.currentEnvironment, function->name, OBJ_VAL(function));

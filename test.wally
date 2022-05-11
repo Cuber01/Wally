@@ -1,16 +1,15 @@
-var a = 2;
 
-{
-    var c = "str";
-}
 
 function foo()
 {
-    print(a);
-    print(b);
-    print(c);
-}
 
-var b = 3;
+    function boo()
+    {
+        var a = 2;
+    }
+
+    print(a);
+
+}
 
 foo();
