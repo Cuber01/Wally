@@ -15,6 +15,7 @@
 
 typedef struct {
     Environment* currentEnvironment;
+    Environment* currentClosure;
     ObjFunction* currentFunction;
 
     uint8_t* ip; // Instruction pointer. Points towards the next instruction to be executed.

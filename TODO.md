@@ -3,7 +3,6 @@ Features til version 1.0:
 * modulo
 * break
 * continue
-* syntactic sugar += ++ -= --
 * switch
 * classes
 * garbage collector

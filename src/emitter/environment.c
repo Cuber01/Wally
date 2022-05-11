@@ -38,7 +38,7 @@ bool environmentSet(Environment* env, ObjString* name, Value value)
 
         if(success == TABLE_ERROR_UNDEFINED_SET)
         {
-            //nativeError("Tried to set value of %s, but it doesn't exist.", name->chars);
+            nativeError("Tried to set value of %s, but it doesn't exist.", name->chars);
         }
 
         if(success == TABLE_ERROR_FUNCTION_SET)

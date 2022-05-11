@@ -4,6 +4,7 @@
 #include "common.h"
 #include "value.h"
 #include "chunk.h"
+#include "environment.h"
 
 // Objects are kept on the heap, and we just keep a pointer to them in Value.
 // This allows us to make objects as big, or as small, as we want (in theory).
@@ -52,14 +53,18 @@ struct ObjString {
     uint32_t hash; // Used in hashtables
 };
 
-typedef struct ObjFunction{
+
+typedef struct ObjFunction {
     Obj obj;
 
     int arity;
     Chunk chunk;
     ObjString* name;
 
+    Environment* closure;
+
     struct ObjFunction* calledFromFunction;
+    Environment* calledFromEnvironment;
     uint8_t* calledFromIp;
 } ObjFunction;
 

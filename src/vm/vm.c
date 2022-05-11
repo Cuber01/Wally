@@ -12,7 +12,6 @@
 
 
 VM vm;
-bool popLeaveNextValue = false;
 
 static void resetStack()
 {
@@ -37,6 +36,7 @@ void initVM()
     resetStack();
     initTable(&vm.strings);
     vm.currentEnvironment = newEnvironment();
+    vm.currentClosure = vm.currentEnvironment;
 
     // defineNative("print", printNative);
 
@@ -107,14 +107,17 @@ static void concatenate()
 
 static bool call(ObjFunction* function, uint16_t argCount)
 {
-    vm.ip = function->chunk.code;
-    vm.currentFunction = function;
 
     if(argCount != function->arity)
     {
         runtimeError("Expected %d arguments but got %d.", function->arity, argCount);
         return false;
     }
+
+    vm.ip = function->chunk.code;
+    vm.currentEnvironment = newEnvironment();
+    vm.currentEnvironment->enclosing = function->closure;
+    vm.currentFunction = function;
 
     return true;
 }
@@ -131,6 +134,7 @@ static bool callValue(Value callee, uint16_t argCount)
 
                 function->calledFromFunction = vm.currentFunction;
                 function->calledFromIp = vm.ip;
+                function->calledFromEnvironment = vm.currentEnvironment;
 
                 return call(function, argCount);
             }
@@ -343,6 +347,8 @@ static int run()
             case OP_DEFINE_FUNCTION:
             {
                 ObjFunction* function = AS_FUNCTION(pop());
+                vm.currentClosure = vm.currentEnvironment; // todo ten update nie powinien być potrzebny
+                function->closure = vm.currentClosure;
 
                 environmentDefine(vm.currentEnvironment, function->name, OBJ_VAL(function));
 

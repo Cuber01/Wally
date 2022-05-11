@@ -1,34 +1,16 @@
-var i = 0;
+var a = 2;
 
-while(i < 5)
 {
-    print(i);
-    i = i + 1;
+    var c = "str";
 }
 
-// Expect: 0
-// Expect: 1
-// Expect: 2
-// Expect: 3
-// Expect: 4
-
-var n = 0;
-
-while(n < 1)
+function foo()
 {
-    n = n + 1;
-
-    var i = 0;
-
-    while(i < 5)
-    {
-        print(i);
-        i = i + 1;
-    }
+    print(a);
+    print(b);
+    print(c);
 }
 
-// Expect: 0
-// Expect: 1
-// Expect: 2
-// Expect: 3
-// Expect: 4
+var b = 3;
+
+foo();
