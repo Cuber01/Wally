@@ -7,6 +7,9 @@
 // #define DEBUG_PRINT_BYTECODE
 // #define DEBUG_PRINT_TOKENS
 
+#define DEBUG_STRESS_GC
+#define DEBUG_LOG_GC
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>

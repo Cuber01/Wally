@@ -4,6 +4,13 @@
 #include "object.h"
 #include "vm.h"
 
+#ifdef DEBUG_LOG_GC
+#include <stdio.h>
+#include "gc_logger.h"
+#include "colors.h"
+#endif
+
+
 // oldSize      newSize                 Operation
 // 0 	        Non‑zero 	            Allocate new block.
 // Non‑zero 	0 	                    Free allocation.
@@ -11,6 +18,13 @@
 // Non‑zero 	Larger than oldSize 	Grow existing allocation.
 void* reallocate(void* pointer, size_t oldSize, size_t newSize)
 {
+    if (newSize > oldSize) // todo
+    {
+        #ifdef DEBUG_STRESS_GC
+        collectGarbage();
+        #endif
+    }
+
     if (newSize == 0)
     {
         free(pointer);
@@ -31,6 +45,10 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize)
 
 void freeObject(Obj* object)
 {
+    #ifdef DEBUG_LOG_GC
+    printf("%p free type %d\n", (void*)object, object->type);
+    #endif
+
     switch (object->type)
     {
         case OBJ_STRING:
@@ -68,7 +86,22 @@ void freeObjects()
     }
 }
 
+// region Garbage Collector
+
+void collectGarbage()
+{
+    #ifdef DEBUG_LOG_GC
+    printf(BOLD_WHITE);
+    printf("-- Garbage Collector Begin\n");
+    printf(COLOR_CLEAR);
+    #endif
+
+}
 
 
 
 
+
+
+
+// endregion

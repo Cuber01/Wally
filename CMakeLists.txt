@@ -31,4 +31,6 @@ add_executable(Wally src/main.c
                      src/debug/native_error.c
                      src/emitter/emitter.c
                      src/emitter/environment.c
-                     src/std/core.c)
+                     src/std/core.c
+                     src/debug/gc_logger.c
+        )

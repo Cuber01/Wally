@@ -19,4 +19,6 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize);
 void freeObjects();
 void freeObject(Obj* object);
 
+void collectGarbage();
+
 #endif //WALLY_MEMORY_H
