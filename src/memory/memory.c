@@ -51,6 +51,7 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize)
     return result;
 }
 
+
 void freeObject(Obj* object)
 {
     #ifdef DEBUG_LOG_GC

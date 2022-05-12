@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.21) # I guess you shouldn't touch the version
+# Release flags: -O3 -DNDEBUG
+# Debug flags: -g
+
 project(Wally)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_C_STANDARD 17)
 
 if (DEBUG_ENABLED)
     add_definitions(-DDEBUG_PRINT_BYTECODE=1 -DDEBUG_TRACE_EXECUTION=1)
-endif (DEBUG_ENABLED)
+endif(DEBUG_ENABLED)
 
 if(TOKEN_PRINT_ENABLED)
     add_definitions(-DEBUG_PRINT_TOKENS=1)
