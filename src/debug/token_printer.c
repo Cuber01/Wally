@@ -72,7 +72,7 @@ void printToken(Token token, bool isNewLine)
     // 19 is longest token's length (TOKEN_GREATER_EQUAL)
     uint8_t spacesToPrint = 19 - strlen(text);
 
-    colorPrint(GREEN, "%s  ", text);
+    colorWrite(GREEN, "%s  ", text);
     while (spacesToPrint--)
     {
         putchar(' ');

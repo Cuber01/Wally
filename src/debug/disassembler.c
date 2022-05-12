@@ -18,7 +18,7 @@ void disassembleChunk(Chunk* chunk, const char* name)
 
 static int simpleInstruction(const char* name, int offset)
 {
-    colorPrint(GREEN, "%s", name);
+    colorWriteline(GREEN, "%s", name);
     return offset + 1;
 }
 
@@ -26,7 +26,7 @@ static int byteInstruction(const char* name, Chunk* chunk, int offset)
 {
     uint8_t slot = chunk->code[offset + 1];
 
-    colorPrint(CYAN, "%-16s ", name);
+    colorWriteline(CYAN, "%-16s ", name);
     printf("%4d\n", slot);
     return offset + 2;
 }
@@ -35,7 +35,7 @@ static int constantInstruction(const char* name, Chunk* chunk, int offset)
 {
     uint8_t constant = chunk->code[offset + 1];
 
-    colorPrint(BLUE, "%-17s ", name);
+    colorWriteline(BLUE, "%-17s ", name);
     printf("%d   '", constant);
 
     printValue(chunk->constants.values[constant]);
@@ -50,7 +50,7 @@ static int jumpInstruction(const char* name, int sign, Chunk* chunk, int offset)
 
     jump |= chunk->code[offset + 2];
 
-    colorPrint(BOLD_PURPLE, "%-17s ", name);
+    colorWriteline(BOLD_PURPLE, "%-17s ", name);
     printf("%4d -> %d\n", offset, offset + 3 + sign * jump);
 
     return offset + 3;
