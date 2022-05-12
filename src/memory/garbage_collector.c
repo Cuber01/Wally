@@ -28,11 +28,11 @@
 
 void markObject(Obj* object)
 {
-#ifdef DEBUG_LOG_GC
+    #ifdef DEBUG_LOG_GC
     printf("%p mark ", (void*)object);
     printValue(OBJ_VAL(object));
     printf("\n");
-#endif
+    #endif
 
     if (object == NULL) return;
     if (object->isMarked) return;
@@ -149,11 +149,9 @@ static void sweep()
 
 void collectGarbage()
 {
-#ifdef DEBUG_LOG_GC
-    printf(BOLD_WHITE);
-    printf("-- Garbage Collector Begin\n");
-    printf(COLOR_CLEAR);
-#endif
+    #ifdef DEBUG_LOG_GC
+    colorPrint(PURPLE, "-- Garbage Collector Begin --");
+    #endif
 
     markRoots();
     traceReferences();

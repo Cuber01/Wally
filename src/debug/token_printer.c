@@ -72,13 +72,11 @@ void printToken(Token token, bool isNewLine)
     // 19 is longest token's length (TOKEN_GREATER_EQUAL)
     uint8_t spacesToPrint = 19 - strlen(text);
 
-    printf(GREEN);
-    printf("%s  ", text);
+    colorPrint(GREEN, "%s  ", text);
     while (spacesToPrint--)
     {
         putchar(' ');
     }
-    printf(COLOR_CLEAR);
 
     printf("'%.*s'\n", token.length, token.start);
 
