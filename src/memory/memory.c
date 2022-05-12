@@ -42,7 +42,7 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize)
 void freeObject(Obj* object)
 {
     #ifdef DEBUG_LOG_GC
-    printf("%p free type %d\n", (void*)object, object->type);
+    printf("%p free type %s\n", (void*)object, objectTypeToChar(object->type));
     #endif
 
     switch (object->type)

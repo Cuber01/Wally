@@ -87,5 +87,6 @@ ObjString* objectToString(Value value);
 ObjNative* newNative(NativeFn function);
 ObjFunction* newFunction();
 
+char* objectTypeToChar(ObjType type);
 
 #endif //WALLY_OBJECT_H

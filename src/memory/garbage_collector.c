@@ -76,7 +76,7 @@ static void markRoots()
         markValue(*slot);
     }
 
-    markTable(&vm.currentEnvironment->values); // TODO implement freeing environments
+    // markTable(&vm.currentEnvironment->values); // TODO implement freeing environments
 
     markCompilerRoots();
 }
