@@ -23,6 +23,6 @@
 
 void colorWriteline(const char* colorCode, const char* format, ...);
 void colorWrite(const char* colorCode, const char* format, ...);
-void stderrPrint(const char* format, ... );
+void stderrPrint(const char* format, ...);
 
 #endif //WALLY_COLORS_H

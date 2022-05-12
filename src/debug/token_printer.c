@@ -69,14 +69,8 @@ void printToken(Token token, bool isNewLine)
     }
 
     char* text = tokenEnumToChar(token.type);
-    // 19 is longest token's length (TOKEN_GREATER_EQUAL)
-    uint8_t spacesToPrint = 19 - strlen(text);
 
-    colorWrite(GREEN, "%s  ", text);
-    while (spacesToPrint--)
-    {
-        putchar(' ');
-    }
+    colorWrite(GREEN, "%-17s  ", text);
 
     printf("'%.*s'\n", token.length, token.start);
 
