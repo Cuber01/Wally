@@ -5,11 +5,11 @@
 
 // #define DEBUG_TRACE_EXECUTION
 // #define DEBUG_PRINT_BYTECODE
-#define DEBUG_PRINT_TOKENS
+// #define DEBUG_PRINT_TOKENS
 
 //#define DEBUG_STRESS_GC
 //#define DEBUG_LOG_GC
-//#define DEBUG_LOG_ALLOCATION
+#define DEBUG_LOG_ALLOCATION
 
 #include <stdbool.h>
 #include <stddef.h>

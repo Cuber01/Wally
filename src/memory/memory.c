@@ -7,6 +7,10 @@
 #include "emitter.h"
 #include "garbage_collector.h"
 
+#ifdef DEBUG_LOG_ALLOCATION
+#include "allocation_logger.h"
+#endif
+
 // oldSize      newSize                 Operation
 // 0 	        Non‑zero 	            Allocate new block.
 // Non‑zero 	0 	                    Free allocation.
@@ -14,15 +18,20 @@
 // Non‑zero 	Larger than oldSize 	Grow existing allocation.
 void* reallocate(void* pointer, size_t oldSize, size_t newSize)
 {
-    if (newSize > oldSize) // todo
+
+    #ifdef DEBUG_STRESS_GC
+    if (newSize > oldSize)
     {
-        #ifdef DEBUG_STRESS_GC
         collectGarbage();
-        #endif
     }
+    #endif
 
     if (newSize == 0)
     {
+        #ifdef DEBUG_LOG_ALLOCATION
+        logAllocation(pointer, oldSize, newSize);
+        #endif
+
         free(pointer);
         return NULL;
     }
@@ -35,9 +44,12 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize)
         exit(1);
     }
 
+    #ifdef DEBUG_LOG_ALLOCATION
+    logAllocation(result, oldSize, newSize);
+    #endif
+
     return result;
 }
-
 
 void freeObject(Obj* object)
 {

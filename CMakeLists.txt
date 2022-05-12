@@ -32,4 +32,7 @@ add_executable(Wally src/main.c
                      src/emitter/emitter.c
                      src/emitter/environment.c
                      src/std/core.c
-                     src/memory/garbage_collector.c src/misc/colors.c)
+                     src/memory/garbage_collector.c
+                     src/misc/colors.c
+                     src/debug/allocation_logger.c
+                     )
