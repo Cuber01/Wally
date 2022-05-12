@@ -83,11 +83,11 @@ static void markRoots()
 
 static void blackenObject(Obj* object)
 {
-#ifdef DEBUG_LOG_GC
+    #ifdef DEBUG_LOG_GC
     printf("%p blacken ", (void*)object);
     printValue(OBJ_VAL(object));
     printf("\n");
-#endif
+    #endif
 
     switch (object->type)
     {
@@ -150,7 +150,12 @@ static void sweep()
 void collectGarbage()
 {
     #ifdef DEBUG_LOG_GC
-    colorPrint(PURPLE, "-- Garbage Collector Begin --");
+    colorWriteline(PURPLE, "-- Garbage Collector Begin --");
+
+    size_t before = vm.bytesAllocated;
+    printf("Collected %zu bytes (from %zu to %zu) next at %zu.\n",
+           before - vm.bytesAllocated, before, vm.bytesAllocated,
+           vm.nextGC);
     #endif
 
     markRoots();
@@ -158,5 +163,6 @@ void collectGarbage()
     tableRemoveWhite(&vm.strings);
     sweep();
 
+    vm.nextGC = vm.bytesAllocated * GC_HEAP_GROW_FACTOR;
 }
 

@@ -42,6 +42,9 @@ void initVM()
     vm.grayCapacity = 0;
     vm.grayStack = NULL;
 
+    vm.bytesAllocated = 0;
+    vm.nextGC = 1024 * 1024;
+
     // defineNative("print", printNative);
 
     vm.objects = NULL;
@@ -95,8 +98,8 @@ static inline ObjString* toString(Value value)
 
 static void concatenate()
 {
-    ObjString* b = toString(pop());
-    ObjString* a = toString(pop());
+    ObjString* b = toString(peek(0));
+    ObjString* a = toString(peek(1));
 
     int length = a->length + b->length;
     char* chars = ALLOCATE(char, length + 1);
@@ -106,6 +109,8 @@ static void concatenate()
     chars[length] = '\0';
 
     ObjString* result = takeString(chars, length);
+    pop();
+    pop();
     push(OBJ_VAL(result));
 }
 

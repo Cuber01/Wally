@@ -18,13 +18,20 @@
 // Non‑zero 	Larger than oldSize 	Grow existing allocation.
 void* reallocate(void* pointer, size_t oldSize, size_t newSize)
 {
+    vm.bytesAllocated += newSize - oldSize;
 
     #ifdef DEBUG_STRESS_GC
     if (newSize > oldSize)
     {
         collectGarbage();
     }
+    #else
+    if (vm.bytesAllocated > vm.nextGC)
+    {
+        collectGarbage();
+    }
     #endif
+
 
     if (newSize == 0)
     {

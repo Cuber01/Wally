@@ -3,6 +3,8 @@
 
 #include "value.h"
 
+#define GC_HEAP_GROW_FACTOR 2
+
 void collectGarbage();
 void markValue(Value value);
 void markObject(Obj* object);
