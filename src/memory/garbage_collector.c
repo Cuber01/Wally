@@ -155,10 +155,11 @@ void collectGarbage()
     size_t before = vm.bytesAllocated;
     #endif
 
-    markRoots();
-    traceReferences();
-    tableRemoveWhite(&vm.strings);
-    sweep();
+    markRoots(); // Mark objects as gray
+    traceReferences(); // Mark gray objects as black
+
+    tableRemoveWhite(&vm.strings); // Remove white objects from the string table
+    sweep(); // Remove remaining whites
 
     vm.nextGC = vm.bytesAllocated * GC_HEAP_GROW_FACTOR;
 
