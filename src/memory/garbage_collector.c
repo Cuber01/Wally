@@ -28,14 +28,14 @@
 
 void markObject(Obj* object)
 {
+    if (object == NULL) return;
+    if (object->isMarked) return;
+
     #ifdef DEBUG_LOG_GC
     printf("%p mark ", (void*)object);
     printValue(OBJ_VAL(object));
     printf("\n");
     #endif
-
-    if (object == NULL) return;
-    if (object->isMarked) return;
 
     object->isMarked = true;
 
