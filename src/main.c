@@ -4,7 +4,6 @@
 
 #include "vm.h"
 
-// TODO for some reason release configuration doesn't work
 static char* readFile(const char* path)
 {
     FILE* file = fopen(path, "rb");

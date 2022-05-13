@@ -150,12 +150,9 @@ static void sweep()
 void collectGarbage()
 {
     #ifdef DEBUG_LOG_GC
-    colorWriteline(PURPLE, "-- Garbage Collector Begin --");
+    colorWriteline(PURPLE, "-- Garbage Collector Begin");
 
     size_t before = vm.bytesAllocated;
-    printf("Collected %zu bytes (from %zu to %zu) next at %zu.\n",
-           before - vm.bytesAllocated, before, vm.bytesAllocated,
-           vm.nextGC);
     #endif
 
     markRoots();
@@ -164,5 +161,13 @@ void collectGarbage()
     sweep();
 
     vm.nextGC = vm.bytesAllocated * GC_HEAP_GROW_FACTOR;
+
+    #ifdef DEBUG_LOG_GC
+    printf("Collected %zu bytes (from %zu to %zu) next at %zu.\n",
+           before - vm.bytesAllocated, before, vm.bytesAllocated,
+           vm.nextGC);
+    colorWriteline(PURPLE, "-- Garbage Collector End");
+    putchar('\n');
+    #endif
 }
 
