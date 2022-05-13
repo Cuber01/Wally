@@ -26,7 +26,7 @@ static int byteInstruction(const char* name, Chunk* chunk, int offset)
 {
     uint8_t slot = chunk->code[offset + 1];
 
-    colorWriteline(CYAN, "%-16s ", name);
+    colorWrite(CYAN, "%-16s ", name);
     printf("%4d\n", slot);
     return offset + 2;
 }
@@ -35,7 +35,7 @@ static int constantInstruction(const char* name, Chunk* chunk, int offset)
 {
     uint8_t constant = chunk->code[offset + 1];
 
-    colorWriteline(BLUE, "%-17s ", name);
+    colorWrite(BLUE, "%-17s ", name);
     printf("%d   '", constant);
 
     printValue(chunk->constants.values[constant]);
@@ -50,7 +50,7 @@ static int jumpInstruction(const char* name, int sign, Chunk* chunk, int offset)
 
     jump |= chunk->code[offset + 2];
 
-    colorWriteline(BOLD_PURPLE, "%-17s ", name);
+    colorWrite(BOLD_PURPLE, "%-17s ", name);
     printf("%4d -> %d\n", offset, offset + 3 + sign * jump);
 
     return offset + 3;
