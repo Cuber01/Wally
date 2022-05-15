@@ -10,7 +10,9 @@ typedef struct name {             \
 
 #define DEFINE_ARRAY_FUNCTIONS(name, snake_case_name, type) \
 	void init##name(name* array)    \
-    { \
+    {                                                       \
+        array = reallocate(array, 0, sizeof(name));         \
+                                                            \
 		array->values = NULL; \
 		array->capacity = 0; \
 		array->count = 0; \

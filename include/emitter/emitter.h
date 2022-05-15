@@ -18,10 +18,9 @@ typedef struct {
     struct Compiler* enclosing;
 } Compiler;
 
-
 typedef struct Continues Continues;
 typedef struct {
-    Compiler* current;
+    Compiler current;
     Continues* continues;
 
     bool hadError;

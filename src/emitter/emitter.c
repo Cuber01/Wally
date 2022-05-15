@@ -12,7 +12,7 @@
 Emitter* emitter = NULL;
 
 DECLARE_ARRAY(Continues, uint)
-DEFINE_ARRAY_FUNCTIONS(Continues, continues, uint)
+DEFINE_ARRAY_FUNCTIONS(Continues, continues, uint);
 
 // region ERROR
 
@@ -27,7 +27,7 @@ static void error(const char* message)
 
 static Chunk* currentChunk()
 {
-    return &emitter->current->function->chunk;
+    return &emitter->current.function->chunk;
 }
 
 static void emitByte(uint8_t byte, uint16_t line)
@@ -473,7 +473,7 @@ static uint16_t compileStatement(Stmt* statement)
             FunctionStmt* stmt = (FunctionStmt*) statement;
 
             Compiler compiler;
-            initCompiler(&compiler, stmt->name, stmt->paramCount, TYPE_FUNCTION);
+            initCompiler((&compiler), stmt->name, stmt->paramCount, TYPE_FUNCTION);
 
             emitByte(OP_SCOPE_START, line);
 
@@ -510,7 +510,7 @@ static uint16_t compileStatement(Stmt* statement)
 
         case RETURN_STATEMENT:
         {
-            if (emitter->current->type == TYPE_SCRIPT)
+            if (emitter->current.type == TYPE_SCRIPT)
             {
                 error("Can't return from top-level code.");
             }
@@ -538,18 +538,18 @@ static uint16_t compileStatement(Stmt* statement)
 
 static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t functionArity, FunctionType type)
 {
-    compiler->enclosing = (struct Compiler*) emitter->current;
+    compiler->enclosing = (struct Compiler*) &emitter->current;
     compiler->function = NULL;
     compiler->type = type;
 
-    emitter->current = compiler;
+    emitter->current = *compiler;
 
     compiler->function = newFunction();
     compiler->function->arity = functionArity;
 
     if(functionName != NULL)
     {
-        emitter->current->function->name = copyString(functionName->chars,
+        emitter->current.function->name = copyString(functionName->chars,
                                              functionName->length);
     }
 }
@@ -557,7 +557,7 @@ static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t f
 static ObjFunction* endCompiler(uint16_t line)
 {
     emitReturn(line);
-    ObjFunction* function = emitter->current->function;
+    ObjFunction* function = emitter->current.function;
 
     #ifdef DEBUG_PRINT_BYTECODE
     if (!emitter->hadError)
@@ -567,28 +567,28 @@ static ObjFunction* endCompiler(uint16_t line)
     }
     #endif
 
-    emitter->current = (Compiler*) emitter->current->enclosing;
+    emitter->current = *((Compiler*) emitter->current.enclosing);
     return function;
 }
 
-void initEmitter(Emitter* _emitter)
+void initEmitter()
 {
-    _emitter = reallocate(_emitter, 0, sizeof(Emitter));
+    emitter = reallocate(emitter, 0, sizeof(Emitter));
 
-    _emitter->current = NULL;
-    _emitter->current = reallocate( _emitter->current, 0, sizeof(Compiler));
+//    _emitter->current = NULL;
+//    _emitter->current = reallocate( _emitter->current, 0, sizeof(Compiler));
+//
+//    _emitter->current->enclosing = NULL;
+//    _emitter->current->enclosing = reallocate( _emitter->current->enclosing, 0, sizeof(Compiler));
 
-    _emitter->current->enclosing = NULL;
-    _emitter->current->enclosing = reallocate( _emitter->current->enclosing, 0, sizeof(Compiler));
-
-    initCompiler(_emitter->current, NULL, 0, TYPE_SCRIPT);
-    initContinues(_emitter->continues);
-    _emitter->hadError = false;
+    initCompiler(&(emitter->current), NULL, 0, TYPE_SCRIPT);
+    initContinues(emitter->continues);
+    emitter->hadError = false;
 }
 
 ObjFunction* emit(Node* statements)
 {
-    initEmitter(emitter);
+    initEmitter();
 
     Node* stmt = statements;
     Node* root = stmt;
@@ -608,7 +608,7 @@ ObjFunction* emit(Node* statements)
 
 void markCompilerRoots()
 {
-    Compiler* compiler = emitter->current;
+    Compiler* compiler = &emitter->current;
 
     while (compiler != NULL)
     {
