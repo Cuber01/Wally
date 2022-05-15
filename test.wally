@@ -1,1 +1,8 @@
-"str";
+function areWeHavingItYet()
+{
+    print("Yes we are!");
+}
+
+areWeHavingItYet();
+
+print("Game");

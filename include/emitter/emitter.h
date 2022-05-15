@@ -18,14 +18,6 @@ typedef struct {
     struct Compiler* enclosing;
 } Compiler;
 
-typedef struct Continues Continues;
-typedef struct {
-    Compiler current;
-    Continues* continues;
-
-    bool hadError;
-} Emitter;
-
 ObjFunction* emit(Node* statements);
 void markCompilerRoots();
 
