@@ -7,6 +7,10 @@
 #include "disassembler.h"
 #include "memory.h"
 #include "garbage_collector.h"
+#include "array.h"
+
+DECLARE_ARRAY(Hello, int)
+DEFINE_ARRAY(Hello, hello, int)
 
 Compiler* current = NULL;
 bool hadError = false;
