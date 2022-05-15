@@ -9,11 +9,10 @@
 #include "garbage_collector.h"
 #include "array.h"
 
-DECLARE_ARRAY(Hello, uint)
-DEFINE_ARRAY(Hello, hello, uint)
+Emitter* emitter = NULL;
 
-Compiler* current = NULL;
-bool hadError = false;
+DECLARE_ARRAY(Continues, uint)
+DEFINE_ARRAY_FUNCTIONS(Continues, continues, uint)
 
 // region ERROR
 
@@ -28,7 +27,7 @@ static void error(const char* message)
 
 static Chunk* currentChunk()
 {
-    return &current->function->chunk;
+    return &emitter->current->function->chunk;
 }
 
 static void emitByte(uint8_t byte, uint16_t line)
@@ -511,7 +510,7 @@ static uint16_t compileStatement(Stmt* statement)
 
         case RETURN_STATEMENT:
         {
-            if (current->type == TYPE_SCRIPT)
+            if (emitter->current->type == TYPE_SCRIPT)
             {
                 error("Can't return from top-level code.");
             }
@@ -539,18 +538,18 @@ static uint16_t compileStatement(Stmt* statement)
 
 static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t functionArity, FunctionType type)
 {
-    compiler->enclosing = (struct Compiler*) current;
+    compiler->enclosing = (struct Compiler*) emitter->current;
     compiler->function = NULL;
     compiler->type = type;
 
-    current = compiler;
+    emitter->current = compiler;
 
     compiler->function = newFunction();
     compiler->function->arity = functionArity;
 
     if(functionName != NULL)
     {
-        current->function->name = copyString(functionName->chars,
+        emitter->current->function->name = copyString(functionName->chars,
                                              functionName->length);
     }
 }
@@ -558,24 +557,38 @@ static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t f
 static ObjFunction* endCompiler(uint16_t line)
 {
     emitReturn(line);
-    ObjFunction* function = current->function;
+    ObjFunction* function = emitter->current->function;
 
     #ifdef DEBUG_PRINT_BYTECODE
-    if (!hadError)
+    if (!emitter->hadError)
     {
         disassembleChunk(currentChunk(), function->name != NULL
                                          ? function->name->chars : "<script>");
     }
     #endif
 
-    current = (Compiler*) current->enclosing;
+    emitter->current = (Compiler*) emitter->current->enclosing;
     return function;
+}
+
+void initEmitter(Emitter* _emitter)
+{
+    _emitter = reallocate(_emitter, 0, sizeof(Emitter));
+
+    _emitter->current = NULL;
+    _emitter->current = reallocate( _emitter->current, 0, sizeof(Compiler));
+
+    _emitter->current->enclosing = NULL;
+    _emitter->current->enclosing = reallocate( _emitter->current->enclosing, 0, sizeof(Compiler));
+
+    initCompiler(_emitter->current, NULL, 0, TYPE_SCRIPT);
+    initContinues(_emitter->continues);
+    _emitter->hadError = false;
 }
 
 ObjFunction* emit(Node* statements)
 {
-    Compiler compiler;
-    initCompiler(&compiler, NULL, 0, TYPE_SCRIPT);
+    initEmitter(emitter);
 
     Node* stmt = statements;
     Node* root = stmt;
@@ -590,12 +603,12 @@ ObjFunction* emit(Node* statements)
     freeList(root);
 
     ObjFunction* function = endCompiler(lastLine);
-    return hadError ? NULL : function;
+    return emitter->hadError ? NULL : function;
 }
 
 void markCompilerRoots()
 {
-    Compiler* compiler = current;
+    Compiler* compiler = emitter->current;
 
     while (compiler != NULL)
     {

@@ -8,7 +8,7 @@ typedef struct name {             \
     type* values; \
 } name;
 
-#define DEFINE_ARRAY(name, snake_case_name, type) \
+#define DEFINE_ARRAY_FUNCTIONS(name, snake_case_name, type) \
 	void init##name(name* array)    \
     { \
 		array->values = NULL; \
