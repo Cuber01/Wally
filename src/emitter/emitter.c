@@ -9,8 +9,8 @@
 #include "garbage_collector.h"
 #include "array.h"
 
-DECLARE_ARRAY(Hello, int)
-DEFINE_ARRAY(Hello, hello, int)
+DECLARE_ARRAY(Hello, uint)
+DEFINE_ARRAY(Hello, hello, uint)
 
 Compiler* current = NULL;
 bool hadError = false;
@@ -59,7 +59,7 @@ static void emitConstant(Value value, uint16_t line)
     emitBytes(OP_CONSTANT, makeConstant(value), line);
 }
 
-static unsigned int emitJump(uint8_t instruction, uint16_t line)
+static uint emitJump(uint8_t instruction, uint16_t line)
 {
     emitByte(instruction, line);
 
@@ -70,10 +70,10 @@ static unsigned int emitJump(uint8_t instruction, uint16_t line)
     return currentChunk()->codeCount - 2;
 }
 
-static void patchJump(unsigned int offset)
+static void patchJump(uint offset)
 {
     // -2 to adjust for the bytecode for the jump offset itself
-    unsigned int jump = currentChunk()->codeCount - offset - 2;
+    uint jump = currentChunk()->codeCount - offset - 2;
 
     if (jump > UINT16_MAX)
     {
@@ -84,11 +84,11 @@ static void patchJump(unsigned int offset)
     currentChunk()->code[offset + 1] = jump & 0xff;
 }
 
-static void emitLoop(unsigned int loopStart, uint16_t line)
+static void emitLoop(uint loopStart, uint16_t line)
 {
     emitByte(OP_LOOP, line);
 
-    unsigned int offset = currentChunk()->codeCount - loopStart + 2;
+    uint offset = currentChunk()->codeCount - loopStart + 2;
     if (offset > UINT16_MAX) error("Loop body too large.");
 
     emitByte((offset >> 8) & 0xff, line);
@@ -280,7 +280,7 @@ static void compileExpression(Expr* expression)
                 case TOKEN_AND:
                 {
                     compileExpression(expr->left);
-                    unsigned int endJump = emitJump(OP_JUMP_IF_FALSE, line);
+                    uint endJump = emitJump(OP_JUMP_IF_FALSE, line);
 
                     emitByte(OP_POP, line);
                     compileExpression(expr->right);
@@ -292,7 +292,7 @@ static void compileExpression(Expr* expression)
                 case TOKEN_OR:
                 {
                     compileExpression(expr->left);
-                    unsigned int endJump = emitJump(OP_JUMP_IF_TRUE, line);
+                    uint endJump = emitJump(OP_JUMP_IF_TRUE, line);
 
                     emitByte(OP_POP, line);
                     compileExpression(expr->right);
@@ -380,12 +380,12 @@ static uint16_t compileStatement(Stmt* statement)
 
             compileExpression(stmt->condition);
 
-            unsigned int thenJump = emitJump(OP_JUMP_IF_FALSE, line);
+            uint thenJump = emitJump(OP_JUMP_IF_FALSE, line);
             emitByte(OP_POP, line);
 
             compileStatement(stmt->thenBranch);
 
-            unsigned int elseJump = emitJump(OP_JUMP, line);
+            uint elseJump = emitJump(OP_JUMP, line);
             patchJump(thenJump);
             emitByte(OP_POP, line);
 
@@ -409,10 +409,10 @@ static uint16_t compileStatement(Stmt* statement)
         {
             WhileStmt* stmt = (WhileStmt*) statement;
 
-            unsigned int loopStart = currentChunk()->codeCount;
+            uint loopStart = currentChunk()->codeCount;
 
             compileExpression(stmt->condition);
-            unsigned int exitJump = emitJump(OP_JUMP_IF_FALSE, line);
+            uint exitJump = emitJump(OP_JUMP_IF_FALSE, line);
             emitByte(OP_POP, line);
 
             compileStatement(stmt->body);
@@ -433,7 +433,7 @@ static uint16_t compileStatement(Stmt* statement)
             compileStatement(stmt->declaration);
 
             // Start the loop before condition
-            unsigned int loopStart = currentChunk()->codeCount;
+            uint loopStart = currentChunk()->codeCount;
             int exitJump = -1;
 
             // Condition

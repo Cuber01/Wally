@@ -14,12 +14,12 @@ void initChunk(Chunk* chunk)
     initValueArray(&chunk->constants);
 }
 
-void writeChunk(Chunk* chunk, uint8_t byte, unsigned int line)
+void writeChunk(Chunk* chunk, uint8_t byte, uint line)
 {
     // Grow the array if we don't have enough space
     if (chunk->codeCapacity < chunk->codeCount + 1)
     {
-        unsigned int oldCapacity = chunk->codeCapacity;
+        uint oldCapacity = chunk->codeCapacity;
         chunk->codeCapacity = GROW_CAPACITY(oldCapacity);
         chunk->code = GROW_ARRAY(uint8_t, chunk->code, oldCapacity, chunk->codeCapacity);
     }

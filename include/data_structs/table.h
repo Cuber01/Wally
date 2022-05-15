@@ -30,7 +30,7 @@ uint8_t tableSet(Table* table, ObjString* key, Value value);
 bool tableGet(Table* table, ObjString* key, Value* value);
 bool tableDelete(Table* table, ObjString* key);
 
-ObjString* tableFindString(Table* table, const char* chars, unsigned int length, uint32_t hash);
+ObjString* tableFindString(Table* table, const char* chars, uint length, uint32_t hash);
 void tableAddAll(Table* from, Table* to);
 
 void markTable(Table* table);

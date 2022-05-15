@@ -49,7 +49,7 @@ typedef struct {
 typedef struct {
     const char* start;
     const char* current;
-    unsigned int line;
+    uint line;
 
     TokenType returnNext;
 } Scanner;

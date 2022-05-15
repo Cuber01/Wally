@@ -57,11 +57,11 @@ typedef enum {
 } OpCode;
 
 typedef struct {
-    unsigned int codeCount;
-    unsigned int codeCapacity;
+    uint codeCount;
+    uint codeCapacity;
 
-    unsigned int lineCount;
-    unsigned int lineCapacity;
+    uint lineCount;
+    uint lineCapacity;
 
     uint8_t* code;
     uint32_t* lines;
@@ -70,7 +70,7 @@ typedef struct {
 } Chunk;
 
 void initChunk(Chunk* chunk);
-void writeChunk(Chunk* chunk, uint8_t byte, unsigned int line);
+void writeChunk(Chunk* chunk, uint8_t byte, uint line);
 void freeChunk(Chunk* chunk);
 int addConstant(Chunk* chunk, Value value);
 

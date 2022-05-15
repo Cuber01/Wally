@@ -45,7 +45,7 @@ ObjNative* newNative(NativeFn function)
     return native;
 }
 
-static ObjString* allocateString(char* chars, unsigned int length, uint32_t hash)
+static ObjString* allocateString(char* chars, uint length, uint32_t hash)
 {
     // Allocate new string object and set fields
     ObjString* string = ALLOCATE_OBJ(ObjString, OBJ_STRING);
@@ -61,7 +61,7 @@ static ObjString* allocateString(char* chars, unsigned int length, uint32_t hash
 }
 
 // FNV-1a hashing
-static uint32_t hashString(const char* key, unsigned int length)
+static uint32_t hashString(const char* key, uint length)
 {
     uint32_t hash = 2166136261u;
 
@@ -74,13 +74,13 @@ static uint32_t hashString(const char* key, unsigned int length)
     return hash;
 }
 
-ObjString* takeString(char* chars, unsigned int length)
+ObjString* takeString(char* chars, uint length)
 {
     uint32_t hash = hashString(chars, length);
     return allocateString(chars, length, hash);
 }
 
-ObjString* copyString(const char* chars, unsigned int length)
+ObjString* copyString(const char* chars, uint length)
 {
     // Generate hash
     uint32_t hash = hashString(chars, length);

@@ -52,7 +52,7 @@ void listWriteValue(Node* root, int index, NodeValue value)
     node->value = value;
 }
 
-NodeValue listGet(Node* root, unsigned int index)
+NodeValue listGet(Node* root, uint index)
 {
     Node* node = root;
     while(index > 0)

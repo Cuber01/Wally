@@ -3,8 +3,8 @@
 
 #define DECLARE_ARRAY(name, type) \
 typedef struct name {             \
-    unsigned int capacity; \
-    unsigned int count;  \
+    uint capacity; \
+    uint count;  \
     type* values; \
 } name;
 
@@ -25,7 +25,7 @@ typedef struct name {             \
 	void snake_case_name##Write(name* array, type value) \
     { \
 		if (array->capacity < array->count + 1) { \
-			unsigned int oldCapacity = array->capacity; \
+			uint oldCapacity = array->capacity; \
 			array->capacity = GROW_CAPACITY(oldCapacity); \
 			array->values = GROW_ARRAY(type, array->values, oldCapacity, array->capacity); \
 		} \

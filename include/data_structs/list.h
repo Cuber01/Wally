@@ -24,7 +24,7 @@ typedef struct Node
 } Node;
 
 void listAdd(Node** node, NodeValue value);
-NodeValue listGet(Node* root, unsigned int index);
+NodeValue listGet(Node* root, uint index);
 void listWriteValue(Node* root, int index, NodeValue value);
 void freeList(Node* root);
 int listGetLength(Node* root);

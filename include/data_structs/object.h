@@ -48,7 +48,7 @@ struct Obj {
 // but only as long as Obj is the first field in the child struct
 struct ObjString {
     Obj obj;
-    unsigned int length;
+    uint length;
     char* chars;
 
     uint32_t hash; // Used in hashtables
@@ -78,8 +78,8 @@ static inline bool isObjType(Value value, ObjType type)
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
 
-ObjString* copyString(const char* chars, unsigned int length);
-ObjString* takeString(char* chars, unsigned int length);
+ObjString* copyString(const char* chars, uint length);
+ObjString* takeString(char* chars, uint length);
 
 void printObject(Value value);
 ObjString* objectToString(Value value);
