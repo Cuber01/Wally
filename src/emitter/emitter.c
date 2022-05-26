@@ -578,8 +578,8 @@ static uint16_t compileStatement(Stmt* statement)
 // TODO this shouldn't be all global
 static void initEmitter()
 {
-    initUInts(continues);
-    initUInts(breaks);
+    continues = initUInts(continues);
+    breaks = initUInts(breaks);
 }
 
 static void freeEmitter()

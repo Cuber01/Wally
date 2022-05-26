@@ -458,37 +458,14 @@ static Stmt* forStatement()
 
 static Stmt* breakStatement()
 {
-//    if(innermostLoopDepth == -1)
-//    {
-//        error("Can't use 'break' statements outside of loops.");
-//    }
-//
-//    consume(TOKEN_SEMICOLON, "Expect ';' after 'break'.");
-//
-//    for (int i = current->localCount - 1;
-//         i >= 0 && current->locals[i].depth > innermostLoopDepth;
-//         i--)
-//    {
-//        emitByte(OP_POP); POPN
-//    }
-//
-//    emitJump(innermostLoopEnd);
+    consume(TOKEN_SEMICOLON, "Expect ';' after 'break'.");
+    return (Stmt*)newBreakStmt(parser.line);
 }
 
 static Stmt* continueStatement()
 {
-//    if (innermostLoopStart == -1) {
-//        error("Can't use 'continue' outside of a loop.");
-//    }
-//
-//    consume(TOKEN_SEMICOLON, "Expect ';' after 'continue'.");
-//
-//    // Discard any locals created inside the loop.
-//    emitMultiplePop(current->localCount - 1);
-//    current->localCount = 0;
-//
-//    // Jump to top of current innermost loop.
-//    emitLoop(innermostLoopStart);
+    consume(TOKEN_SEMICOLON, "Expect ';' after 'continue'.");
+    return (Stmt*)newContinueStmt(parser.line);
 }
 
 static Stmt* whileStatement()

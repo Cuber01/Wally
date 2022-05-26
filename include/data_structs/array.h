@@ -11,13 +11,15 @@ typedef struct name {             \
 } name;
 
 #define DEFINE_ARRAY_FUNCTIONS(name, snake_case_name, type) \
-	void init##name(name* array)    \
+	name* init##name(name* array)    \
     {                                                       \
         array = reallocate(array, 0, sizeof(name));         \
                                                             \
 		array->values = NULL; \
 		array->capacity = 0; \
-		array->count = 0; \
+		array->count = 0;                                         \
+                                                            \
+        return array;                                       \
 	} \
 	\
 	void free##name(name* array) \
@@ -39,7 +41,7 @@ typedef struct name {             \
 	}
 
 #define DEFINE_ARRAY_FUNCTION_PREDECLARATIONS(name, snake_case_name, type) \
-    void init##name(name* array); \
+    name* init##name(name* array); \
     void free##name(name* array); \
     void snake_case_name##Write(name* array, type value); \
 

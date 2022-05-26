@@ -1,8 +1,5 @@
-function areWeHavingItYet()
+while(true)
 {
-    print("Yes we are!");
+    continue;
+    print("Crin ge !");
 }
-
-areWeHavingItYet();
-
-print("Game");
