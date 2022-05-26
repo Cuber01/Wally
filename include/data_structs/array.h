@@ -1,6 +1,8 @@
 #ifndef WALLY_ARRAY_H
 #define WALLY_ARRAY_H
 
+#include "common.h"
+
 #define DECLARE_ARRAY(name, type) \
 typedef struct name {             \
     uint capacity; \
@@ -35,5 +37,13 @@ typedef struct name {             \
 		array->values[array->count] = value; \
 		array->count++; \
 	}
+
+#define DEFINE_ARRAY_FUNCTION_PREDECLARATIONS(name, snake_case_name, type) \
+    void init##name(name* array); \
+    void free##name(name* array); \
+    void snake_case_name##Write(name* array, type value); \
+
+DECLARE_ARRAY(UInts, uint)
+DEFINE_ARRAY_FUNCTION_PREDECLARATIONS(UInts, uints, uint)
 
 #endif //WALLY_ARRAY_H

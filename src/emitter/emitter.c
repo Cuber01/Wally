@@ -4,13 +4,17 @@
 #include "emitter.h"
 #include "chunk.h"
 #include "list.h"
-#include "disassembler.h"
 #include "memory.h"
 #include "garbage_collector.h"
 #include "array.h"
 
-DECLARE_ARRAY(Hello, uint)
-DEFINE_ARRAY_FUNCTIONS(Hello, hello, uint)
+#ifdef DEBUG_PRINT_BYTECODE
+#include "disassembler.h"
+#endif
+
+UInts* breaks;
+UInts* continues;
+uint loopDepth = 0;
 
 Compiler* current = NULL;
 bool hadError = false;
@@ -82,6 +86,16 @@ static void patchJump(uint offset)
 
     currentChunk()->code[offset] = (jump >> 8) & 0xff;
     currentChunk()->code[offset + 1] = jump & 0xff;
+}
+
+static void patchLoopJumps(UInts* jumps)
+{
+    for (uint i = 0; i < jumps->count; i++)
+    {
+        patchJump(jumps->values[i]);
+    }
+
+    freeUInts(jumps);
 }
 
 static void emitLoop(uint loopStart, uint16_t line)
@@ -410,16 +424,21 @@ static uint16_t compileStatement(Stmt* statement)
             WhileStmt* stmt = (WhileStmt*) statement;
 
             uint loopStart = currentChunk()->codeCount;
+            loopDepth++;
 
             compileExpression(stmt->condition);
             uint exitJump = emitJump(OP_JUMP_IF_FALSE, line);
             emitByte(OP_POP, line);
 
             compileStatement(stmt->body);
-            emitLoop(loopStart, line);
 
+            patchLoopJumps(continues);
+            emitLoop(loopStart, line);
             patchJump(exitJump);
+            patchLoopJumps(breaks);
+
             emitByte(OP_POP, line);
+            loopDepth--;
             break;
         }
 
@@ -428,6 +447,7 @@ static uint16_t compileStatement(Stmt* statement)
             ForStmt* stmt = (ForStmt*) statement;
 
             emitByte(OP_SCOPE_START, line);
+            loopDepth++;
 
             // Declaration/Initializer
             compileStatement(stmt->declaration);
@@ -451,11 +471,13 @@ static uint16_t compileStatement(Stmt* statement)
             emitByte(OP_POP, line); // Pop Condition
 
             compileStatement(stmt->body);
+            patchLoopJumps(continues);
 
             compileExpression(stmt->increment);
 
             emitLoop(loopStart, line);
 
+            patchLoopJumps(breaks);
             emitByte(OP_SCOPE_END, line);
 
             // Jump out of the loop
@@ -466,6 +488,7 @@ static uint16_t compileStatement(Stmt* statement)
                 emitByte(OP_POP, line);
             }
 
+            loopDepth--;
             break;
         }
 
@@ -524,18 +547,46 @@ static uint16_t compileStatement(Stmt* statement)
             break;
         }
 
+        case CONTINUE_STATEMENT:
+            if (loopDepth == 0)
+            {
+                error("Can't 'continue' from top-level code.");
+            }
+
+            uintsWrite(continues, emitJump(OP_JUMP, statement->line));
+            break;
+
+        case BREAK_STATEMENT:
+            if (loopDepth == 0)
+            {
+                error("Can't break from top-level code.");
+            }
+
+            uintsWrite(breaks, emitJump(OP_JUMP, statement->line));
+            break;
+
         case SWITCH_STATEMENT:
             break;
-        case CONTINUE_STATEMENT:
-            break;
-        case BREAK_STATEMENT:
-            break;
+
     }
 
     return line;
 }
 
 // region MAIN
+
+// TODO this shouldn't be all global
+static void initEmitter()
+{
+    initUInts(continues);
+    initUInts(breaks);
+}
+
+static void freeEmitter()
+{
+    freeUInts(continues);
+    freeUInts(breaks);
+}
 
 static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t functionArity, FunctionType type)
 {
@@ -560,13 +611,13 @@ static ObjFunction* endCompiler(uint16_t line)
     emitReturn(line);
     ObjFunction* function = current->function;
 
-#ifdef DEBUG_PRINT_BYTECODE
+    #ifdef DEBUG_PRINT_BYTECODE
     if (!hadError)
     {
         disassembleChunk(currentChunk(), function->name != NULL
                                          ? function->name->chars : "<script>");
     }
-#endif
+    #endif
 
     current = (Compiler*) current->enclosing;
     return function;
@@ -574,6 +625,8 @@ static ObjFunction* endCompiler(uint16_t line)
 
 ObjFunction* emit(Node* statements)
 {
+    initEmitter();
+
     Compiler compiler;
     initCompiler(&compiler, NULL, 0, TYPE_SCRIPT);
 
@@ -588,6 +641,8 @@ ObjFunction* emit(Node* statements)
     }
 
     freeList(root);
+
+    freeEmitter();
 
     ObjFunction* function = endCompiler(lastLine);
     return hadError ? NULL : function;
