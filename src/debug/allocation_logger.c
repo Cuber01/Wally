@@ -11,6 +11,12 @@ void logAllocation(void* pointer, size_t oldSize, size_t newSize)
         return;
     }
 
+    if(newSize == 0 && oldSize == 0)
+    {
+        colorWriteline(WHITE, "[-] Ignore null");
+        return;
+    }
+
     if(newSize == 0)
     {
         colorWriteline(RED, "[ %zu -> %zu ] Free %p", oldSize, newSize, pointer);
