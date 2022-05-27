@@ -1,0 +1,10 @@
+var a = 0;
+
+while(true)
+{
+    a++;
+    if(a == 2) break;
+    print(a);
+}
+
+// Expect: 1
