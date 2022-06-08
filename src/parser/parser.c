@@ -11,6 +11,7 @@
 #include "disassembler.h"
 #include "emitter.h"
 #include "memory.h"
+#include "vm.h"
 
 #endif
 
@@ -323,7 +324,11 @@ static Expr* string()
 
     escapeSequences(str, str);
 
-    return (Expr*)newLiteralExpr(OBJ_VAL(copyString(str, parser.previous.length - 2)), parser.line);
+    Value string = OBJ_VAL(copyString(str, parser.previous.length - 2));
+    push(string);
+    Expr* rv = (Expr*)newLiteralExpr(string, parser.line);
+    pop();
+    return rv;
 }
 
 static Expr* interpolatedString()
