@@ -71,12 +71,16 @@ static void markArray(ValueArray* array)
 
 static void markRoots()
 {
+
     for (Value* slot = vm.stack; slot < vm.stackTop; slot++)
     {
         markValue(*slot);
     }
 
-    // markTable(&vm.currentEnvironment->values); // TODO implement freeing environments
+    if(vm.currentEnvironment != NULL)
+    {
+        markEnvironment(vm.currentEnvironment);
+    }
 
     markCompilerRoots();
 }
@@ -147,6 +151,7 @@ static void sweep()
     }
 }
 
+int tmp = 0;
 void collectGarbage()
 {
     #ifdef DEBUG_LOG_GC
@@ -154,6 +159,8 @@ void collectGarbage()
 
     size_t before = vm.bytesAllocated;
     #endif
+
+    tmp++;
 
     markRoots(); // Mark objects as gray
     traceReferences(); // Mark gray objects as black

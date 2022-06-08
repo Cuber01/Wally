@@ -74,6 +74,16 @@ bool environmentGet(Environment* env, ObjString* name, Value* result)
     return true;
 }
 
+void markEnvironment(Environment* env)
+{
+    markTable(&env->values);
+
+    if(env->enclosing != NULL)
+    {
+        markEnvironment(env->enclosing);
+    }
+}
+
 void freeEnvironment(Environment* env)
 {
     FREE_ARRAY(Entry, env->values.entries, env->values.capacity);

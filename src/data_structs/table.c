@@ -221,6 +221,8 @@ bool tableDelete(Table* table, ObjString* key)
 
 void markTable(Table* table)
 {
+    if(table == NULL) return;
+
     for (int i = 0; i < table->capacity; i++)
     {
         Entry* entry = &table->entries[i];

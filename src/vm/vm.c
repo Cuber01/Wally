@@ -8,8 +8,6 @@
 #include "object.h"
 #include "memory.h"
 #include "emitter.h"
-#include "core.h"
-
 
 VM vm;
 
@@ -66,11 +64,6 @@ void push(Value value)
 Value pop()
 {
     vm.stackTop--;
-    return *vm.stackTop;
-}
-
-Value popNullable()
-{
     return *vm.stackTop;
 }
 
