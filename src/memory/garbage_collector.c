@@ -161,7 +161,8 @@ void collectGarbage()
     #endif
 
     tmp++;
-
+    // todo problem jest taki że po początkowym push-pop w parserze/scannerze te stringi są na drzewkach ast i gc je usuwa
+    // dodać drzewka do gc??
     markRoots(); // Mark objects as gray
     traceReferences(); // Mark gray objects as black
 

@@ -12,7 +12,6 @@
 #include "emitter.h"
 #include "memory.h"
 #include "vm.h"
-
 #endif
 
 #ifdef DEBUG_PRINT_TOKENS
@@ -324,10 +323,12 @@ static Expr* string()
 
     escapeSequences(str, str);
 
+    // todo recent change
     Value string = OBJ_VAL(copyString(str, parser.previous.length - 2));
     push(string);
     Expr* rv = (Expr*)newLiteralExpr(string, parser.line);
     pop();
+
     return rv;
 }
 
@@ -745,16 +746,14 @@ Node* compile(const char* source)
 
     advance();
 
-    Node* statements = NULL;
-
     while (!match(TOKEN_EOF))
     {
-        listAdd(&statements, (NodeValue){.as.statement = declaration()});
+        listAdd(&parser.statements, (NodeValue){.as.statement = declaration()});
     }
 
     consume(TOKEN_EOF, "Expect end of expression.");
 
-    return parser.hadError ? NULL : statements;
+    return parser.hadError ? NULL : parser.statements;
 }
 
 ParseRule rules[] =
