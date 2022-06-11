@@ -8,6 +8,7 @@
 #include "object.h"
 #include "memory.h"
 #include "emitter.h"
+#include "garbage_collector.h"
 
 VM vm;
 
@@ -446,6 +447,7 @@ static int run()
 
                 if(oldFunction->calledFromFunction == NULL)
                 {
+                    collectGarbage();
                     return INTERPRET_OK;
                 }
 
@@ -507,5 +509,6 @@ int interpret(const char* source)
     vm.currentFunction = function;
     call(function, 0);
 
+    gcStarted = true;
     return run();
 }

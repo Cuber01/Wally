@@ -16,7 +16,7 @@ endif(TOKEN_PRINT_ENABLED)
 
 include_directories(Wally PRIVATE include/ include/data_structs/ include/misc/ include/debug/
                     include/memory/ include/scanner/ include/parser include/vm/ include/emitter
-                    include/std/ )
+                    include/std/ include/preprocessor/)
 
 add_executable(Wally src/main.c
                      src/memory/memory.c
@@ -37,4 +37,6 @@ add_executable(Wally src/main.c
                      src/std/core.c
                      src/memory/garbage_collector.c
                      src/misc/colors.c
-                     src/debug/allocation_logger.c src/data_structs/array.c)
+                     src/debug/allocation_logger.c
+                     src/data_structs/array.c
+                     src/preprocessor/preprocessor.c)

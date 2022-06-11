@@ -26,6 +26,8 @@
 // isMarked = true
 // Is not on the gray stack
 
+bool gcStarted = false;
+
 void markObject(Obj* object)
 {
     if (object == NULL) return;
@@ -151,7 +153,6 @@ static void sweep()
     }
 }
 
-int tmp = 0;
 void collectGarbage()
 {
     #ifdef DEBUG_LOG_GC
@@ -160,9 +161,6 @@ void collectGarbage()
     size_t before = vm.bytesAllocated;
     #endif
 
-    tmp++;
-    // todo problem jest taki że po początkowym push-pop w parserze/scannerze te stringi są na drzewkach ast i gc je usuwa
-    // dodać drzewka do gc??
     markRoots(); // Mark objects as gray
     traceReferences(); // Mark gray objects as black
 

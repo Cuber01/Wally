@@ -9,4 +9,6 @@ void collectGarbage();
 void markValue(Value value);
 void markObject(Obj* object);
 
+bool gcStarted;
+
 #endif //WALLY_GARBAGE_COLLECTOR_H
