@@ -124,8 +124,9 @@ static void symbol()
 
 static DirectiveType checkKeyword(int start, int length, const char* rest, DirectiveType type)
 {
-    if (preprocessor.current - preprocessor.start == start + length &&          // Check length
-        memcmp(preprocessor.start + start, rest, length) == 0)  // Check contents
+    // +1 is for the '#'
+    if (preprocessor.current - preprocessor.start == start + length + 1 &&      // Check length
+        memcmp(preprocessor.start + start + 1, rest, length ) == 0)  // Check contents
     {
         return type;
     }
@@ -199,12 +200,12 @@ char* preprocess(char* text)
 {
     initPreprocessor(text);
 
-    skipWhitespace();
-    preprocessor.start = preprocessor.current;
-
     for(;;)
     {
         if (isAtEnd()) return preprocessor.start;
+
+        skipWhitespace();
+        preprocessor.start = preprocessor.current;
 
         char c = advance();
 
