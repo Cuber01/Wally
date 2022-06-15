@@ -1,50 +1,15 @@
 #include <string.h>
+#include <stdio.h>
 #include "preprocessor.h"
 
-char* preprocess(char* text)
-{
-    char* c = text;
-
-    while(*c != '\0')
-    {
-        if (*c == '#')
-        {
-
-        }
-        else
-        {
-            c++;
-        }
-
-    }
-
-    return text;
-}
-
-static char* processDirective(char* text)
-{
-    char* c = text;
-
-    switch (c)
-    {
-        case ' ':
-        case '\r':
-        case '\t':
-        case '\n':
-        case '/':
-        break;
-
-    }
-
-}
-
-
-void initPreprocessor(const char* source)
+void initPreprocessor(char* source)
 {
     preprocessor.start = source;
     preprocessor.current = source;
     preprocessor.line = 1;
 }
+
+// region Util
 
 static bool isAtEnd()
 {
@@ -76,8 +41,10 @@ static char peekNext()
     return preprocessor.current[1];
 }
 
-static void skipWhitespace()
+static bool skipWhitespace()
 {
+    bool whiteSpaceEncountered = false;
+
     for (;;)
     {
         char c = peek();
@@ -86,10 +53,12 @@ static void skipWhitespace()
             case ' ':
             case '\r':
             case '\t':
+                whiteSpaceEncountered = true;
                 advance();
                 break;
 
             case '\n':
+                whiteSpaceEncountered = true;
                 preprocessor.line++;
                 advance();
                 break;
@@ -97,11 +66,15 @@ static void skipWhitespace()
             case '/':
                 if (peekNext() == '/')
                 {
+                    whiteSpaceEncountered = true;
+
                     // A comment goes until the end of the line.
                     while (peek() != '\n' && !isAtEnd()) advance();
                 }
                 else if (peekNext() == '*')
                 {
+                    whiteSpaceEncountered = true;
+
                     advance();
 
                     while (!isAtEnd())
@@ -119,17 +92,35 @@ static void skipWhitespace()
                 }
                 else
                 {
-                    return;
+                    return whiteSpaceEncountered;
                 }
                 break;
 
             default:
-                return;
+                return whiteSpaceEncountered;
         }
     }
 }
 
+static bool isAlpha(char c)
+{
+    return (c >= 'a' && c <= 'z') ||
+           (c >= 'A' && c <= 'Z') ||
+           c == '_';
+}
 
+// endregion
+
+// region Symbols
+
+static void symbol()
+{
+    printf("symbol?");
+}
+
+// endregion
+
+// region Directives
 
 static DirectiveType checkKeyword(int start, int length, const char* rest, DirectiveType type)
 {
@@ -139,46 +130,95 @@ static DirectiveType checkKeyword(int start, int length, const char* rest, Direc
         return type;
     }
 
-    return DIRECTIVE_SYMBOL;
+    return DIRECTIVE_NONE;
 }
 
-static DirectiveType identifierType()
+static DirectiveType getDirectiveType()
 {
-    switch (preprocessor.start[0])
+
+    switch (preprocessor.start[1])
     {
+
         case 'd': return checkKeyword(1, 5, "efine", DIRECTIVE_DEFINE);
         case 'u': return checkKeyword(1, 4, "ndef", DIRECTIVE_UNDEF);
-        case 'f': return checkKeyword(1, 3, "ile", DIRECTIVE_FILE);
         case 'e': return checkKeyword(1, 4, "rror", DIRECTIVE_ERROR);
-        case 'l': return checkKeyword(1, 3, "ine", DIRECTIVE_LINE);
 
         case 'i':
         {
             if (preprocessor.current - preprocessor.start > 1)
             {
-                switch (preprocessor.start[1])
+                switch (preprocessor.start[2])
                 {
                     case 'f':
                     {
                         if (preprocessor.current - preprocessor.start > 2)
                         {
-                            switch (preprocessor.start[2])
+                            switch (preprocessor.start[3])
                             {
                                 case 'd': return checkKeyword(3, 2, "ef", DIRECTIVE_IFDEF);
                                 case 'n': return checkKeyword(3, 3, "def", DIRECTIVE_IFNDEF);
                             }
                         }
-
                     }
-
                     case 'n': return checkKeyword(2, 5, "clude", DIRECTIVE_INCLUDE);
                 }
-
-
-
-                }
             }
-            return checkKeyword(1, 6, "nclude", DIRECTIVE_INCLUDE);
         }
+
+    }
+
+    return DIRECTIVE_NONE;
+}
+
+static void directive()
+{
+    while (isAlpha(peek())) advance();
+    DirectiveType type = getDirectiveType();
+
+    switch (type)
+    {
+        case DIRECTIVE_INCLUDE:
+        case DIRECTIVE_DEFINE:
+        case DIRECTIVE_UNDEF:
+        case DIRECTIVE_IFDEF:
+        case DIRECTIVE_IFNDEF:
+        case DIRECTIVE_ERROR:
+        break;
+
+        default:
+        {
+            printf("Expect directive after '#'.\n"); // todo error
+        }
+    }
+}
+
+
+// endregion
+
+char* preprocess(char* text)
+{
+    initPreprocessor(text);
+
+    skipWhitespace();
+    preprocessor.start = preprocessor.current;
+
+    for(;;)
+    {
+        if (isAtEnd()) return preprocessor.start;
+
+        char c = advance();
+
+        if(c == '#')
+        {
+            advance();
+            directive();
+        }
+        else if(isAlpha(c))
+        {
+            symbol();
+        }
+
+    }
+
 
 }

@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "vm.h"
+#include "preprocessor.h"
 
 static char* readFile(const char* path)
 {
@@ -40,6 +41,12 @@ static char* readFile(const char* path)
 static void runFile(const char* path)
 {
     char* source = readFile(path);
+
+    #ifdef DEBUG_PRINT_PREPROCESSOR
+    printf("%s\n", preprocess(source));
+    return;
+    #endif
+
     int result = interpret(source);
     free(source);
 
