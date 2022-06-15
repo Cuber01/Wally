@@ -2,6 +2,7 @@
 #define WALLY_PREPROCESSOR_H
 
 #include "common.h"
+#include "table.h"
 
 typedef enum
 {
@@ -16,7 +17,10 @@ typedef enum
 //    DIRECTIVE_LINE,
 } DirectiveType;
 
+
 typedef struct {
+    Table* defines;
+
     char* start;
     char* current;
     uint line;

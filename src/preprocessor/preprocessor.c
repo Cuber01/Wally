@@ -1,13 +1,27 @@
 #include <string.h>
 #include <stdio.h>
 #include "preprocessor.h"
+#include "colors.h"
+#include "object.h"
+#include "scanner.h"
+
+// region Main
 
 void initPreprocessor(char* source)
 {
+    initTable(preprocessor.defines);
+
     preprocessor.start = source;
     preprocessor.current = source;
     preprocessor.line = 1;
 }
+
+void freePreprocessor()
+{
+    freeTable(preprocessor.defines);
+}
+
+// endregion
 
 // region Util
 
@@ -41,7 +55,7 @@ static char peekNext()
     return preprocessor.current[1];
 }
 
-static bool skipWhitespace()
+static bool skipWhitespace(bool newLineIsWhitespace)
 {
     bool whiteSpaceEncountered = false;
 
@@ -58,6 +72,8 @@ static bool skipWhitespace()
                 break;
 
             case '\n':
+                if(!newLineIsWhitespace) return whiteSpaceEncountered;
+
                 whiteSpaceEncountered = true;
                 preprocessor.line++;
                 advance();
@@ -102,13 +118,6 @@ static bool skipWhitespace()
     }
 }
 
-static bool isAlpha(char c)
-{
-    return (c >= 'a' && c <= 'z') ||
-           (c >= 'A' && c <= 'Z') ||
-           c == '_';
-}
-
 // endregion
 
 // region Symbols
@@ -116,6 +125,50 @@ static bool isAlpha(char c)
 static void symbol()
 {
     printf("symbol?");
+}
+
+// endregion
+
+// region Directive Execution
+
+static void includeDirective()
+{
+
+}
+
+static void defineDirective()
+{
+//    if(!skipWhitespace(false))
+//    {
+//        colorWriteline(RED, "Expect whitespace after define directive.");
+//        return;
+//    }
+    skipWhitespace(false);
+
+    while (isAlpha(peek()) || isDigit(peek())) advance();
+    char* defineName = copyString(preprocessor.start, preprocessor.current - preprocessor.start);
+
+
+}
+
+static void undefDirective()
+{
+
+}
+
+static void ifdefDirective()
+{
+
+}
+
+static void ifndefDirective()
+{
+
+}
+
+static void errorDirective()
+{
+
 }
 
 // endregion
@@ -178,13 +231,12 @@ static void directive()
 
     switch (type)
     {
-        case DIRECTIVE_INCLUDE:
-        case DIRECTIVE_DEFINE:
-        case DIRECTIVE_UNDEF:
-        case DIRECTIVE_IFDEF:
-        case DIRECTIVE_IFNDEF:
-        case DIRECTIVE_ERROR:
-        break;
+        case DIRECTIVE_INCLUDE: includeDirective();  break;
+        case DIRECTIVE_DEFINE:  defineDirective();   break;
+        case DIRECTIVE_UNDEF:   undefDirective();    break;
+        case DIRECTIVE_IFDEF:   ifdefDirective();    break;
+        case DIRECTIVE_IFNDEF:  ifndefDirective();   break;
+        case DIRECTIVE_ERROR:   errorDirective();    break;
 
         default:
         {
@@ -204,7 +256,7 @@ char* preprocess(char* text)
     {
         if (isAtEnd()) return preprocessor.start;
 
-        skipWhitespace();
+        skipWhitespace(true);
         preprocessor.start = preprocessor.current;
 
         char c = advance();

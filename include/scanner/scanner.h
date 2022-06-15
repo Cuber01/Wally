@@ -59,4 +59,7 @@ Scanner scanner;
 void initScanner(const char* source);
 Token scanToken();
 
+bool isDigit(char c);
+bool isAlpha(char c);
+
 #endif //WALLY_SCANNER_H
