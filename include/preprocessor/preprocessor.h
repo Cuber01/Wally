@@ -24,6 +24,10 @@ typedef struct {
 
     char* start;
     char* current;
+
+    char* output;
+    char* outputStart;
+
     uint line;
 } Preprocessor;
 

@@ -10,13 +10,15 @@
 
 void initPreprocessor(char* source)
 {
-    preprocessor.defines = reallocate(preprocessor.defines, 0, sizeof(Table));
+    preprocessor.defines = reallocate(preprocessor.defines, 0, sizeof(Table)); // todo zamiast edytować source directly przepisuj chary które pasują
     initTable(preprocessor.defines);
 
     preprocessor.start = source;
     preprocessor.current = source;
     preprocessor.escapeNextChar = false;
     preprocessor.line = 1;
+
+    preprocessor.outputStart = preprocessor.output;
 }
 
 void freePreprocessor()
@@ -33,8 +35,17 @@ static bool isAtEnd()
     return *preprocessor.current == '\0';
 }
 
+static char advanceNoSend()
+{
+    preprocessor.current++;
+    return preprocessor.current[-1];
+}
+
 static char advance()
 {
+    preprocessor.output = preprocessor.current;
+    preprocessor.output++;
+
     preprocessor.current++;
     return preprocessor.current[-1];
 }
@@ -123,6 +134,8 @@ static bool skipWhitespace(bool newLineIsWhitespace)
 
 static bool isValidDefineChar(char c)
 {
+    // TODO wip
+
     if(preprocessor.escapeNextChar)
     {
         preprocessor.escapeNextChar = false;
@@ -170,13 +183,13 @@ static void defineDirective()
     skipWhitespace(false);
 
     preprocessor.start = preprocessor.current;
-    while (isAlpha(peek())) advance();
+    while (isAlpha(peek())) advanceNoSend();
     ObjString* name = copyString(preprocessor.start, preprocessor.current - preprocessor.start);
 
     skipWhitespace(false);
 
     preprocessor.start = preprocessor.current;
-    while (isValidDefineChar(peek())) advance();
+    while (isValidDefineChar(peek())) advanceNoSend();
     Value content = OBJ_VAL(copyString(preprocessor.start, preprocessor.current - preprocessor.start));
 
     tableSet(preprocessor.defines, name, content);
@@ -258,7 +271,7 @@ static DirectiveType getDirectiveType()
 
 static void directive()
 {
-    while (isAlpha(peek())) advance();
+    while (isAlpha(peek())) advanceNoSend();
     DirectiveType type = getDirectiveType();
 
     switch (type)
@@ -288,7 +301,7 @@ char* preprocess(char* text)
     {
         if (isAtEnd())
         {
-            return preprocessor.start;
+            return preprocessor.outputStart;
         }
 
         skipWhitespace(true);
@@ -298,7 +311,7 @@ char* preprocess(char* text)
 
         if(c == '#')
         {
-            advance();
+            advanceNoSend();
             directive();
         }
         else if(isAlpha(c))
