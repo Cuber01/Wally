@@ -20,6 +20,7 @@ typedef enum
 
 typedef struct {
     Table* defines;
+    bool escapeNextChar;
 
     char* start;
     char* current;

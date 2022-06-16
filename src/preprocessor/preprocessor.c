@@ -4,15 +4,18 @@
 #include "colors.h"
 #include "object.h"
 #include "scanner.h"
+#include "memory.h"
 
 // region Main
 
 void initPreprocessor(char* source)
 {
+    preprocessor.defines = reallocate(preprocessor.defines, 0, sizeof(Table));
     initTable(preprocessor.defines);
 
     preprocessor.start = source;
     preprocessor.current = source;
+    preprocessor.escapeNextChar = false;
     preprocessor.line = 1;
 }
 
@@ -118,6 +121,27 @@ static bool skipWhitespace(bool newLineIsWhitespace)
     }
 }
 
+static bool isValidDefineChar(char c)
+{
+    if(preprocessor.escapeNextChar)
+    {
+        preprocessor.escapeNextChar = false;
+
+        // Successfully escaped newline
+        if(c == '\n')
+        {
+            return true;
+        }
+
+    }
+
+    if(c == '\\')
+    {
+        preprocessor.escapeNextChar = true;
+        return true;
+    }
+}
+
 // endregion
 
 // region Symbols
@@ -145,9 +169,17 @@ static void defineDirective()
 //    }
     skipWhitespace(false);
 
-    while (isAlpha(peek()) || isDigit(peek())) advance();
-    char* defineName = copyString(preprocessor.start, preprocessor.current - preprocessor.start);
+    preprocessor.start = preprocessor.current;
+    while (isAlpha(peek())) advance();
+    ObjString* name = copyString(preprocessor.start, preprocessor.current - preprocessor.start);
 
+    skipWhitespace(false);
+
+    preprocessor.start = preprocessor.current;
+    while (isValidDefineChar(peek())) advance();
+    Value content = OBJ_VAL(copyString(preprocessor.start, preprocessor.current - preprocessor.start));
+
+    tableSet(preprocessor.defines, name, content);
 
 }
 
@@ -254,7 +286,10 @@ char* preprocess(char* text)
 
     for(;;)
     {
-        if (isAtEnd()) return preprocessor.start;
+        if (isAtEnd())
+        {
+            return preprocessor.start;
+        }
 
         skipWhitespace(true);
         preprocessor.start = preprocessor.current;
