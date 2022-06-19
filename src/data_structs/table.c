@@ -14,12 +14,16 @@ void initTable(Table* table)
     table->count = 0;
     table->capacity = 0;
     table->entries = NULL;
+    table->keys = reallocate(NULL, 0, sizeof(table->keys));
 }
 
 void freeTable(Table* table)
 {
     FREE_ARRAY(Entry, table->entries, table->capacity);
-    initTable(table);
+    table->count = 0;
+    table->capacity = 0;
+    table->entries = NULL;
+    table->keys = NULL;
 }
 
 static Entry* findEntry(Entry* entries, int capacity, ObjString* key)
@@ -123,6 +127,11 @@ ObjString* tableFindString(Table* table, const char* chars, uint length, uint32_
     }
 }
 
+void addKey(Table* table, ObjString* key)
+{
+    table->keys[table->count] = key;
+}
+
 uint8_t tableDefineEntry(Table* table, ObjString* key, Value value)
 {
     // Grow the table if it is at least 75% full
@@ -139,10 +148,12 @@ uint8_t tableDefineEntry(Table* table, ObjString* key, Value value)
     // IS_NULL check makes sure that we're not examining a tombstone
     if (!isNewKey) return TABLE_ERROR_REDEFINE; // used to be: !isNewKey || IS_NULL(entry->value)
 
+    addKey(table, key);
     table->count++;
 
     entry->key = key;
     entry->value = value;
+
     return TABLE_SUCCESS;
 }
 
@@ -182,7 +193,11 @@ uint8_t tableSet(Table* table, ObjString* key, Value value)
     Entry* entry = findEntry(table->entries, table->capacity, key);
     bool isNewKey = entry->key == NULL;
     // IS_NULL check makes sure that we're not examining a tombstone
-    if (isNewKey && IS_NULL(entry->value)) table->count++;
+    if (isNewKey && IS_NULL(entry->value))
+    {
+        addKey(table, key);
+        table->count++;
+    }
 
     entry->key = key;
     entry->value = value;
