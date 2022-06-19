@@ -4,6 +4,7 @@
 
 #include "vm.h"
 #include "preprocessor.h"
+#include "memory.h"
 
 static char* readFile(const char* path)
 {

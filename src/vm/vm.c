@@ -447,6 +447,7 @@ static int run()
 
                 if(oldFunction->calledFromFunction == NULL)
                 {
+                    printVariables(vm.currentEnvironment);
                     collectGarbage();
                     return INTERPRET_OK;
                 }

@@ -83,10 +83,15 @@ void printVariables(Environment* env)
 
         for(uint i = 0; i < table.count; i++)
         {
-            if(table.entries[i].key == NULL) continue;
+            ObjString* key = table.keys[i];
 
-            printf("%s: ", table.entries[i].key->chars);
-            printRawValue(table.entries[i].value);
+            Value* value = NULL;
+            value = reallocate(value, 0, sizeof(Value));
+
+            tableGet(&table, key, value);
+
+            printf("%s: ", key->chars);
+            printRawValue(*value);
             putc('\n', stdout);
         }
 
