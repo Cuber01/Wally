@@ -236,13 +236,17 @@ bool tableDelete(Table* table, ObjString* key)
 
 void markTable(Table* table)
 {
-    if(table == NULL) return;
-
-    for (int i = 0; i < table->capacity; i++)
+     for(uint i = 0; i < table->count; i++)
     {
-        Entry* entry = &table->entries[i];
-        markObject((Obj*)entry->key);
-        markValue(entry->value);
+        ObjString* key = table->keys[i];
+
+        Value* value;
+
+        tableGet(table, key, value);
+
+        markObject((Obj*)table->keys[i]);
+        markValue(*value);
+
     }
 }
 
