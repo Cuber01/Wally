@@ -18,13 +18,17 @@ typedef struct {
     int count;
     int capacity;
     Entry* entries;
+    ObjString** keys;
 } Table;
 
 void initTable(Table* table);
 void freeTable(Table* table);
 
+// Create new entry. Error if given key already exists.
 uint8_t tableDefineEntry(Table* table, ObjString* key, Value value);
+// Set an entry. Error if given key doesn't exist.
 uint8_t tableSetExistingEntry(Table* table, ObjString* key, Value value);
+// Set or create an entry if it doesn't exist.
 uint8_t tableSet(Table* table, ObjString* key, Value value);
 
 bool tableGet(Table* table, ObjString* key, Value* value);

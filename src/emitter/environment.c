@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include "environment.h"
 #include "native_error.h"
 #include "memory.h"
@@ -72,6 +73,25 @@ bool environmentGet(Environment* env, ObjString* name, Value* result)
     }
 
     return true;
+}
+
+void printVariables(Environment* env)
+{
+    while(env != NULL)
+    {
+        Table table = env->values;
+
+        for(uint i = 0; i < table.count; i++)
+        {
+            if(table.entries[i].key == NULL) continue;
+
+            printf("%s: ", table.entries[i].key->chars);
+            printRawValue(table.entries[i].value);
+            putc('\n', stdout);
+        }
+
+        env = env->enclosing;
+    }
 }
 
 void markEnvironment(Environment* env)

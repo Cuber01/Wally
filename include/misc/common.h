@@ -8,10 +8,10 @@
 // #define DEBUG_PRINT_BYTECODE
 // #define DEBUG_PRINT_TOKENS
 
-#define DEBUG_PRINT_PREPROCESSOR
+// #define DEBUG_PRINT_PREPROCESSOR
 
-// #define DEBUG_STRESS_GC
-// #define DEBUG_LOG_GC
+#define DEBUG_STRESS_GC
+#define DEBUG_LOG_GC
 // #define DEBUG_LOG_ALLOCATION
 
 #include <stdbool.h>

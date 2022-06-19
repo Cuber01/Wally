@@ -23,6 +23,7 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize)
     #ifdef DEBUG_STRESS_GC
     if (newSize > oldSize && gcStarted)
     {
+        printVariables(vm.currentEnvironment);
         collectGarbage();
     }
     #else

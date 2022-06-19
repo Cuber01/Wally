@@ -301,7 +301,7 @@ char* preprocess(char* text)
     {
         if (isAtEnd())
         {
-            return preprocessor.outputStart;
+            return preprocessor.output;
         }
 
         skipWhitespace(true);
