@@ -237,7 +237,7 @@ bool tableDelete(Table* table, ObjString* key)
 void markTable(Table* table)
 {
      for(uint i = 0; i < table->count; i++)
-    {
+     {
         ObjString* key = table->keys[i];
 
         Value* value;
@@ -247,7 +247,7 @@ void markTable(Table* table)
         markObject((Obj*)table->keys[i]);
         markValue(*value);
 
-    }
+     }
 }
 
 void tableRemoveWhite(Table* table)

@@ -490,7 +490,7 @@ static int run()
     #undef READ_BYTE_NO_INCREMENT
 }
 
-
+ObjFunction* function;
 int interpret(const char* source)
 {
     if(*source == '\0')
@@ -502,7 +502,7 @@ int interpret(const char* source)
     Node* statements = compile(source);
     if (statements == NULL) return INTERPRET_COMPILE_ERROR;
 
-    ObjFunction* function = emit(statements);
+    function = emit(statements);
     if (function == NULL) return INTERPRET_COMPILE_ERROR;
 
     push(OBJ_VAL(function));

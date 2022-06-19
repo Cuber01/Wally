@@ -30,13 +30,15 @@ typedef enum {
     VAL_OBJ
 } ValueType;
 
-typedef struct {
+typedef struct 
+{
     ValueType type;
+    
     union {
         bool boolean;
         double number;
         Obj* obj;
-        } as;
+    } as;
 } Value;
 
 typedef struct {
