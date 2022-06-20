@@ -1,8 +1,8 @@
 #include <string.h>
-#include <stdio.h>
 #include "environment.h"
 #include "native_error.h"
 #include "memory.h"
+#include <stdio.h>
 
 Environment* newEnvironment()
 {
@@ -77,26 +77,24 @@ bool environmentGet(Environment* env, ObjString* name, Value* result)
 
 void printVariables(Environment* env)
 {
-    // while(env != NULL)
-    // {
-    //     Table table = env->values;
+     while(env != NULL)
+     {
+         Table table = env->values;
 
-    //     for(uint i = 0; i < table.count; i++)
-    //     {
-    //         ObjString* key = table.keys[i];
+         for(uint i = 0; i < table.count; i++)
+         {
+             ObjString* key = table.keys[i];
 
-    //         Value value = [100]
-    //         value = reallocate(value, 0, sizeof(Value));
+             Value value;
+             tableGet(&table, key, &value);
 
-    //         tableGet(&table, key, value);
+             printf("%s: ", key->chars);
+             printRawValue(value);
+             putc('\n', stdout);
+         }
 
-    //         printf("%s: ", key->chars);
-    //         printRawValue(*value);
-    //         putc('\n', stdout);
-    //     }
-
-    //     env = env->enclosing;
-    // }
+         env = env->enclosing;
+     }
 }
 
 void markEnvironment(Environment* env)

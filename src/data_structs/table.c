@@ -241,7 +241,6 @@ void markTable(Table* table)
         ObjString* key = table->keys[i];
 
         Value value;
-
         tableGet(table, key, &value);
 
         markObject((Obj*)table->keys[i]);
