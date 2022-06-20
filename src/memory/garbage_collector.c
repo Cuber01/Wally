@@ -9,6 +9,7 @@
 #include "memory.h"
 #include "colors.h"
 #include "emitter.h"
+#include "value.h"
 
 // This is a Mark-Sweep garbage collector.
 

@@ -149,7 +149,10 @@ ObjString* objectToString(Value value)
         case OBJ_NATIVE:
             return copyString("<native fn>", 11);
         case OBJ_FUNCTION:
-            break;
+            return copyString(AS_FUNCTION(value)->name->chars, strlen(AS_FUNCTION(value)->name->chars));
+        default:
+            printf("Reached unreachable.");
+            return NULL;
     }
 }
 
