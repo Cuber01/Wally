@@ -240,12 +240,12 @@ void markTable(Table* table)
      {
         ObjString* key = table->keys[i];
 
-        Value* value;
+        Value value;
 
-        tableGet(table, key, value);
+        tableGet(table, key, &value);
 
         markObject((Obj*)table->keys[i]);
-        markValue(*value);
+        markValue(value);
 
      }
 }

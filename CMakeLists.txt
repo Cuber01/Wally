@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.21) # I guess you shouldn't touch the version
 project(Wally)
 
 set(CMAKE_C_STANDARD 17)
+add_compile_options(Wally -O0 )
 
 if (DEBUG_ENABLED)
     add_definitions(-DDEBUG_PRINT_BYTECODE=1 -DDEBUG_TRACE_EXECUTION=1)
