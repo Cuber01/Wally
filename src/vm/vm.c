@@ -95,7 +95,7 @@ static void concatenate()
     ObjString* b = toString(peek(0));
     ObjString* a = toString(peek(1));
 
-    int length = a->length + b->length;
+    uint length = a->length + b->length;
     char* chars = ALLOCATE(char, length + 1);
 
     memcpy(chars, a->chars, a->length);
