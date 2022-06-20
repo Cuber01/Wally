@@ -157,7 +157,7 @@ static void sweep()
 void collectGarbage()
 {
     #ifdef DEBUG_LOG_GC
-    colorWriteline(PURPLE, "-- Garbage Collector Begin");
+    colorWriteLine(PURPLE, "-- Garbage Collector Begin");
 
     size_t before = vm.bytesAllocated;
     #endif
@@ -174,7 +174,7 @@ void collectGarbage()
     printf("Collected %zu bytes (from %zu to %zu) next at %zu.\n",
            before - vm.bytesAllocated, before, vm.bytesAllocated,
            vm.nextGC);
-    colorWriteline(PURPLE, "-- Garbage Collector End");
+    colorWriteLine(PURPLE, "-- Garbage Collector End");
     putchar('\n');
     #endif
 }

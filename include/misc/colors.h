@@ -21,7 +21,7 @@
 
 #define COLOR_CLEAR "\e[0m"
 
-void colorWriteline(const char* colorCode, const char* format, ...);
+void colorWriteLine(const char* colorCode, const char* format, ...);
 void colorWrite(const char* colorCode, const char* format, ...);
 void stderrPrint(const char* format, ...);
 

@@ -18,7 +18,7 @@ void disassembleChunk(Chunk* chunk, const char* name)
 
 static int simpleInstruction(const char* name, int offset)
 {
-    colorWriteline(GREEN, "%s", name);
+    colorWriteLine(GREEN, "%s", name);
     return offset + 1;
 }
 

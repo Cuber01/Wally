@@ -2,7 +2,7 @@
 #include <stdarg.h>
 #include "colors.h"
 
-void colorWriteline(const char* colorCode, const char* format, ...)
+void colorWriteLine(const char* colorCode, const char* format, ...)
 {
     va_list args;
     fprintf( stdout, "%s", colorCode );

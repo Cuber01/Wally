@@ -7,31 +7,31 @@ void logAllocation(void* pointer, size_t oldSize, size_t newSize)
 {
     if(oldSize == 0 && newSize > 0)
     {
-        colorWriteline(GREEN, "[ %zu -> %zu ] Allocate %p", oldSize, newSize, pointer);
+        colorWriteLine(GREEN, "[ %zu -> %zu ] Allocate %p", oldSize, newSize, pointer);
         return;
     }
 
     if(newSize == 0 && oldSize == 0)
     {
-        colorWriteline(WHITE, "[-] Ignore null");
+        colorWriteLine(WHITE, "[-] Ignore null");
         return;
     }
 
     if(newSize == 0)
     {
-        colorWriteline(RED, "[ %zu -> %zu ] Free %p", oldSize, newSize, pointer);
+        colorWriteLine(RED, "[ %zu -> %zu ] Free %p", oldSize, newSize, pointer);
         return;
     }
 
     if(newSize > oldSize)
     {
-        colorWriteline(BLUE, "[ %zu -> %zu ] Grow %p", oldSize, newSize, pointer);
+        colorWriteLine(BLUE, "[ %zu -> %zu ] Grow %p", oldSize, newSize, pointer);
         return;
     }
 
     if(oldSize < newSize)
     {
-        colorWriteline(CYAN, "[ %zu -> %zu ] Shrink %p", oldSize, newSize, pointer);
+        colorWriteLine(CYAN, "[ %zu -> %zu ] Shrink %p", oldSize, newSize, pointer);
         return;
     }
 }

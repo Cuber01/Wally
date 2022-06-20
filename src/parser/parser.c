@@ -6,6 +6,7 @@
 #include "chunk.h"
 #include "object.h"
 #include "memory.h"
+#include "vm.h"
 
 #ifdef DEBUG_PRINT_BYTECODE
 #include "disassembler.h"
@@ -649,7 +650,7 @@ static Stmt* functionDeclaration()
     consume(TOKEN_LEFT_PAREN, "Expect '(' after function name.");
 
     // Params
-    ObjString** params = reallocate(NULL, 0, sizeof(*params));
+    ObjString** params = reallocate(NULL, 0, sizeof(ObjString));
     uint16_t paramCount = 0;
 
     if(!match(TOKEN_RIGHT_PAREN))
@@ -663,7 +664,7 @@ static Stmt* functionDeclaration()
             }
             else
             {
-                params = reallocate(params, sizeof(params), (paramCount + 1) * sizeof(*params));
+                params = reallocate(params, sizeof(params), (paramCount + 1) * sizeof(ObjString));
                 params[paramCount] = parseVariableName("Expect parameter name.");
             }
 
