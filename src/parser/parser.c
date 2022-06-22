@@ -173,13 +173,19 @@ static Expr* parsePrecedence(Precedence precedence)
         return NULL;
     }
 
-    Expr* expr = prefixRule();
+    bool canAssign = precedence <= PREC_ASSIGNMENT;
+    Expr* expr = prefixRule(canAssign);
 
     while (precedence <= getRule(parser.current.type)->precedence)
     {
         advance();
         ParseInfixFn infixRule = getRule(parser.previous.type)->infix;
-        expr = (Expr*)infixRule(expr);
+        expr = (Expr*)infixRule(expr, canAssign);
+    }
+
+    if (canAssign && match(TOKEN_EQUAL))
+    {
+        error("Invalid assignment target.");
     }
 
     return expr;
@@ -194,7 +200,7 @@ static Expr* expression()
 
 // region EXPRESSIONS
 
-static Expr* binary(Expr* previous)
+static Expr* binary(Expr* previous, bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
     ParseRule* rule = getRule(operatorType);
@@ -204,7 +210,7 @@ static Expr* binary(Expr* previous)
     return (Expr*)newBinaryExpr(previous, operatorType, right, parser.line);
 }
 
-static Expr* increment(Expr* previous)
+static Expr* increment(Expr* previous, bool canAssign)
 {
     VarExpr* prev = (VarExpr*)previous;
 
@@ -216,7 +222,7 @@ static Expr* increment(Expr* previous)
                                 parser.line);
 }
 
-static Expr* decrement(Expr* previous)
+static Expr* decrement(Expr* previous, bool canAssign)
 {
     VarExpr* prev = (VarExpr*)previous;
 
@@ -228,7 +234,56 @@ static Expr* decrement(Expr* previous)
                                 parser.line);
 }
 
-static Expr* ternary(Expr* previous)
+
+static Node* argumentList(uint16_t* argCount)
+{
+    Node* root = NULL;
+
+    if (!check(TOKEN_RIGHT_PAREN))
+    {
+        do
+        {
+
+            Expr* arg = expression();
+            listAdd(&root, NODE_EXPRESSION_VALUE(arg));
+            (*argCount)++;
+
+        } while (match(TOKEN_COMMA));
+    }
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after arguments.");
+
+    return root;
+}
+
+static ObjString* parseVariableName(const char* errorMessage)
+{
+    consume(TOKEN_IDENTIFIER, errorMessage);
+
+    return copyString(parser.previous.start,parser.previous.length);
+}
+
+static Expr* dot(Expr* previous, bool canAssign)
+{
+    ObjString* name = parseVariableName("Expect property name after '.'.");
+
+    Expr* value = NULL;
+
+    if (match(TOKEN_EQUAL) && canAssign)
+    {
+        value = expression();
+    }
+
+    return (Expr*)newDotExpr(previous, name, value, parser.line);
+}
+
+static Expr* call(Expr* previous, bool canAssign)
+{
+    uint16_t argCount = 0;
+    Node* args = argumentList(&argCount);
+    return (Expr*) newCallExpr(((VarExpr*)previous)->name, argCount, args, parser.line);
+}
+
+static Expr* ternary(Expr* previous, bool canAssign)
 {
     Expr* thenBranch = parsePrecedence(PREC_TERNARY);
     consume(TOKEN_COLON, "Expect ':' after first ternary branch.");
@@ -236,7 +291,41 @@ static Expr* ternary(Expr* previous)
     return (Expr*)newTernaryExpr(previous, thenBranch, elseBranch, parser.line);
 }
 
-static Expr* literal()
+
+static Expr* variable(bool canAssign)
+{
+    ObjString* name = copyString(parser.previous.start,parser.previous.length);
+
+    //if(match(TOKEN_DOT)) return dot();
+
+    if(match(TOKEN_EQUAL) && canAssign)
+    {
+        TokenType operator = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
+
+        if(operator == 0)
+        {
+            Expr* value = expression();
+            return (Expr*)newAssignExpr(name, value, parser.line);
+        }
+        else
+        {
+            return (Expr*)newAssignExpr(name, (Expr*)newBinaryExpr(
+                                                (Expr*)newVarExpr(name, parser.line),
+                                                operator,
+                                                expression(),
+                                                parser.line),
+                                        parser.line);
+        }
+
+    }
+    else
+    {
+        return (Expr*)newVarExpr(name, parser.line);
+    }
+
+}
+
+static Expr* literal(bool canAssign)
 {
     switch (parser.previous.type)
     {
@@ -248,7 +337,7 @@ static Expr* literal()
     }
 }
 
-static Expr* number()
+static Expr* number(bool canAssign)
 {
     double value = strtod(parser.previous.start, NULL);
     return (Expr*)newLiteralExpr(NUMBER_VAL(value), parser.line);
@@ -313,7 +402,7 @@ static void escapeSequences(char* destination, char* source)
 
 }
 
-static Expr* string()
+static Expr* string(bool canAssign)
 {
     // Math is for trimming ""
     uint32_t length = strlen(parser.previous.start);
@@ -333,12 +422,12 @@ static Expr* string()
     return rv;
 }
 
-static Expr* interpolatedString()
+static Expr* interpolatedString(bool canAssign)
 {
 
 }
 
-static Expr* unary()
+static Expr* unary(bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
 
@@ -347,59 +436,11 @@ static Expr* unary()
     return (Expr*) newUnaryExpr(expr, operatorType, parser.line);
 }
 
-static Expr* grouping()
+static Expr* grouping(bool canAssign)
 {
     Expr* expr = expression();
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
     return expr;
-}
-
-static Node* argumentList(uint16_t* argCount)
-{
-    Node* root = NULL;
-
-    if (!check(TOKEN_RIGHT_PAREN))
-    {
-        do
-        {
-
-            Expr* arg = expression();
-            listAdd(&root, NODE_EXPRESSION_VALUE(arg));
-            (*argCount)++;
-
-        } while (match(TOKEN_COMMA));
-    }
-    consume(TOKEN_RIGHT_PAREN, "Expect ')' after arguments.");
-
-    return root;
-}
-
-static ObjString* parseVariableName(const char* errorMessage)
-{
-    consume(TOKEN_IDENTIFIER, errorMessage);
-
-    return copyString(parser.previous.start,parser.previous.length);
-}
-
-static Expr* dot(Expr* previous)
-{
-    ObjString* name = parseVariableName("Expect property name after '.'.");
-
-    Expr* value = NULL;
-
-    if (match(TOKEN_EQUAL))
-    {
-        value = expression();
-    }
-
-    return (Expr*)newDotExpr(previous, name, value, parser.line);
-}
-
-static Expr* call(Expr* previous)
-{
-    uint16_t argCount = 0;
-    Node* args = argumentList(&argCount);
-    return (Expr*) newCallExpr(((VarExpr*)previous)->name, argCount, args, parser.line);
 }
 
 // endregion
@@ -428,7 +469,7 @@ static Stmt* block()
     return (Stmt*)newBlockStmt(statements, parser.line);
 }
 
-static Expr* logical(Expr* previous)
+static Expr* logical(Expr* previous, bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
     ParseRule* rule = getRule(operatorType);
@@ -623,39 +664,6 @@ static Stmt* statement()
     else if (match(TOKEN_SWITCH))     return switchStatement();
     else if (match(TOKEN_RETURN))     return returnStatement();
     else return expressionStatement();
-
-}
-
-static Expr* variable()
-{
-    ObjString* name = copyString(parser.previous.start,parser.previous.length);
-
-    //if(match(TOKEN_DOT)) return dot();
-
-    if(match(TOKEN_EQUAL))
-    {
-        TokenType operator = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
-
-        if(operator == 0)
-        {
-            Expr* value = expression();
-            return (Expr*)newAssignExpr(name, value, parser.line);
-        }
-        else
-        {
-            return (Expr*)newAssignExpr(name, (Expr*)newBinaryExpr(
-                                                (Expr*)newVarExpr(name, parser.line),
-                                                operator,
-                                                expression(),
-                                                parser.line),
-                                        parser.line);
-        }
-
-    }
-    else
-    {
-        return (Expr*)newVarExpr(name, parser.line);
-    }
 
 }
 
