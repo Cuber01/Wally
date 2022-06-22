@@ -381,7 +381,7 @@ static ObjString* parseVariableName(const char* errorMessage)
     return copyString(parser.previous.start,parser.previous.length);
 }
 
-static void dot()
+static Expr* dot(Expr* previous)
 {
     ObjString* name = parseVariableName("Expect property name after '.'.");
 
@@ -391,6 +391,14 @@ static void dot()
     {
         value = expression();
     }
+
+    if(previous->type != VAR_EXPRESSION && previous->type != DOT_EXPRESSION)
+    {
+        errorAtCurrent("Cannot get or set a non-variable using the '.' operator.");
+        // todo return?
+    }
+
+    return (Expr*)newDotExpr((VarExpr*)previous, name, value, parser.line);
 }
 
 static Expr* call(Expr* previous)
@@ -628,6 +636,8 @@ static Expr* variable()
 {
     ObjString* name = copyString(parser.previous.start,parser.previous.length);
 
+    //if(match(TOKEN_DOT)) return dot();
+
     if(match(TOKEN_EQUAL))
     {
         TokenType operator = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
@@ -795,7 +805,6 @@ ParseRule rules[] =
         [TOKEN_LEFT_BRACE]    = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_RIGHT_BRACE]   = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_COMMA]         = {NULL,                 NULL,      PREC_NONE},
-        [TOKEN_DOT]           = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_MINUS]         = {unary,                binary,    PREC_TERM},
         [TOKEN_PLUS]          = {NULL,                 binary,    PREC_TERM},
         [TOKEN_SEMICOLON]     = {NULL,                 NULL,      PREC_NONE},
@@ -826,7 +835,7 @@ ParseRule rules[] =
         [TOKEN_OR]            = {NULL,                 logical,   PREC_OR},
         [TOKEN_RETURN]        = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_SUPER]         = {NULL,                 NULL,      PREC_NONE},
-        [TOKEN_DOT]           = {NULL,                 dot,       PREC_CALL},
+        [TOKEN_DOT]           = {variable,             dot,       PREC_CALL},
         [TOKEN_THIS]          = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_TRUE]          = {literal,              NULL,      PREC_NONE},
         [TOKEN_VAR]           = {NULL,                 NULL,      PREC_NONE},

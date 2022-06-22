@@ -399,11 +399,12 @@ AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line)
     return expr;
 }
 
-DotExpr* newDotExpr(ObjString* name, Expr* value, uint16_t line)
+DotExpr* newDotExpr(Expr* instance, ObjString* fieldName, Expr* value, uint16_t line)
 {
     DotExpr* expr = (DotExpr*) ALLOCATE_EXPRESSION(DotExpr, DOT_EXPRESSION, false, line);
 
-    expr->name = name;
+    expr->fieldName = fieldName;
+    expr->instance = instance;
     expr->value = value;
 
     return expr;

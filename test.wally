@@ -1,2 +1,4 @@
-class Brioche {}
-print(Brioche());
+//class Toast {}
+//var toast = Toast();
+//toast.jam = "grape";
+toast.jam;

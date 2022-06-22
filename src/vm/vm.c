@@ -353,6 +353,18 @@ static int run()
                 break;
             }
 
+            case OP_SET_PROPERTY:
+            {
+
+
+                break;
+            }
+
+            case OP_GET_PROPERTY:
+            {
+                break;
+            }
+
             case OP_DEFINE_FUNCTION:
             {
                 ObjFunction* function = AS_FUNCTION(pop());

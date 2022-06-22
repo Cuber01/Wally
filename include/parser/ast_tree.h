@@ -116,7 +116,9 @@ typedef struct
 {
     Expr expr;
 
-    ObjString* name;
+    ObjString* fieldName;
+    Expr* instance;
+
     // If value is null it's a getter, otherwise it is a setter.
     Expr* value;
 } DotExpr;
@@ -252,7 +254,7 @@ UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line);
 VarExpr* newVarExpr(ObjString* name, uint16_t line);
 AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line);
 CallExpr* newCallExpr(ObjString* callee, uint16_t argCount, Node* args, uint16_t line);
-DotExpr* newDotExpr(ObjString* name, Expr* value, uint16_t line);
+DotExpr* newDotExpr(Expr* instance, ObjString* fieldName, Expr* value, uint16_t line);
 
 // ------------ STATEMENT CONSTRUCTORS ------------
 
