@@ -269,18 +269,12 @@ static void compileExpression(Expr* expression)
             if (expr->value != NULL)
             {
                 compileExpression(expr->value);
-                emitBytes(OP_SET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName)), line);
-            } else {
-                emitBytes(OP_GET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName)), line);
-            }
-
-            if (expr->value == NULL)
-            {
+                emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(expr->fieldName)), line);
                 emitByte(OP_SET_PROPERTY, line);
-            } else
+            }
+            else
             {
-                compileExpression(expr->value);
-                emitByte(OP_GET_PROPERTY, line);
+                emitBytes(OP_GET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName)), line);
             }
 
             break;
