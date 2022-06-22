@@ -50,6 +50,9 @@ typedef enum {
     OP_RETURN,
     OP_DEFINE_FUNCTION,
 
+    // OOP
+    OP_DEFINE_CLASS,
+
     // Misc
     OP_POP,
     OP_TERNARY,

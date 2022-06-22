@@ -357,6 +357,14 @@ static int run()
                 break;
             }
 
+            case OP_DEFINE_CLASS:
+            {
+                ObjClass* klass = AS_CLASS(pop());
+
+                environmentDefine(vm.currentEnvironment, klass->name, OBJ_VAL(klass));
+                break;
+            }
+
             case OP_SCOPE_START:
             {
                 Environment* enclosing = vm.currentEnvironment;

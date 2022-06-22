@@ -650,7 +650,7 @@ static Stmt* classDeclaration()
     consume(TOKEN_LEFT_BRACE, "Expect '{' before class body.");
     consume(TOKEN_RIGHT_BRACE, "Expect '}' after class body.");
 
-    return (Stmt*)newClassStmt()
+    return (Stmt*)newClassStmt(name, parser.line);
 }
 
 static Stmt* functionDeclaration()

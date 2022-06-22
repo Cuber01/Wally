@@ -536,7 +536,8 @@ static uint16_t compileStatement(Stmt* statement)
         {
             ClassStmt* stmt = (ClassStmt*) statement;
 
-            emitBytes(OP_CLASS, makeConstant(OBJ_VAL(stmt->name)));
+            emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(newClass(stmt->name))), line);
+            emitByte(OP_DEFINE_CLASS, line);
 
             break;
         }
