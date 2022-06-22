@@ -258,6 +258,24 @@ static void compileExpression(Expr* expression)
             break;
         }
 
+        case DOT_EXPRESSION:
+        {
+            DotExpr* expr = (DotExpr*)expression;
+
+            emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(expr->name)), line);
+
+            if (expr->value == NULL)
+            {
+                emitByte(OP_SET_PROPERTY, line);
+            } else
+            {
+                compileExpression(expr->value);
+                emitByte(OP_GET_PROPERTY, line);
+            }
+
+            break;
+        }
+
         case GROUPED_EXPRESSION:
         {
             GroupedExpr* expr = (GroupedExpr*)expression;

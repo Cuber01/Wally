@@ -126,7 +126,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_CALL", offset);
         case OP_DEFINE_FUNCTION:
             return simpleInstruction("OP_DEFINE_FUNCTION", offset);
-
+        case OP_DEFINE_CLASS:
+            return simpleInstruction("OP_DEFINE_CLASS", offset);
 
         case OP_JUMP:
             return jumpInstruction("OP_JUMP", 1, chunk, offset);
@@ -139,8 +140,10 @@ int disassembleInstruction(Chunk* chunk, int offset)
 
         case OP_CONSTANT:
             return constantInstruction("OP_CONSTANT", chunk, offset);
-        case OP_DEFINE_CLASS:
-            return constantInstruction("OP_DEFINE_CLASS", chunk, offset);
+        case OP_GET_PROPERTY:
+            return constantInstruction("OP_GET_PROPERTY", chunk, offset);
+        case OP_SET_PROPERTY:
+            return constantInstruction("OP_SET_PROPERTY", chunk, offset);
 
         default:
             printf("Unknown opcode %d\n", instruction);

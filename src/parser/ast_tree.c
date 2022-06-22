@@ -257,7 +257,7 @@ void freeStatement(Stmt* stmt)
     }
 }
 
-// ------------ EXPRESSIONS ------------
+// region Statements
 ContinueStmt* newContinueStmt(uint16_t line)
 {
     ContinueStmt* stmt = (ContinueStmt*) ALLOCATE_STATEMENT(ContinueStmt, CONTINUE_STATEMENT, line);
@@ -374,6 +374,10 @@ ExpressionStmt* newExpressionStmt(Expr* expr, uint16_t line)
     return stmt;
 }
 
+// endregion
+
+// region Expressions
+
 CallExpr* newCallExpr(ObjString* callee, uint16_t argCount, Node* args, uint16_t line)
 {
     CallExpr* expr = (CallExpr*) ALLOCATE_EXPRESSION(CallExpr, CALL_EXPRESSION, true, line);
@@ -388,6 +392,16 @@ CallExpr* newCallExpr(ObjString* callee, uint16_t argCount, Node* args, uint16_t
 AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line)
 {
     AssignExpr* expr = (AssignExpr*) ALLOCATE_EXPRESSION(AssignExpr, ASSIGN_EXPRESSION, false, line);
+
+    expr->name = name;
+    expr->value = value;
+
+    return expr;
+}
+
+DotExpr* newDotExpr(ObjString* name, Expr* value, uint16_t line)
+{
+    DotExpr* expr = (DotExpr*) ALLOCATE_EXPRESSION(DotExpr, DOT_EXPRESSION, false, line);
 
     expr->name = name;
     expr->value = value;
@@ -460,3 +474,5 @@ LiteralExpr* newLiteralExpr(Value value, uint16_t line)
     expr->value = value;
     return expr;
 }
+
+// endregion

@@ -381,6 +381,18 @@ static ObjString* parseVariableName(const char* errorMessage)
     return copyString(parser.previous.start,parser.previous.length);
 }
 
+static void dot()
+{
+    ObjString* name = parseVariableName("Expect property name after '.'.");
+
+    Expr* value = NULL;
+
+    if (match(TOKEN_EQUAL))
+    {
+        value = expression();
+    }
+}
+
 static Expr* call(Expr* previous)
 {
     uint16_t argCount = 0;
@@ -814,6 +826,7 @@ ParseRule rules[] =
         [TOKEN_OR]            = {NULL,                 logical,   PREC_OR},
         [TOKEN_RETURN]        = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_SUPER]         = {NULL,                 NULL,      PREC_NONE},
+        [TOKEN_DOT]           = {NULL,                 dot,       PREC_CALL},
         [TOKEN_THIS]          = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_TRUE]          = {literal,              NULL,      PREC_NONE},
         [TOKEN_VAR]           = {NULL,                 NULL,      PREC_NONE},

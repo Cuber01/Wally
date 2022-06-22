@@ -14,7 +14,8 @@ typedef enum {
     GROUPED_EXPRESSION,
     ASSIGN_EXPRESSION,
     CALL_EXPRESSION,
-    TERNARY_EXPRESSION
+    TERNARY_EXPRESSION,
+    DOT_EXPRESSION,
 } ExprType;
 
 typedef enum {
@@ -110,6 +111,15 @@ typedef struct
     ObjString* name;
     Expr* value;
 } AssignExpr;
+
+typedef struct
+{
+    Expr expr;
+
+    ObjString* name;
+    // If value is null it's a getter, otherwise it is a setter.
+    Expr* value;
+} DotExpr;
 
 typedef struct
 {
@@ -242,6 +252,7 @@ UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line);
 VarExpr* newVarExpr(ObjString* name, uint16_t line);
 AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line);
 CallExpr* newCallExpr(ObjString* callee, uint16_t argCount, Node* args, uint16_t line);
+DotExpr* newDotExpr(ObjString* name, Expr* value, uint16_t line);
 
 // ------------ STATEMENT CONSTRUCTORS ------------
 

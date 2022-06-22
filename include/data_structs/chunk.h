@@ -52,6 +52,8 @@ typedef enum {
 
     // OOP
     OP_DEFINE_CLASS,
+    OP_GET_PROPERTY,
+    OP_SET_PROPERTY,
 
     // Misc
     OP_POP,
