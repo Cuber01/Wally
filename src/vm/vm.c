@@ -412,6 +412,7 @@ static int run()
                 ObjInstance* instance = AS_INSTANCE(instanceVal);
 
                 tableSet(&instance->fields, fieldName, initializer);
+                push(initializer);
                 break;
             }
 

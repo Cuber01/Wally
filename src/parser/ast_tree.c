@@ -401,7 +401,7 @@ AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line)
 
 DotExpr* newDotExpr(Expr* instance, ObjString* fieldName, Expr* value, uint16_t line)
 {
-    DotExpr* expr = (DotExpr*) ALLOCATE_EXPRESSION(DotExpr, DOT_EXPRESSION, false, line);
+    DotExpr* expr = (DotExpr*) ALLOCATE_EXPRESSION(DotExpr, DOT_EXPRESSION, true, line);
 
     expr->fieldName = fieldName;
     expr->instance = instance;
