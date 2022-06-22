@@ -81,6 +81,15 @@ void freeObject(Obj* object)
             break;
         }
 
+        case OBJ_INSTANCE:
+        {
+            ObjInstance* instance = (ObjInstance*)object;
+            freeTable(&instance->fields);
+
+            FREE(ObjInstance, object);
+            break;
+        }
+
         case OBJ_FUNCTION:
         {
             ObjFunction* function = (ObjFunction*)object;

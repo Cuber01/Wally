@@ -108,6 +108,14 @@ static void blackenObject(Obj* object)
             break;
         }
 
+        case OBJ_INSTANCE:
+        {
+            ObjInstance* instance = (ObjInstance*)object;
+            markObject((Obj*)instance->klass);
+            markTable(&instance->fields);
+            break;
+        }
+
         case OBJ_FUNCTION:
         {
             // todo do something with environment and MAYBE calledFromFunction

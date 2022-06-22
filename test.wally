@@ -1,2 +1,2 @@
 class Brioche {}
-print(Brioche);
+print(Brioche());
