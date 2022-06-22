@@ -219,11 +219,20 @@ void freeStatement(Stmt* stmt)
         {
             FunctionStmt* statement = (FunctionStmt*) stmt;
 
-            // todo i think gc will take care of strings but if not then we have to clean them up here
+            freeObject((Obj*)statement->name); // todo check if this works
             freeList(statement->body);
 
             FREE(FunctionStmt, stmt);
             break;
+        }
+
+        case CLASS_STATEMENT:
+        {
+            ClassStmt* statement = (ClassStmt*) stmt;
+
+            freeObject((Obj*)statement->name); // todo check if this works
+
+            FREE(ClassStmt, stmt);
         }
 
         case RETURN_STATEMENT:
@@ -266,6 +275,15 @@ ReturnStmt* newReturnStmt(Expr* value, uint16_t line)
     ReturnStmt* stmt = (ReturnStmt*) ALLOCATE_STATEMENT(ReturnStmt, RETURN_STATEMENT, line);
 
     stmt->value = value;
+
+    return stmt;
+}
+
+ClassStmt* newClassStmt(ObjString* name, uint16_t line)
+{
+    ClassStmt* stmt = (ClassStmt*) ALLOCATE_STATEMENT(ClassStmt, CLASS_STATEMENT, line);
+
+    stmt->name = name;
 
     return stmt;
 }

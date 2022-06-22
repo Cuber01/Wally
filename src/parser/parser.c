@@ -643,6 +643,16 @@ static Expr* variable()
 
 }
 
+static Stmt* classDeclaration()
+{
+    ObjString* name = parseVariableName("Expect class name.");
+
+    consume(TOKEN_LEFT_BRACE, "Expect '{' before class body.");
+    consume(TOKEN_RIGHT_BRACE, "Expect '}' after class body.");
+
+    return (Stmt*)newClassStmt()
+}
+
 static Stmt* functionDeclaration()
 {
     ObjString* name = parseVariableName("Expect function name.");
@@ -716,6 +726,7 @@ static Stmt* declaration()
 
     if (match(TOKEN_VAR))           stmt = varDeclaration();
     else if (match(TOKEN_FUNCTION)) stmt = functionDeclaration();
+    else if (match(TOKEN_CLASS))    stmt = classDeclaration();
     else
     {
         stmt = statement();

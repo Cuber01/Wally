@@ -28,7 +28,8 @@ typedef enum {
     CONTINUE_STATEMENT,
     BREAK_STATEMENT,
     FUNCTION_STATEMENT,
-    RETURN_STATEMENT
+    RETURN_STATEMENT,
+    CLASS_STATEMENT,
 } StmtType;
 
 // ------------ EXPRESSIONS ------------
@@ -209,6 +210,14 @@ typedef struct
 {
     Stmt stmt;
 
+    ObjString* name;
+
+} ClassStmt;
+
+typedef struct
+{
+    Stmt stmt;
+
     Expr* value;
 } ReturnStmt;
 
@@ -247,3 +256,4 @@ FunctionStmt* newFunctionStmt(ObjString* name, Node* body, ObjString** params, u
 ReturnStmt* newReturnStmt(Expr* value, uint16_t line);
 BreakStmt* newBreakStmt(uint16_t line);
 ContinueStmt* newContinueStmt(uint16_t line);
+ClassStmt* newClassStmt(ObjString* name, uint16_t line);

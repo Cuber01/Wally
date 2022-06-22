@@ -75,6 +75,12 @@ void freeObject(Obj* object)
             break;
         }
 
+        case OBJ_CLASS:
+        {
+            FREE(ObjClass, object);
+            break;
+        }
+
         case OBJ_FUNCTION:
         {
             ObjFunction* function = (ObjFunction*)object;

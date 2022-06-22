@@ -101,6 +101,13 @@ static void blackenObject(Obj* object)
         case OBJ_NATIVE:
         case OBJ_STRING: break;
 
+        case OBJ_CLASS:
+        {
+            ObjClass* klass = (ObjClass*)object;
+            markObject((Obj*)klass->name);
+            break;
+        }
+
         case OBJ_FUNCTION:
         {
             // todo do something with environment and MAYBE calledFromFunction

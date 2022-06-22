@@ -532,6 +532,15 @@ static uint16_t compileStatement(Stmt* statement)
             break;
         }
 
+        case CLASS_STATEMENT:
+        {
+            ClassStmt* stmt = (ClassStmt*) statement;
+
+            emitBytes(OP_CLASS, makeConstant(OBJ_VAL(stmt->name)));
+
+            break;
+        }
+
         case RETURN_STATEMENT:
         {
             if (current->type == TYPE_SCRIPT)
