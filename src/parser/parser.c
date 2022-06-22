@@ -392,13 +392,7 @@ static Expr* dot(Expr* previous)
         value = expression();
     }
 
-    if(previous->type != VAR_EXPRESSION && previous->type != DOT_EXPRESSION)
-    {
-        errorAtCurrent("Cannot get or set a non-variable using the '.' operator.");
-        // todo return?
-    }
-
-    return (Expr*)newDotExpr((VarExpr*)previous, name, value, parser.line);
+    return (Expr*)newDotExpr(previous, name, value, parser.line);
 }
 
 static Expr* call(Expr* previous)

@@ -262,9 +262,17 @@ static void compileExpression(Expr* expression)
         {
             DotExpr* expr = (DotExpr*)expression;
 
-            emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(expr->fieldName)), line);
+            //emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(expr->fieldName)), line);
             //emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(expr->instanceName->name)), line);
-           // compileExpression(expr->instanceName);
+            compileExpression(expr->instance);
+
+            if (expr->value != NULL)
+            {
+                compileExpression(expr->value);
+                emitBytes(OP_SET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName)), line);
+            } else {
+                emitBytes(OP_GET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName)), line);
+            }
 
             if (expr->value == NULL)
             {
