@@ -142,7 +142,7 @@ typedef struct Stmt {
 } Stmt;
 
 DECLARE_ARRAY(Statements, Stmt*)
-DEFINE_ARRAY_FUNCTIONS(Statements, statements, Stmt*)
+DEFINE_ARRAY_FUNCTION_PREDECLARATIONS(Statements, statements, Stmt*)
 
 typedef struct
 {

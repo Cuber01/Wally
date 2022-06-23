@@ -12,6 +12,8 @@
 #include "disassembler.h"
 #endif
 
+static uint16_t compileStatement(Stmt* statement);
+
 UInts* breaks;
 UInts* continues;
 uint loopDepth = 0;
@@ -262,8 +264,6 @@ static void compileExpression(Expr* expression)
         {
             DotExpr* expr = (DotExpr*)expression;
 
-            //emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(expr->fieldName)), line);
-            //emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(expr->instanceName->name)), line);
             compileExpression(expr->instance);
 
             if (expr->value != NULL)
@@ -372,6 +372,42 @@ static void compileVariable(ObjString* name, Expr* initializer, uint16_t line)
     }
 
     emitByte(OP_DEFINE_VARIABLE, line);
+}
+
+static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
+{
+    Compiler compiler;
+    initCompiler(&compiler, stmt->name, stmt->paramCount, TYPE_FUNCTION);
+
+    emitByte(OP_SCOPE_START, line);
+
+    // Params
+    ObjString** params = stmt->params;
+    int paramCount = stmt->paramCount - 1;
+
+    while (paramCount >= 0)
+    {
+        emitConstant(OBJ_VAL(params[paramCount]), line);
+        emitByte(OP_DEFINE_ARGUMENT, line);
+        paramCount--;
+    }
+
+    // Body
+    Node* body = stmt->body;
+
+    while (body != NULL)
+    {
+        compileStatement(AS_STATEMENT(body));
+        body = body->next;
+    }
+
+    emitByte(OP_SCOPE_END, line);
+
+    ObjFunction* function = endCompiler(line);
+
+    // Function definition data
+    emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)), line);
+    emitByte(isMethod ? OP_DEFINE_METHOD : OP_DEFINE_FUNCTION, line);
 }
 
 static uint16_t compileStatement(Stmt* statement)
@@ -518,39 +554,7 @@ static uint16_t compileStatement(Stmt* statement)
         {
             FunctionStmt* stmt = (FunctionStmt*) statement;
 
-            Compiler compiler;
-            initCompiler(&compiler, stmt->name, stmt->paramCount, TYPE_FUNCTION);
-
-            emitByte(OP_SCOPE_START, line);
-
-            // Params
-            ObjString** params = stmt->params;
-            int paramCount = stmt->paramCount - 1;
-
-            while (paramCount >= 0)
-            {
-                emitConstant(OBJ_VAL(params[paramCount]), line);
-                emitByte(OP_DEFINE_ARGUMENT, line);
-                paramCount--;
-            }
-
-            // Body
-            Node* body = stmt->body;
-
-            while (body != NULL)
-            {
-                compileStatement(AS_STATEMENT(body));
-                body = body->next;
-            }
-
-            emitByte(OP_SCOPE_END, line);
-
-            ObjFunction* function = endCompiler(line);
-
-            // Function definition data
-            emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)), line);
-            emitByte(OP_DEFINE_FUNCTION, line);
-
+            compileFunction(stmt, false, line);
             break;
         }
 
@@ -558,9 +562,18 @@ static uint16_t compileStatement(Stmt* statement)
         {
             ClassStmt* stmt = (ClassStmt*) statement;
 
-            emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(newClass(stmt->name))), line);
+            Stmt* method = *(stmt->methods.values);
+
+            while(method != NULL)
+            {
+                compileFunction((FunctionStmt*)method, true, line);
+                method++;
+            }
+
+            emitConstant(OBJ_VAL(newClass(stmt->name)), line);
             emitByte(OP_DEFINE_CLASS, line);
 
+            emitByte(OP_POP, line);
             break;
         }
 
@@ -604,6 +617,7 @@ static uint16_t compileStatement(Stmt* statement)
 
     return line;
 }
+
 
 // region MAIN
 

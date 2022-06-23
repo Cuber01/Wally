@@ -48,4 +48,6 @@ typedef struct name {             \
 DECLARE_ARRAY(UInts, uint)
 DEFINE_ARRAY_FUNCTION_PREDECLARATIONS(UInts, uints, uint)
 
+
+
 #endif //WALLY_ARRAY_H

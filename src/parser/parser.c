@@ -716,18 +716,19 @@ static Stmt* functionDeclaration(bool isMethod)
 static Stmt* classDeclaration()
 {
     ObjString* name = parseVariableName("Expect class name.");
+    Token className = parser.previous;
 
     consume(TOKEN_LEFT_BRACE, "Expect '{' before class body.");
 
-    Statements methods;
-    initStatements(&methods);
+    Statements* methods = NULL;
+    initStatements(methods);
 
     while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
     {
-        statementsWrite(&methods, functionDeclaration(true));
+        statementsWrite(methods, functionDeclaration(true));
     }
 
-    return (Stmt*)newClassStmt(name, methods, parser.line);
+    return (Stmt*)newClassStmt(name, *methods, parser.line);
 }
 
 static Stmt* varDeclaration()

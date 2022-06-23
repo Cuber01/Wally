@@ -145,6 +145,9 @@ int disassembleInstruction(Chunk* chunk, int offset)
 
         case OP_CONSTANT:
             return constantInstruction("OP_CONSTANT", chunk, offset);
+        case OP_DEFINE_METHOD:
+            return constantInstruction("OP_METHOD", chunk, offset);
+
 
         default:
             printf("Unknown opcode %d\n", instruction);
