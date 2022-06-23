@@ -4,29 +4,7 @@
 #define ALLOCATE_EXPRESSION(objectType, enumType, pop, line) \
     newExpression(sizeof(objectType), enumType, pop, line)
 
-//DEFINE_ARRAY_FUNCTIONS(Statements, statements, Stmt*)
-
-Statements *initStatements(Statements *array) {
-    array = reallocate(array, 0, sizeof(Statements));
-    array->values = ((void *) 0);
-    array->capacity = 0;
-    array->count = 0;
-    return array;
-}
-void freeStatements(Statements *array) {
-    reallocate(array->values, sizeof(Stmt *) * (array->capacity), 0);
-    initStatements(array);
-}
-void statementsWrite(Statements *array, Stmt *value) {
-    if (array->capacity < array->count + 1) {
-        unsigned int oldCapacity = array->capacity;
-        array->capacity = ((oldCapacity) < 8 ? 8 : (oldCapacity) * 2);
-        array->values = (Stmt **) reallocate(array->values, sizeof(Stmt *) * (oldCapacity),
-                                             sizeof(Stmt *) * (array->capacity));
-    }
-    array->values[array->count] = value;
-    array->count++;
-}
+DEFINE_ARRAY_FUNCTIONS(Statements, statements, Stmt*)
 
 static Expr* newExpression(size_t size, ExprType type, bool pop, uint16_t line)
 {

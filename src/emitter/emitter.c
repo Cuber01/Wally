@@ -562,12 +562,9 @@ static uint16_t compileStatement(Stmt* statement)
         {
             ClassStmt* stmt = (ClassStmt*) statement;
 
-            Stmt* method = *(stmt->methods.values);
-
-            while(method != NULL)
+            for(uint i = 0; i < stmt->methods.count; i++)
             {
-                compileFunction((FunctionStmt*)method, true, line);
-                method++;
+                compileFunction((FunctionStmt*)(stmt->methods.values[i]), true, line);
             }
 
             emitConstant(OBJ_VAL(newClass(stmt->name)), line);

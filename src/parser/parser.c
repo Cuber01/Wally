@@ -721,12 +721,14 @@ static Stmt* classDeclaration()
     consume(TOKEN_LEFT_BRACE, "Expect '{' before class body.");
 
     Statements* methods = NULL;
-    initStatements(methods);
+    methods = initStatements(methods);
 
     while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
     {
         statementsWrite(methods, functionDeclaration(true));
     }
+
+    consume(TOKEN_RIGHT_BRACE, "Expect '}' after class body.");
 
     return (Stmt*)newClassStmt(name, *methods, parser.line);
 }
