@@ -1,5 +1,7 @@
 class Poof {}
-var a = 0;
 var b = Poof();
 b.c = 1;
-a + b.c = 3;
+b.d = 2;
+print(b.c + b.d);
+
+// Expect: 3

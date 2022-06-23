@@ -200,7 +200,7 @@ static Expr* expression()
 
 // region EXPRESSIONS
 
-static Expr* binary(Expr* previous, bool canAssign)
+static Expr* binary(Expr* previous, __attribute__((unused)) bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
     ParseRule* rule = getRule(operatorType);
@@ -210,7 +210,7 @@ static Expr* binary(Expr* previous, bool canAssign)
     return (Expr*)newBinaryExpr(previous, operatorType, right, parser.line);
 }
 
-static Expr* increment(Expr* previous, bool canAssign)
+static Expr* increment(Expr* previous, __attribute__((unused)) bool canAssign)
 {
     VarExpr* prev = (VarExpr*)previous;
 
@@ -222,7 +222,7 @@ static Expr* increment(Expr* previous, bool canAssign)
                                 parser.line);
 }
 
-static Expr* decrement(Expr* previous, bool canAssign)
+static Expr* decrement(Expr* previous, __attribute__((unused)) bool canAssign)
 {
     VarExpr* prev = (VarExpr*)previous;
 
@@ -276,14 +276,14 @@ static Expr* dot(Expr* previous, bool canAssign)
     return (Expr*)newDotExpr(previous, name, value, parser.line);
 }
 
-static Expr* call(Expr* previous, bool canAssign)
+static Expr* call(Expr* previous, __attribute__((unused)) bool canAssign)
 {
     uint16_t argCount = 0;
     Node* args = argumentList(&argCount);
     return (Expr*) newCallExpr(((VarExpr*)previous)->name, argCount, args, parser.line);
 }
 
-static Expr* ternary(Expr* previous, bool canAssign)
+static Expr* ternary(Expr* previous, __attribute__((unused)) bool canAssign)
 {
     Expr* thenBranch = parsePrecedence(PREC_TERNARY);
     consume(TOKEN_COLON, "Expect ':' after first ternary branch.");
@@ -325,7 +325,7 @@ static Expr* variable(bool canAssign)
 
 }
 
-static Expr* literal(bool canAssign)
+static Expr* literal(__attribute__((unused)) bool canAssign)
 {
     switch (parser.previous.type)
     {
@@ -337,7 +337,7 @@ static Expr* literal(bool canAssign)
     }
 }
 
-static Expr* number(bool canAssign)
+static Expr* number(__attribute__((unused)) bool canAssign)
 {
     double value = strtod(parser.previous.start, NULL);
     return (Expr*)newLiteralExpr(NUMBER_VAL(value), parser.line);
@@ -402,7 +402,7 @@ static void escapeSequences(char* destination, char* source)
 
 }
 
-static Expr* string(bool canAssign)
+static Expr* string(__attribute__((unused)) bool canAssign)
 {
     // Math is for trimming ""
     uint32_t length = strlen(parser.previous.start);
@@ -422,12 +422,12 @@ static Expr* string(bool canAssign)
     return rv;
 }
 
-static Expr* interpolatedString(bool canAssign)
+static Expr* interpolatedString(__attribute__((unused)) bool canAssign)
 {
 
 }
 
-static Expr* unary(bool canAssign)
+static Expr* unary(__attribute__((unused)) bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
 
@@ -436,7 +436,7 @@ static Expr* unary(bool canAssign)
     return (Expr*) newUnaryExpr(expr, operatorType, parser.line);
 }
 
-static Expr* grouping(bool canAssign)
+static Expr* grouping(__attribute__((unused)) bool canAssign)
 {
     Expr* expr = expression();
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
@@ -469,7 +469,7 @@ static Stmt* block()
     return (Stmt*)newBlockStmt(statements, parser.line);
 }
 
-static Expr* logical(Expr* previous, bool canAssign)
+static Expr* logical(Expr* previous, __attribute__((unused)) bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
     ParseRule* rule = getRule(operatorType);
