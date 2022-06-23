@@ -524,31 +524,11 @@ static int run()
                     return INTERPRET_OK;
                 }
 
+
+
                 vm.currentFunction = oldFunction->calledFromFunction;
                 vm.ip = oldFunction->calledFromIp;
 
-
-//                Value result = popNullable();
-//                vm.frameCount--;
-//
-//                if (vm.frameCount == 0)
-//                {
-//                    pop();
-//
-//                    if(IS_NUMBER(result))
-//                    {
-//                        return AS_NUMBER(result);
-//                    }
-//                    else
-//                    {
-//                        return INTERPRET_OK;
-//                    }
-//r
-//                }
-//
-//                vm.stackTop = frame->slots;
-//                push(result);
-//                frame = &vm.frames[vm.frameCount - 1];
                 break;
             }
         }

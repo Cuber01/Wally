@@ -1,4 +1,7 @@
-class Brunch {
-  bacon() {}
-  eggs() {}
+function foo()
+{
+    return;
 }
+
+var a = foo();
+print(a);

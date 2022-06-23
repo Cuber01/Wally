@@ -584,7 +584,15 @@ static uint16_t compileStatement(Stmt* statement)
 
             ReturnStmt* stmt = (ReturnStmt*) statement;
 
-            compileExpression(stmt->value);
+            if(stmt->value == NULL)
+            {
+                emitConstant(NULL_VAL, line);
+            }
+            else
+            {
+                compileExpression(stmt->value);
+            }
+
             emitByte(OP_RETURN, line);
 
             break;
