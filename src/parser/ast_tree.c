@@ -231,6 +231,7 @@ void freeStatement(Stmt* stmt)
             ClassStmt* statement = (ClassStmt*) stmt;
 
             freeObject((Obj*)statement->name); // todo check if this works
+            freeStatements(&statement->methods);
 
             FREE(ClassStmt, stmt);
         }
@@ -279,11 +280,12 @@ ReturnStmt* newReturnStmt(Expr* value, uint16_t line)
     return stmt;
 }
 
-ClassStmt* newClassStmt(ObjString* name, uint16_t line)
+ClassStmt* newClassStmt(ObjString* name, Statements methods, uint16_t line)
 {
     ClassStmt* stmt = (ClassStmt*) ALLOCATE_STATEMENT(ClassStmt, CLASS_STATEMENT, line);
 
     stmt->name = name;
+    stmt->methods = methods;
 
     return stmt;
 }

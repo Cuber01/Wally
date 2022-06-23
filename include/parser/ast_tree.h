@@ -2,6 +2,8 @@
 #include "scanner.h"
 #include "object.h"
 #include "list.h"
+#include "array.h"
+#include "memory.h"
 
 typedef struct Node Node;
 
@@ -139,6 +141,9 @@ typedef struct Stmt {
     uint16_t line;
 } Stmt;
 
+DECLARE_ARRAY(Statements, Stmt*)
+DEFINE_ARRAY_FUNCTIONS(Statements, statements, Stmt*)
+
 typedef struct
 {
     Stmt stmt;
@@ -223,7 +228,7 @@ typedef struct
     Stmt stmt;
 
     ObjString* name;
-
+    Statements methods;
 } ClassStmt;
 
 typedef struct
@@ -269,4 +274,4 @@ FunctionStmt* newFunctionStmt(ObjString* name, Node* body, ObjString** params, u
 ReturnStmt* newReturnStmt(Expr* value, uint16_t line);
 BreakStmt* newBreakStmt(uint16_t line);
 ContinueStmt* newContinueStmt(uint16_t line);
-ClassStmt* newClassStmt(ObjString* name, uint16_t line);
+ClassStmt* newClassStmt(ObjString* name, Statements methods, uint16_t line);

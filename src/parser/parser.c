@@ -667,21 +667,12 @@ static Stmt* statement()
 
 }
 
-static Stmt* classDeclaration()
+
+static Stmt* functionDeclaration(bool isMethod)
 {
-    ObjString* name = parseVariableName("Expect class name.");
+    ObjString* name = parseVariableName( isMethod ? "Expect method name." : "Expect function name.");
 
-    consume(TOKEN_LEFT_BRACE, "Expect '{' before class body.");
-    consume(TOKEN_RIGHT_BRACE, "Expect '}' after class body.");
-
-    return (Stmt*)newClassStmt(name, parser.line);
-}
-
-static Stmt* functionDeclaration()
-{
-    ObjString* name = parseVariableName("Expect function name.");
-
-    consume(TOKEN_LEFT_PAREN, "Expect '(' after function name.");
+    consume(TOKEN_LEFT_PAREN, isMethod ? "Expect '(' after method name." : "Expect '(' after function name.");
 
     // Params
     ObjString** params = reallocate(NULL, 0, sizeof(ObjString));
@@ -706,13 +697,13 @@ static Stmt* functionDeclaration()
 
             if(match(TOKEN_RIGHT_PAREN)) break;
 
-            consume(TOKEN_COMMA, "Expect ',' after parameter in function.");
+            consume(TOKEN_COMMA, isMethod ? "Expect ',' after parameter in method." : "Expect ',' after parameter in function.");
         }
     }
 
     // Body, can't be handled with 'block' because we need to emit scope start at custom locations
     Node* body = NULL;
-    consume(TOKEN_LEFT_BRACE, "Expect '{' at the start of function body.");
+    consume(TOKEN_LEFT_BRACE, isMethod ? "Expect '{' at the start of method body." : "Expect '{' at the start of function body.");
 
     while (!match(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
     {
@@ -720,6 +711,23 @@ static Stmt* functionDeclaration()
     }
 
     return (Stmt*)newFunctionStmt(name, body, params, paramCount, parser.line);
+}
+
+static Stmt* classDeclaration()
+{
+    ObjString* name = parseVariableName("Expect class name.");
+
+    consume(TOKEN_LEFT_BRACE, "Expect '{' before class body.");
+
+    Statements methods;
+    initStatements(&methods);
+
+    while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF))
+    {
+        statementsWrite(&methods, functionDeclaration(true));
+    }
+
+    return (Stmt*)newClassStmt(name, methods, parser.line);
 }
 
 static Stmt* varDeclaration()
@@ -749,7 +757,7 @@ static Stmt* declaration()
     Stmt* stmt;
 
     if (match(TOKEN_VAR))           stmt = varDeclaration();
-    else if (match(TOKEN_FUNCTION)) stmt = functionDeclaration();
+    else if (match(TOKEN_FUNCTION)) stmt = functionDeclaration(false);
     else if (match(TOKEN_CLASS))    stmt = classDeclaration();
     else
     {

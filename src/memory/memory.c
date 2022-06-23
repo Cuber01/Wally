@@ -77,6 +77,8 @@ void freeObject(Obj* object)
 
         case OBJ_CLASS:
         {
+            ObjClass* klass = (ObjClass*)object;
+            freeTable(&klass->methods);
             FREE(ObjClass, object);
             break;
         }

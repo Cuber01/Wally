@@ -105,6 +105,7 @@ static void blackenObject(Obj* object)
         {
             ObjClass* klass = (ObjClass*)object;
             markObject((Obj*)klass->name);
+            markTable(&klass->methods);
             break;
         }
 
@@ -118,7 +119,7 @@ static void blackenObject(Obj* object)
 
         case OBJ_FUNCTION:
         {
-            // todo do something with environment and MAYBE calledFromFunction
+            // todo do something with environment (current environment and its branches are marked already though) and MAYBE calledFromFunction (yeah no?)
             ObjFunction* function = (ObjFunction*)object;
             markObject((Obj*)function->name);
             markArray(&function->chunk.constants);
