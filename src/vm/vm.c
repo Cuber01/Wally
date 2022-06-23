@@ -176,12 +176,11 @@ static void defineNative(const char* name, NativeFn function)
     pop();
 }
 
-static void defineMethod(ObjString* name)
+static void defineMethod()
 {
-    Value method = peek(0);
-    ObjClass* klass = AS_CLASS(peek(1));
-    tableSet(&klass->methods, name, method);
-    pop();
+    Value method = pop();
+    ObjClass* klass = AS_CLASS(peek(0));
+    tableSet(&klass->methods, AS_FUNCTION(method)->name, method);
 }
 
 static int run()
@@ -511,7 +510,7 @@ static int run()
             }
 
             case OP_DEFINE_METHOD:
-                defineMethod(READ_STRING());
+                defineMethod();
                 break;
 
             case OP_RETURN:

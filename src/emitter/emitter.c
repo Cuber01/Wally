@@ -269,7 +269,7 @@ static void compileExpression(Expr* expression)
             if (expr->value != NULL)
             {
                 compileExpression(expr->value);
-                emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(expr->fieldName)), line);
+                emitConstant(OBJ_VAL(expr->fieldName), line);
                 emitByte(OP_SET_PROPERTY, line);
             }
             else
@@ -406,7 +406,7 @@ static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
     ObjFunction* function = endCompiler(line);
 
     // Function definition data
-    emitBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)), line);
+    emitConstant(OBJ_VAL(function), line);
     emitByte(isMethod ? OP_DEFINE_METHOD : OP_DEFINE_FUNCTION, line);
 }
 
@@ -562,12 +562,13 @@ static uint16_t compileStatement(Stmt* statement)
         {
             ClassStmt* stmt = (ClassStmt*) statement;
 
+            emitConstant(OBJ_VAL(newClass(stmt->name)), line);
+
             for(uint i = 0; i < stmt->methods.count; i++)
             {
                 compileFunction((FunctionStmt*)(stmt->methods.values[i]), true, line);
             }
 
-            emitConstant(OBJ_VAL(newClass(stmt->name)), line);
             emitByte(OP_DEFINE_CLASS, line);
 
             emitByte(OP_POP, line);
