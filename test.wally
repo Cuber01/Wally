@@ -1,6 +1,6 @@
 function foo()
 {
-    return;
+    return 1;
 }
 
 var a = foo();

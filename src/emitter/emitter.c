@@ -118,7 +118,7 @@ static void emitReturn(uint16_t line)
 
 // endregion
 static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t functionArity, FunctionType type);
-static ObjFunction* endCompiler(uint16_t line);
+static ObjFunction* endCompiler(bool emitNull, uint16_t line);
 
 static void compileExpression(Expr* expression)
 {
@@ -403,7 +403,7 @@ static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
 
     emitByte(OP_SCOPE_END, line);
 
-    ObjFunction* function = endCompiler(line);
+    ObjFunction* function = endCompiler(true, line);
 
     // Function definition data
     emitConstant(OBJ_VAL(function), line);
@@ -658,8 +658,11 @@ static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t f
     }
 }
 
-static ObjFunction* endCompiler(uint16_t line)
+static ObjFunction* endCompiler(bool emitNull, uint16_t line)
 {
+    // We emit null if user didn't return anything else via the return statement
+    if(emitNull) emitConstant(NULL_VAL, line);
+
     emitReturn(line);
     ObjFunction* function = current->function;
 
@@ -696,7 +699,7 @@ ObjFunction* emit(Node* statements)
 
     freeEmitter();
 
-    ObjFunction* function = endCompiler(lastLine);
+    ObjFunction* function = endCompiler(false, lastLine);
     return hadError ? NULL : function;
 }
 
