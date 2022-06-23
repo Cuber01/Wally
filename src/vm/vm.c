@@ -375,7 +375,7 @@ static int run()
 
             case OP_DEFINE_CLASS:
             {
-                ObjClass* klass = AS_CLASS(pop());
+                ObjClass* klass = AS_CLASS(peek(0));
 
                 environmentDefine(vm.currentEnvironment, klass->name, OBJ_VAL(klass));
                 break;

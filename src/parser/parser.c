@@ -9,10 +9,7 @@
 #include "vm.h"
 
 #ifdef DEBUG_PRINT_BYTECODE
-#include "disassembler.h"
 #include "emitter.h"
-#include "memory.h"
-#include "vm.h"
 #endif
 
 #ifdef DEBUG_PRINT_TOKENS
@@ -716,7 +713,6 @@ static Stmt* functionDeclaration(bool isMethod)
 static Stmt* classDeclaration()
 {
     ObjString* name = parseVariableName("Expect class name.");
-    Token className = parser.previous;
 
     consume(TOKEN_LEFT_BRACE, "Expect '{' before class body.");
 

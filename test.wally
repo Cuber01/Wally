@@ -1,7 +1,12 @@
-function foo()
+var a = "Hello World";
+
+class Main
 {
-    return 1;
+    gaming()
+    {
+        print(a);
+    }
 }
 
-var a = foo();
-print(a);
+var main = Main();
+main.gaming();
