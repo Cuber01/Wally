@@ -9,8 +9,11 @@
 #include "memory.h"
 #include "emitter.h"
 #include "garbage_collector.h"
+#include "core.h"
 
 VM vm;
+
+// region Error
 
 static void resetStack()
 {
@@ -29,32 +32,9 @@ void runtimeError(const char* format, ...)
     resetStack();
 }
 
-static void defineNative(const char* name, NativeFn function);
-void initVM()
-{
-    resetStack();
-    initTable(&vm.strings);
-    vm.currentEnvironment = newEnvironment();
-    vm.currentClosure = vm.currentEnvironment;
+// endregion
 
-    vm.grayCount = 0;
-    vm.grayCapacity = 0;
-    vm.grayStack = NULL;
-
-    vm.bytesAllocated = 0;
-    vm.nextGC = 1024 * 1024;
-
-    // defineNative("print", printNative);
-
-    vm.objects = NULL;
-}
-
-void freeVM()
-{
-    // todo free environment
-    freeTable(&vm.strings);
-    freeObjects();
-}
+// region VM Utils
 
 void push(Value value)
 {
@@ -71,6 +51,26 @@ Value pop()
 static Value peek(int distance)
 {
     return vm.stackTop[-1 - distance];
+}
+
+// endregion
+
+// region Runtime Utils
+
+static void defineNative(const char* name, NativeFn function)
+{
+    tableDefineEntry(
+            &vm.nativeEnvironment->values,
+            copyString(name, (int)strlen(name)),
+            OBJ_VAL((Obj*)newNative(function))
+    );
+}
+
+static void defineMethod()
+{
+    Value method = pop();
+    ObjClass* klass = AS_CLASS(peek(0));
+    tableSet(&klass->methods, AS_FUNCTION(method)->name, method);
 }
 
 static bool isFalsey(Value value)
@@ -110,7 +110,6 @@ static void concatenate()
 
 static bool call(ObjFunction* function, uint16_t argCount)
 {
-
     if(argCount != function->arity)
     {
         runtimeError("Expected %d arguments but got %d.", function->arity, argCount);
@@ -158,7 +157,7 @@ static bool callValue(Value callee, uint16_t argCount)
             {
                 NativeFn native = AS_NATIVE(callee);
                 Value result = native(argCount, vm.stackTop - argCount);
-                vm.stackTop -= argCount + 1;
+                pop();
                 push(result);
                 return true;
             }
@@ -189,21 +188,9 @@ static bool bindMethod(ObjClass* klass, ObjString* name)
     return true;
 }
 
-static void defineNative(const char* name, NativeFn function)
-{
-    push(OBJ_VAL(copyString(name, (int)strlen(name))));
-    push(OBJ_VAL(newNative(function)));
+// endregion
 
-    pop();
-    pop();
-}
-
-static void defineMethod()
-{
-    Value method = pop();
-    ObjClass* klass = AS_CLASS(peek(0));
-    tableSet(&klass->methods, AS_FUNCTION(method)->name, method);
-}
+// region Run
 
 static int run()
 {
@@ -362,7 +349,11 @@ static int run()
 
                 if (!environmentGet(vm.currentEnvironment, AS_STRING(name), &value))
                 {
-                    return INTERPRET_RUNTIME_ERROR;
+                    if(!environmentGet(vm.nativeEnvironment, AS_STRING(name), &value))
+                    {
+                        runtimeError("Tried to get value of %s, but it doesn't exist.", AS_CSTRING(name));
+                        return INTERPRET_RUNTIME_ERROR;
+                    }
                 }
 
                 push(value);
@@ -565,6 +556,38 @@ static int run()
     #undef READ_BYTE_NO_INCREMENT
 }
 
+// endregion
+
+// region Main
+
+void initVM()
+{
+    resetStack();
+    initTable(&vm.strings);
+    vm.currentEnvironment = newEnvironment();
+    vm.nativeEnvironment = newEnvironment();
+    vm.currentClosure = vm.currentEnvironment;
+
+    vm.grayCount = 0;
+    vm.grayCapacity = 0;
+    vm.grayStack = NULL;
+
+    vm.bytesAllocated = 0;
+    vm.nextGC = 1024 * 1024;
+
+    defineNative("print", printNative);
+
+    vm.objects = NULL;
+}
+
+void freeVM()
+{
+    freeEnvironmentsRecursively(vm.currentEnvironment);
+    freeEnvironment(vm.nativeEnvironment);
+    freeTable(&vm.strings);
+    freeObjects();
+}
+
 int interpret(const char* source)
 {
     if(*source == '\0')
@@ -587,3 +610,5 @@ int interpret(const char* source)
     gcStarted = true;
     return run();
 }
+
+// endregion

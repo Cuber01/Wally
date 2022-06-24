@@ -64,11 +64,6 @@ bool environmentGet(Environment* env, ObjString* name, Value* result)
             return environmentGet(env->enclosing, name, result);
         }
 
-        if(strcmp("print", name->chars) != 0) // todo temporary code
-        {
-            nativeError("Tried to get value of '%s', but it doesn't exist.", name->chars);
-        }
-
         return false;
     }
 
@@ -105,6 +100,17 @@ void markEnvironment(Environment* env)
     {
         markEnvironment(env->enclosing);
     }
+}
+
+void freeEnvironmentsRecursively(Environment* env)
+{
+    if(env->enclosing != NULL)
+    {
+        freeEnvironmentsRecursively(env->enclosing);
+    }
+
+    FREE_ARRAY(Entry, env->values.entries, env->values.capacity);
+    FREE(Environment, env);
 }
 
 void freeEnvironment(Environment* env)

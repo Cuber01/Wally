@@ -20,6 +20,8 @@ typedef struct
     Environment* currentClosure;
     ObjFunction* currentFunction;
 
+    Environment* nativeEnvironment;
+
     uint8_t* ip; // Instruction pointer. Points towards the next instruction to be executed.
 
     // -- Vm Runtime Data --

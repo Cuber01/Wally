@@ -15,6 +15,7 @@ bool environmentGet(Environment* env, ObjString* name, Value* result);
 bool environmentSet(Environment* env, ObjString* name, Value value);
 
 void markEnvironment(Environment* env);
+void freeEnvironmentsRecursively(Environment* env);
 void freeEnvironment(Environment* env);
 void printVariables(Environment* env);
 

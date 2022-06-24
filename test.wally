@@ -1,16 +1,3 @@
-class Brunch {
-  eggs()
-   {
-    var a = 2;
-   }
-}
 
-var brunch = Brunch();
-brunch.eggs();
 
-//function foo()
-//{
-//
-//}
-//
-//foo();
+print("Hello world!");
