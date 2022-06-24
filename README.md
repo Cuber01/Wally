@@ -1,6 +1,9 @@
 # Wally
 
-TBA
+Wally is a dynamically typed programming language developed primarily for learning purposes. 
+The goal is to make a language that is usable to as high degree as possible and code something in it.
+
+There's no documentation at the moment, but you can learn the basics by looking into the `tests/` directory.
 
 # Running
 
