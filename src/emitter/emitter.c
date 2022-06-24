@@ -280,6 +280,21 @@ static void compileExpression(Expr* expression)
             break;
         }
 
+        case THIS_EXPRESSION:
+        {
+            ThisExpr* expr = (ThisExpr*)expression;
+
+            FunctionType type = current->type;
+
+            if (type != TYPE_METHOD)
+            {
+                error("'this' cannot be used outside of methods.");
+            }
+
+
+
+        }
+
         case GROUPED_EXPRESSION:
         {
             GroupedExpr* expr = (GroupedExpr*)expression;
@@ -377,7 +392,10 @@ static void compileVariable(ObjString* name, Expr* initializer, uint16_t line)
 static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
 {
     Compiler compiler;
-    initCompiler(&compiler, stmt->name, stmt->paramCount, TYPE_FUNCTION);
+    initCompiler(&compiler,
+             stmt->name,
+              stmt->paramCount,
+                    isMethod ? TYPE_METHOD : TYPE_FUNCTION);
 
     emitByte(OP_SCOPE_START, line);
 

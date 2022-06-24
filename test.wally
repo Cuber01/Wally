@@ -1,12 +1,11 @@
 class PrettyPrinter
 {
-    prettyPrint(text)
+    prettyPrint()
     {
-        print("*** " + text + " ***");
+        this.a;
     }
 }
 
 var printer = PrettyPrinter();
-printer.prettyPrint("So pretty!");
-
-// Expect: *** So pretty! ***
+printer.a = 1;
+printer.prettyPrint();

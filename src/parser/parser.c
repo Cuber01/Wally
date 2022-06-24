@@ -288,7 +288,6 @@ static Expr* ternary(Expr* previous, __attribute__((unused)) bool canAssign)
     return (Expr*)newTernaryExpr(previous, thenBranch, elseBranch, parser.line);
 }
 
-
 static Expr* variable(bool canAssign)
 {
     ObjString* name = copyString(parser.previous.start,parser.previous.length);
@@ -320,6 +319,11 @@ static Expr* variable(bool canAssign)
         return (Expr*)newVarExpr(name, parser.line);
     }
 
+}
+
+static Expr* this_(__attribute__((unused)) bool canAssign)
+{
+    return (Expr*)newThisExpr(parsePrecedence(PREC_NONE), parser.line);
 }
 
 static Expr* literal(__attribute__((unused)) bool canAssign)
@@ -845,7 +849,7 @@ ParseRule rules[] =
         [TOKEN_RETURN]        = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_SUPER]         = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_DOT]           = {variable,             dot,       PREC_CALL},
-        [TOKEN_THIS]          = {NULL,                 NULL,      PREC_NONE},
+        [TOKEN_THIS]          = {this_,                NULL,      PREC_NONE},
         [TOKEN_TRUE]          = {literal,              NULL,      PREC_NONE},
         [TOKEN_VAR]           = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_PLUS_PLUS]     = {NULL,                 increment, PREC_INCR_DECR},

@@ -18,6 +18,7 @@ typedef enum {
     CALL_EXPRESSION,
     TERNARY_EXPRESSION,
     DOT_EXPRESSION,
+    THIS_EXPRESSION,
 } ExprType;
 
 typedef enum {
@@ -54,8 +55,8 @@ typedef struct
 {
     Expr expr;
 
-    Obj value;
-} ObjectExpr;
+    Expr* variable;
+} ThisExpr;
 
 typedef struct
 {
@@ -260,6 +261,7 @@ VarExpr* newVarExpr(ObjString* name, uint16_t line);
 AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line);
 CallExpr* newCallExpr(Expr* callee, uint16_t argCount, Node* args, uint16_t line);
 DotExpr* newDotExpr(Expr* instance, ObjString* fieldName, Expr* value, uint16_t line);
+ThisExpr* newThisExpr(Expr* variable, uint16_t line);
 
 // ------------ STATEMENT CONSTRUCTORS ------------
 
