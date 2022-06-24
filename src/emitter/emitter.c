@@ -301,7 +301,7 @@ static void compileExpression(Expr* expression)
             }
 
             emitConstant(NUMBER_VAL(expr->argCount), line);
-            emitConstant(OBJ_VAL(expr->callee), line);
+            compileExpression(expr->callee);
             emitByte(OP_CALL, line);
 
             break;

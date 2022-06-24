@@ -131,6 +131,12 @@ static bool callValue(Value callee, uint16_t argCount)
     {
         switch (OBJ_TYPE(callee))
         {
+            case OBJ_BOUND_METHOD:
+            {
+                ObjBoundMethod* bound = AS_BOUND_METHOD(callee);
+                return call(bound->method, argCount);
+            }
+
             case OBJ_FUNCTION:
             {
                 ObjFunction* function = AS_FUNCTION(callee);
@@ -165,6 +171,22 @@ static bool callValue(Value callee, uint16_t argCount)
 
     runtimeError("Can only call functions and classes.");
     return false;
+}
+
+static bool bindMethod(ObjClass* klass, ObjString* name)
+{
+    Value method;
+
+    if (!tableGet(&klass->methods, name, &method))
+    {
+        runtimeError("Undefined property '%s'.", name->chars);
+        return false;
+    }
+
+    ObjBoundMethod* bound = newBoundMethod(peek(0),AS_FUNCTION(method));
+    pop();
+    push(OBJ_VAL(bound));
+    return true;
 }
 
 static void defineNative(const char* name, NativeFn function)
@@ -396,8 +418,11 @@ static int run()
 
                 if (!tableGet(&instance->fields, name, &value))
                 {
-                    runtimeError("Property '%s' doesn't exist.", name->chars);
-                    return INTERPRET_RUNTIME_ERROR;
+                    if (!bindMethod(instance->klass, name))
+                    {
+                        return INTERPRET_RUNTIME_ERROR;
+                    }
+                    break;
                 }
 
                 pop(); // Instance.
@@ -490,21 +515,19 @@ static int run()
 
             case OP_CALL:
             {
-                ObjString* name = AS_STRING(pop());
+                Value callee = pop();
                 uint8_t argCount = AS_NUMBER(pop());
 
-                Value callee;
-
-                if(!environmentGet(vm.currentEnvironment, name, &callee))
-                {
-                    printRawValue(pop());
-                    putchar('\n');
-                    push(NULL_VAL);
-                }
-                else
-                {
+//                if(!environmentGet(vm.currentEnvironment, name, &callee))
+//                {
+//                    printRawValue(pop());
+//                    putchar('\n');
+//                    push(NULL_VAL);
+//                }
+//                else
+//                {
                     callValue(callee, argCount);
-                }
+              //  }
 
                 break;
             }

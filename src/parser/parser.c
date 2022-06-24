@@ -277,7 +277,7 @@ static Expr* call(Expr* previous, __attribute__((unused)) bool canAssign)
 {
     uint16_t argCount = 0;
     Node* args = argumentList(&argCount);
-    return (Expr*) newCallExpr(((VarExpr*)previous)->name, argCount, args, parser.line);
+    return (Expr*) newCallExpr(previous, argCount, args, parser.line);
 }
 
 static Expr* ternary(Expr* previous, __attribute__((unused)) bool canAssign)

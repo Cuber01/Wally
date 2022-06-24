@@ -1,12 +1,16 @@
-var a = "Hello World";
-
-class Main
-{
-    gaming()
-    {
-        print(a);
-    }
+class Brunch {
+  eggs()
+   {
+    var a = 2;
+   }
 }
 
-var main = Main();
-main.gaming();
+var brunch = Brunch();
+brunch.eggs();
+
+//function foo()
+//{
+//
+//}
+//
+//foo();

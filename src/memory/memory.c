@@ -75,6 +75,10 @@ void freeObject(Obj* object)
             break;
         }
 
+        case OBJ_BOUND_METHOD:
+            FREE(ObjBoundMethod, object);
+            break;
+
         case OBJ_CLASS:
         {
             ObjClass* klass = (ObjClass*)object;

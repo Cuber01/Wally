@@ -22,6 +22,7 @@
 #define IS_NATIVE(value)       isObjType(value, OBJ_NATIVE)
 #define IS_CLASS(value)        isObjType(value, OBJ_CLASS)
 #define IS_INSTANCE(value)     isObjType(value, OBJ_INSTANCE)
+#define IS_BOUND_METHOD(value) isObjType(value, OBJ_BOUND_METHOD)
 
 #define AS_STRING(value)        ((ObjString*)AS_OBJ(value))
 #define AS_CSTRING(value)       (((ObjString*)AS_OBJ(value))->chars)
@@ -29,6 +30,8 @@
 #define AS_NATIVE(value)        (((ObjNative*)AS_OBJ(value))->function)
 #define AS_CLASS(value)         ((ObjClass*)AS_OBJ(value))
 #define AS_INSTANCE(value)     ((ObjInstance*)AS_OBJ(value))
+#define AS_BOUND_METHOD(value) ((ObjBoundMethod*)AS_OBJ(value))
+
 
 typedef Value (*NativeFn)(int argCount, Value* args);
 
@@ -38,6 +41,7 @@ typedef enum {
     OBJ_FUNCTION,
     OBJ_INSTANCE,
     OBJ_NATIVE,
+    OBJ_BOUND_METHOD,
 } ObjType;
 
 struct Obj {
@@ -85,6 +89,12 @@ typedef struct ObjFunction {
 
 typedef struct {
     Obj obj;
+    Value receiver;
+    ObjFunction* method;
+} ObjBoundMethod;
+
+typedef struct {
+    Obj obj;
     NativeFn function;
 } ObjNative;
 
@@ -103,6 +113,8 @@ ObjNative* newNative(NativeFn function);
 ObjFunction* newFunction();
 ObjClass* newClass(ObjString* name);
 ObjInstance* newInstance(ObjClass* klass);
+ObjBoundMethod* newBoundMethod(Value receiver, ObjFunction* method);
+
 
 char* objectTypeToChar(ObjType type);
 
