@@ -140,6 +140,10 @@ static bool callValue(Value callee, uint16_t argCount)
             case OBJ_BOUND_METHOD:
             {
                 ObjBoundMethod* bound = AS_BOUND_METHOD(callee);
+
+                bound->method->calledFromFunction = vm.currentFunction;
+                bound->method->calledFromIp = vm.ip;
+
                 return call(bound->method, bound->instance, argCount);
             }
 
@@ -161,6 +165,11 @@ static bool callValue(Value callee, uint16_t argCount)
                 Value initializer;
                 if (tableGet(&klass->methods, vm.initString,&initializer))
                 {
+                    ObjFunction* init = AS_FUNCTION(initializer);
+
+                    init->calledFromFunction = vm.currentFunction;
+                    init->calledFromIp = vm.ip;
+
                     return call(AS_FUNCTION(initializer), AS_INSTANCE(peek(0)),  argCount);
                 }
 
@@ -542,8 +551,6 @@ static int run()
                     collectGarbage();
                     return INTERPRET_OK;
                 }
-
-
 
                 vm.currentFunction = oldFunction->calledFromFunction;
                 vm.ip = oldFunction->calledFromIp;

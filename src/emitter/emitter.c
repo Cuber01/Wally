@@ -10,6 +10,8 @@
 
 #ifdef DEBUG_PRINT_BYTECODE
 #include "disassembler.h"
+#include "colors.h"
+
 #endif
 
 static uint16_t compileStatement(Stmt* statement);
@@ -25,7 +27,8 @@ bool hadError = false;
 
 static void error(const char* message)
 {
-    printf("%s", message);
+    colorWriteLine(RED, "%s", message);
+    hadError = true;
 }
 
 // endregion
@@ -377,10 +380,18 @@ static void compileVariable(ObjString* name, Expr* initializer, uint16_t line)
 static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
 {
     Compiler compiler;
+
+    FunctionType type = isMethod ? TYPE_METHOD : TYPE_FUNCTION;
+
+    if (isMethod && stmt->name->length == 4 && memcmp(stmt->name->chars, "init", 4) == 0)
+    {
+        type = TYPE_INITIALIZER;
+    }
+
     initCompiler(&compiler,
              stmt->name,
               stmt->paramCount,
-                    isMethod ? TYPE_METHOD : TYPE_FUNCTION);
+                          type);
 
     emitByte(OP_SCOPE_START, line);
 
@@ -585,6 +596,11 @@ static uint16_t compileStatement(Stmt* statement)
                 error("Can't return from top-level code.");
             }
 
+            if (current->type == TYPE_INITIALIZER)
+            {
+                error("Can't return custom values from initializer. It always returns the instance of your class.");
+            }
+
             ReturnStmt* stmt = (ReturnStmt*) statement;
 
             if(stmt->value == NULL)
@@ -664,7 +680,10 @@ static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t f
 static ObjFunction* endCompiler(bool emitNull, uint16_t line)
 {
     // We emit null if user didn't return anything else via the return statement
-    if(emitNull) emitConstant(NULL_VAL, line);
+    if(current->type != TYPE_INITIALIZER && emitNull)
+    {
+        emitConstant(NULL_VAL, line);
+    }
 
     emitReturn(line);
     ObjFunction* function = current->function;
