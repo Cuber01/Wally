@@ -409,8 +409,7 @@ static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
 
     while (paramCount >= 0)
     {
-        emitConstant(OBJ_VAL(params[paramCount]), line);
-        emitByte(OP_DEFINE_ARGUMENT, line);
+        emitBytes(OP_DEFINE_ARGUMENT, makeConstant(OBJ_VAL(params[paramCount])), line);
         paramCount--;
     }
 

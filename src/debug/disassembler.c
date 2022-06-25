@@ -128,8 +128,6 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_SCOPE_START", offset);
         case OP_SCOPE_END:
             return simpleInstruction("OP_SCOPE_END", offset);
-        case OP_CALL:
-            return simpleInstruction("OP_CALL", offset);
         case OP_DEFINE_FUNCTION:
             return simpleInstruction("OP_DEFINE_FUNCTION", offset);
         case OP_DEFINE_CLASS:
@@ -158,6 +156,10 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return constantInstruction("OP_SET_PROPERTY", chunk, offset);
         case OP_DEFINE_VARIABLE:
             return constantInstruction("OP_DEFINE_VARIABLE", chunk, offset);
+        case OP_CALL:
+            return constantInstruction("OP_CALL", chunk, offset);
+        case OP_DEFINE_ARGUMENT:
+            return constantInstruction("OP_DEFINE_ARGUMENT", chunk, offset);
 
         case OP_INVOKE:
             return invokeInstruction("OP_INVOKE", chunk, offset);

@@ -381,10 +381,10 @@ static int run()
 
             case OP_DEFINE_ARGUMENT:
             {
-                Value name = pop();
+                ObjString* name = READ_STRING();
                 Value initializer = pop();
 
-                if(!environmentDefine(vm.currentEnvironment, AS_STRING(name), initializer))
+                if(!environmentDefine(vm.currentEnvironment, name, initializer))
                 {
                     return INTERPRET_RUNTIME_ERROR;
                 }
