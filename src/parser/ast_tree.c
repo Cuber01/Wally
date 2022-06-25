@@ -52,12 +52,6 @@ void freeExpression(Expr* expr)
             break;
         }
 
-        case THIS_EXPRESSION:
-        {
-            FREE(ThisExpr, expr);
-            break;
-        }
-
         case BINARY_EXPRESSION:
         {
             BinaryExpr* expression = (BinaryExpr*) expr;
@@ -409,12 +403,6 @@ CallExpr* newCallExpr(Expr* callee, uint16_t argCount, Node* args, uint16_t line
     return expr;
 }
 
-ThisExpr* newThisExpr(uint16_t line)
-{
-    ThisExpr* expr = (ThisExpr*) ALLOCATE_EXPRESSION(ThisExpr, CALL_EXPRESSION, true, line);
-
-    return expr;
-}
 
 AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line)
 {

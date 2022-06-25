@@ -122,7 +122,7 @@ static bool call(ObjFunction* function, ObjInstance* thisValue, uint16_t argCoun
     // Define 'this' to be replaced by instance in methods
     if(thisValue != NULL)
     {
-        environmentDefine(vm.currentEnvironment, copyString("this", 4), OBJ_VAL(thisValue));
+        environmentDefine(vm.currentEnvironment, vm.thisString, OBJ_VAL(thisValue));
     }
 
     vm.currentEnvironment->enclosing = function->closure;
@@ -157,6 +157,13 @@ static bool callValue(Value callee, uint16_t argCount)
             {
                 ObjClass* klass = AS_CLASS(callee);
                 push(OBJ_VAL(newInstance(klass)));
+
+                Value initializer;
+                if (tableGet(&klass->methods, vm.initString,&initializer))
+                {
+                    return call(AS_FUNCTION(initializer), AS_INSTANCE(peek(0)),  argCount);
+                }
+
                 return true;
             }
 
@@ -573,6 +580,12 @@ void initVM()
     vm.bytesAllocated = 0;
     vm.nextGC = 1024 * 1024;
 
+    // NULLs are needed to make sure the garbage collector doesn't free them
+    vm.initString = NULL;
+    vm.initString = copyString("init", 4);
+    vm.thisString = NULL;
+    vm.thisString = copyString("this", 4);
+
     defineNative("print", printNative);
 
     vm.objects = NULL;
@@ -580,6 +593,9 @@ void initVM()
 
 void freeVM()
 {
+    vm.initString = NULL;
+    vm.thisString = NULL;
+
     freeEnvironmentsRecursively(vm.currentEnvironment);
     freeEnvironment(vm.nativeEnvironment);
     freeTable(&vm.strings);

@@ -1,13 +1,1 @@
-class PrettyPrinter
-{
-    prettyPrint()
-    {
-        print(this.a);
-    }
-}
-
-var printer = PrettyPrinter();
-printer.a = 1;
-
-var poo = PrettyPrinter();
-poo.prettyPrint();
+this;

@@ -280,19 +280,6 @@ static void compileExpression(Expr* expression)
             break;
         }
 
-        case THIS_EXPRESSION:
-        {
-            ThisExpr* expr = (ThisExpr*)expression;
-
-            FunctionType type = current->type;
-
-            if (type != TYPE_METHOD)
-            {
-                error("'this' cannot be used outside of methods.");
-            }
-
-        }
-
         case GROUPED_EXPRESSION:
         {
             GroupedExpr* expr = (GroupedExpr*)expression;
