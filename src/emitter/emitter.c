@@ -268,12 +268,25 @@ static void compileExpression(Expr* expression)
 
             compileExpression(expr->instance);
 
-            if (expr->value != NULL)
+            if(expr->isCall) // Call to a method
+            {
+                Node* node = expr->args;
+
+                while(node != NULL)
+                {
+                    compileExpression(node->value.as.expression);
+                    node = node->next;
+                }
+
+                emitBytes(OP_INVOKE, makeConstant(OBJ_VAL(expr->fieldName)), line);
+                emitByte(expr->argCount, line);
+            }
+            else if (expr->value != NULL) // Setter
             {
                 compileExpression(expr->value);
                 emitBytes(OP_SET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName)), line);
             }
-            else
+            else // Getter
             {
                 emitBytes(OP_GET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName)), line);
             }

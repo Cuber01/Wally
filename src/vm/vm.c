@@ -211,6 +211,33 @@ static bool bindMethod(ObjClass* klass, ObjInstance* instance, ObjString* name)
     return true;
 }
 
+static bool invokeFromClass(ObjInstance* instance, ObjString* name, int argCount)
+{
+
+    Value method;
+    if (!tableGet(&instance->klass->methods, name, &method))
+    {
+        runtimeError("Undefined property '%s'.", name->chars);
+        return false;
+    }
+
+    return call(AS_FUNCTION(method), instance, argCount);
+}
+
+static bool invoke(ObjString* name, int argCount)
+{
+    Value receiver = peek(argCount);
+
+    if (!IS_INSTANCE(receiver))
+    {
+        runtimeError("Only instances have methods.");
+        return false;
+    }
+
+    ObjInstance* instance = AS_INSTANCE(receiver);
+    return invokeFromClass(instance, name, argCount);
+}
+
 // endregion
 
 // region Run
@@ -414,6 +441,19 @@ static int run()
                 ObjClass* klass = AS_CLASS(peek(0));
 
                 environmentDefine(vm.currentEnvironment, klass->name, OBJ_VAL(klass));
+                break;
+            }
+
+            case OP_INVOKE:
+            {
+                ObjString* method = READ_STRING();
+                uint8_t argCount = READ_BYTE();
+
+                if (!invoke(method, argCount))
+                {
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+
                 break;
             }
 

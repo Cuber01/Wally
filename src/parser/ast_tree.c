@@ -414,13 +414,17 @@ AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line)
     return expr;
 }
 
-DotExpr* newDotExpr(Expr* instance, ObjString* fieldName, Expr* value, uint16_t line)
+DotExpr* newDotExpr(Expr* instance, ObjString* fieldName, Expr* value,
+                    bool isCall, Node* args, uint8_t argCount, uint16_t line)
 {
     DotExpr* expr = (DotExpr*) ALLOCATE_EXPRESSION(DotExpr, DOT_EXPRESSION, true, line);
 
     expr->fieldName = fieldName;
     expr->instance = instance;
     expr->value = value;
+    expr->args = args;
+    expr->argCount = argCount;
+    expr->isCall = isCall;
 
     return expr;
 }

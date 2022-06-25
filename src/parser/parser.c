@@ -232,7 +232,7 @@ static Expr* decrement(Expr* previous, __attribute__((unused)) bool canAssign)
 }
 
 
-static Node* argumentList(uint16_t* argCount)
+static Node* argumentList(uint8_t* argCount)
 {
     Node* root = NULL;
 
@@ -240,9 +240,15 @@ static Node* argumentList(uint16_t* argCount)
     {
         do
         {
-
             Expr* arg = expression();
             listAdd(&root, NODE_EXPRESSION_VALUE(arg));
+
+            if(*argCount + 1 > 255)
+            {
+                error("Cannot have more than 255 arguments in a call");
+                break;
+            }
+
             (*argCount)++;
 
         } while (match(TOKEN_COMMA));
@@ -265,17 +271,26 @@ static Expr* dot(Expr* previous, bool canAssign)
 
     Expr* value = NULL;
 
+    bool isCall = false;
+    uint8_t argCount = 0;
+    Node* args = NULL;
+
     if (match(TOKEN_EQUAL) && canAssign)
     {
         value = expression();
     }
+    else if (match(TOKEN_LEFT_PAREN))
+    {
+        isCall = true;
+        args = argumentList(&argCount);
+    }
 
-    return (Expr*)newDotExpr(previous, name, value, parser.line);
+    return (Expr*)newDotExpr(previous, name, value, isCall, args, argCount, parser.line);
 }
 
 static Expr* call(Expr* previous, __attribute__((unused)) bool canAssign)
 {
-    uint16_t argCount = 0;
+    uint8_t argCount = 0;
     Node* args = argumentList(&argCount);
     return (Expr*) newCallExpr(previous, argCount, args, parser.line);
 }

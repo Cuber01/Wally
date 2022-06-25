@@ -123,6 +123,12 @@ typedef struct
 
     // If value is null it's a getter, otherwise it is a setter.
     Expr* value;
+
+    // If isCall, it's actually a call
+    bool isCall;
+
+    Node* args;
+    uint8_t argCount;
 } DotExpr;
 
 typedef struct
@@ -143,13 +149,6 @@ typedef struct Stmt {
 
 DECLARE_ARRAY(Statements, Stmt*)
 DEFINE_ARRAY_FUNCTION_PREDECLARATIONS(Statements, statements, Stmt*)
-
-typedef struct
-{
-    Stmt stmt;
-
-    Expr* toPrint;
-} PrintStmt;
 
 typedef struct
 {
@@ -259,7 +258,7 @@ UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line);
 VarExpr* newVarExpr(ObjString* name, uint16_t line);
 AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line);
 CallExpr* newCallExpr(Expr* callee, uint8_t argCount, Node* args, uint16_t line);
-DotExpr* newDotExpr(Expr* instance, ObjString* fieldName, Expr* value, uint16_t line);
+DotExpr* newDotExpr(Expr* instance, ObjString* fieldName, Expr* value, bool isCall, Node* args, uint8_t argCount, uint16_t line);
 
 // ------------ STATEMENT CONSTRUCTORS ------------
 
