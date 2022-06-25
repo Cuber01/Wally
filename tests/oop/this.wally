@@ -8,6 +8,6 @@ class PrettyPrinter
 
 var printer = PrettyPrinter();
 printer.a = 1;
+printer.prettyPrint();
 
-var poo = PrettyPrinter();
-poo.prettyPrint();
+// Expect: 1
