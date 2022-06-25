@@ -145,7 +145,7 @@ static void compileExpression(Expr* expression)
                     break;
 
                 case VAL_NULL:
-                    emitConstant(NULL_VAL, line);
+                    emitByte(OP_NULL, line);
                     break;
 
                 case VAL_NUMBER:
@@ -303,6 +303,7 @@ static void compileExpression(Expr* expression)
                 node = node->next;
             }
 
+            // emitByte(expr->argCount, line);
             emitConstant(NUMBER_VAL(expr->argCount), line);
             compileExpression(expr->callee);
             emitByte(OP_CALL, line);
@@ -367,7 +368,7 @@ static void compileVariable(ObjString* name, Expr* initializer, uint16_t line)
 
     if(initializer == NULL)
     {
-        emitConstant(NULL_VAL, line);
+        emitByte(OP_NULL, line);
     }
     else
     {
@@ -605,7 +606,7 @@ static uint16_t compileStatement(Stmt* statement)
 
             if(stmt->value == NULL)
             {
-                emitConstant(NULL_VAL, line);
+                emitByte(OP_NULL, line);
             }
             else
             {
@@ -682,7 +683,7 @@ static ObjFunction* endCompiler(bool emitNull, uint16_t line)
     // We emit null if user didn't return anything else via the return statement
     if(current->type != TYPE_INITIALIZER && emitNull)
     {
-        emitConstant(NULL_VAL, line);
+        emitByte(OP_NULL, line);
     }
 
     emitReturn(line);
