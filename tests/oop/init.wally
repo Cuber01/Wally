@@ -1,0 +1,17 @@
+class Higher
+{
+    init()
+    {
+        print("Settle a bet for me. Is budget a real word?");
+        this.budget = 100;
+    }
+}
+
+var upperCruster = Higher();
+upperCruster.opinion = "I don't think so.";
+print(upperCruster.opinion);
+print(upperCruster.budget);
+
+// Expect: Settle a bet for me. Is budget a real word?
+// Expect: I don't think so.
+// Expect: 100

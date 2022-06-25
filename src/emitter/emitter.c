@@ -7,6 +7,7 @@
 #include "memory.h"
 #include "garbage_collector.h"
 #include "array.h"
+#include "colors.h"
 
 #ifdef DEBUG_PRINT_BYTECODE
 #include "disassembler.h"
