@@ -112,12 +112,6 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_TERNARY", offset);
         case OP_SWITCH_EQUAL:
             return simpleInstruction("OP_SWITCH_EQUAL", offset);
-        case OP_DEFINE_VARIABLE:
-            return simpleInstruction("OP_DEFINE_VARIABLE", offset);
-        case OP_SET_VARIABLE:
-            return simpleInstruction("OP_SET_VARIABLE", offset);
-        case OP_GET_VARIABLE:
-            return simpleInstruction("OP_GET_VARIABLE", offset);
         case OP_SCOPE_START:
             return simpleInstruction("OP_SCOPE_START", offset);
         case OP_SCOPE_END:
@@ -128,13 +122,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_DEFINE_FUNCTION", offset);
         case OP_DEFINE_CLASS:
             return simpleInstruction("OP_DEFINE_CLASS", offset);
-        case OP_GET_PROPERTY:
-            return simpleInstruction("OP_GET_PROPERTY", offset);
-        case OP_SET_PROPERTY:
-            return simpleInstruction("OP_SET_PROPERTY", offset);
         case OP_DEFINE_METHOD:
             return simpleInstruction("OP_DEFINE_METHOD", offset);
-
 
         case OP_JUMP:
             return jumpInstruction("OP_JUMP", 1, chunk, offset);
@@ -147,7 +136,16 @@ int disassembleInstruction(Chunk* chunk, int offset)
 
         case OP_CONSTANT:
             return constantInstruction("OP_CONSTANT", chunk, offset);
-
+        case OP_GET_VARIABLE:
+            return constantInstruction("OP_GET_VARIABLE", chunk, offset);
+        case OP_SET_VARIABLE:
+            return constantInstruction("OP_SET_VARIABLE", chunk, offset);
+        case OP_GET_PROPERTY:
+            return constantInstruction("OP_GET_PROPERTY", chunk, offset);
+        case OP_SET_PROPERTY:
+            return constantInstruction("OP_SET_PROPERTY", chunk, offset);
+        case OP_DEFINE_VARIABLE:
+            return constantInstruction("OP_DEFINE_VARIABLE", chunk, offset);
 
 
         default:

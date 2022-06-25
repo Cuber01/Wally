@@ -130,7 +130,7 @@ typedef struct
     Expr expr;
 
     Expr* callee;
-    uint16_t argCount;
+    uint8_t argCount;
     Node* args;
 } CallExpr;
 
@@ -258,7 +258,7 @@ TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch,
 UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line);
 VarExpr* newVarExpr(ObjString* name, uint16_t line);
 AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line);
-CallExpr* newCallExpr(Expr* callee, uint16_t argCount, Node* args, uint16_t line);
+CallExpr* newCallExpr(Expr* callee, uint8_t argCount, Node* args, uint16_t line);
 DotExpr* newDotExpr(Expr* instance, ObjString* fieldName, Expr* value, uint16_t line);
 
 // ------------ STATEMENT CONSTRUCTORS ------------

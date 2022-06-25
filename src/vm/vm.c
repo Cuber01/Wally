@@ -345,9 +345,9 @@ static int run()
             case OP_DEFINE_VARIABLE:
             {
                 Value initializer = pop();
-                Value name = pop();
+                ObjString* name = READ_STRING();
 
-                environmentDefine(vm.currentEnvironment, AS_STRING(name), initializer);
+                environmentDefine(vm.currentEnvironment, name, initializer);
 
                 break;
             }
@@ -367,14 +367,14 @@ static int run()
 
             case OP_GET_VARIABLE:
             {
-                Value name = pop();
+                ObjString* name = READ_STRING();
                 Value value;
 
-                if (!environmentGet(vm.currentEnvironment, AS_STRING(name), &value))
+                if (!environmentGet(vm.currentEnvironment, name, &value))
                 {
-                    if(!environmentGet(vm.nativeEnvironment, AS_STRING(name), &value))
+                    if(!environmentGet(vm.nativeEnvironment, name, &value))
                     {
-                        runtimeError("Tried to get value of %s, but it doesn't exist.", AS_CSTRING(name));
+                        runtimeError("Tried to get value of '%s', but it doesn't exist.", name->chars);
                         return INTERPRET_RUNTIME_ERROR;
                     }
                 }
@@ -386,9 +386,9 @@ static int run()
             case OP_SET_VARIABLE:
             {
                 Value value = pop();
-                Value name = pop();
+                ObjString* name = READ_STRING();
 
-                if (!environmentSet(vm.currentEnvironment, AS_STRING(name), value))
+                if (!environmentSet(vm.currentEnvironment, name, value))
                 {
                     return INTERPRET_RUNTIME_ERROR;
                 }
@@ -447,7 +447,7 @@ static int run()
 
             case OP_SET_PROPERTY:
             {
-                ObjString* fieldName = AS_STRING(pop());
+                ObjString* fieldName = READ_STRING();
                 Value initializer = pop();
                 Value instanceVal = pop();
 
@@ -530,7 +530,7 @@ static int run()
             case OP_CALL:
             {
                 Value callee = pop();
-                uint8_t argCount = AS_NUMBER(pop());
+                uint8_t argCount = READ_BYTE();
 
                 callValue(callee, argCount);
 

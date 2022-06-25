@@ -246,8 +246,7 @@ static void compileExpression(Expr* expression)
         {
             VarExpr* expr = (VarExpr*)expression;
 
-            emitConstant(OBJ_VAL(expr->name), line);
-            emitByte(OP_GET_VARIABLE, line);
+            emitBytes(OP_GET_VARIABLE, makeConstant(OBJ_VAL(expr->name)), line);
 
             break;
         }
@@ -256,10 +255,9 @@ static void compileExpression(Expr* expression)
         {
             AssignExpr* expr = (AssignExpr*)expression;
 
-            emitConstant(OBJ_VAL(expr->name), line);
             compileExpression(expr->value);
 
-            emitByte(OP_SET_VARIABLE, line);
+            emitBytes(OP_SET_VARIABLE, makeConstant(OBJ_VAL(expr->name)), line);
 
             break;
         }
@@ -273,8 +271,7 @@ static void compileExpression(Expr* expression)
             if (expr->value != NULL)
             {
                 compileExpression(expr->value);
-                emitConstant(OBJ_VAL(expr->fieldName), line);
-                emitByte(OP_SET_PROPERTY, line);
+                emitBytes(OP_SET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName)), line);
             }
             else
             {
@@ -304,10 +301,8 @@ static void compileExpression(Expr* expression)
                 node = node->next;
             }
 
-            // emitByte(expr->argCount, line);
-            emitConstant(NUMBER_VAL(expr->argCount), line);
             compileExpression(expr->callee);
-            emitByte(OP_CALL, line);
+            emitBytes(OP_CALL, expr->argCount, line);
 
             break;
         }
@@ -365,8 +360,6 @@ static void compileExpressionStatement(ExpressionStmt* statement)
 
 static void compileVariable(ObjString* name, Expr* initializer, uint16_t line)
 {
-    emitConstant(OBJ_VAL(name), line);
-
     if(initializer == NULL)
     {
         emitByte(OP_NULL, line);
@@ -376,7 +369,7 @@ static void compileVariable(ObjString* name, Expr* initializer, uint16_t line)
         compileExpression(initializer);
     }
 
-    emitByte(OP_DEFINE_VARIABLE, line);
+    emitBytes(OP_DEFINE_VARIABLE, makeConstant(OBJ_VAL(name)), line);
 }
 
 static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
