@@ -68,9 +68,9 @@ static void defineNative(const char* name, NativeFn function)
 
 static void defineMethod()
 {
-    Value method = pop();
+    ObjFunction* method = AS_FUNCTION(pop());
     ObjClass* klass = AS_CLASS(peek(0));
-    tableSet(&klass->methods, AS_FUNCTION(method)->name, method);
+    tableSet(&klass->methods, method->name, OBJ_VAL(method));
 }
 
 static bool isFalsey(Value value)
@@ -108,7 +108,7 @@ static void concatenate()
     push(OBJ_VAL(result));
 }
 
-static bool call(ObjFunction* function, uint16_t argCount)
+static bool call(ObjFunction* function, ObjInstance* thisValue, uint16_t argCount)
 {
     if(argCount != function->arity)
     {
@@ -118,6 +118,13 @@ static bool call(ObjFunction* function, uint16_t argCount)
 
     vm.ip = function->chunk.code;
     vm.currentEnvironment = newEnvironment();
+
+    // Define 'this' to be replaced by instance in methods
+    if(thisValue != NULL)
+    {
+        environmentDefine(vm.currentEnvironment, copyString("this", 4), OBJ_VAL(thisValue));
+    }
+
     vm.currentEnvironment->enclosing = function->closure;
     vm.currentFunction = function;
 
@@ -133,7 +140,7 @@ static bool callValue(Value callee, uint16_t argCount)
             case OBJ_BOUND_METHOD:
             {
                 ObjBoundMethod* bound = AS_BOUND_METHOD(callee);
-                return call(bound->method, argCount);
+                return call(bound->method, bound->instance, argCount);
             }
 
             case OBJ_FUNCTION:
@@ -143,7 +150,7 @@ static bool callValue(Value callee, uint16_t argCount)
                 function->calledFromFunction = vm.currentFunction;
                 function->calledFromIp = vm.ip;
 
-                return call(function, argCount);
+                return call(function, NULL, argCount);
             }
 
             case OBJ_CLASS:
@@ -172,7 +179,7 @@ static bool callValue(Value callee, uint16_t argCount)
     return false;
 }
 
-static bool bindMethod(ObjClass* klass, ObjString* name)
+static bool bindMethod(ObjClass* klass, ObjInstance* instance, ObjString* name)
 {
     Value method;
 
@@ -182,7 +189,7 @@ static bool bindMethod(ObjClass* klass, ObjString* name)
         return false;
     }
 
-    ObjBoundMethod* bound = newBoundMethod(peek(0),AS_FUNCTION(method));
+    ObjBoundMethod* bound = newBoundMethod(instance, AS_FUNCTION(method));
     pop();
     push(OBJ_VAL(bound));
     return true;
@@ -409,7 +416,7 @@ static int run()
 
                 if (!tableGet(&instance->fields, name, &value))
                 {
-                    if (!bindMethod(instance->klass, name))
+                    if (!bindMethod(instance->klass, instance, name))
                     {
                         return INTERPRET_RUNTIME_ERROR;
                     }
@@ -509,16 +516,7 @@ static int run()
                 Value callee = pop();
                 uint8_t argCount = AS_NUMBER(pop());
 
-//                if(!environmentGet(vm.currentEnvironment, name, &callee))
-//                {
-//                    printRawValue(pop());
-//                    putchar('\n');
-//                    push(NULL_VAL);
-//                }
-//                else
-//                {
-                    callValue(callee, argCount);
-              //  }
+                callValue(callee, argCount);
 
                 break;
             }
@@ -605,7 +603,7 @@ int interpret(const char* source)
     push(OBJ_VAL(function));
 
     // vm.currentFunction = function;
-    call(function, 0);
+    call(function, NULL, 0);
 
     gcStarted = true;
     return run();

@@ -24,16 +24,14 @@ static Obj* allocateObject(size_t size, ObjType type)
     return object;
 }
 
-ObjBoundMethod* newBoundMethod(Value receiver,  ObjFunction* method)
+ObjBoundMethod* newBoundMethod(ObjInstance* instance, ObjFunction* method)
 {
     ObjBoundMethod* bound = ALLOCATE_OBJ(ObjBoundMethod,
                                          OBJ_BOUND_METHOD);
-    bound->receiver = receiver;
+    bound->instance = instance;
     bound->method = method;
     return bound;
 }
-
-
 
 ObjFunction* newFunction()
 {

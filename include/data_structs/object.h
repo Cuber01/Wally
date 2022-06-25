@@ -89,8 +89,8 @@ typedef struct ObjFunction {
 
 typedef struct {
     Obj obj;
-    Value receiver;
     ObjFunction* method;
+    ObjInstance* instance;
 } ObjBoundMethod;
 
 typedef struct {
@@ -113,8 +113,7 @@ ObjNative* newNative(NativeFn function);
 ObjFunction* newFunction();
 ObjClass* newClass(ObjString* name);
 ObjInstance* newInstance(ObjClass* klass);
-ObjBoundMethod* newBoundMethod(Value receiver, ObjFunction* method);
-
+ObjBoundMethod* newBoundMethod(ObjInstance* instance, ObjFunction* method);
 
 char* objectTypeToChar(ObjType type);
 

@@ -2,7 +2,7 @@ class PrettyPrinter
 {
     prettyPrint()
     {
-        this.a;
+        print(this.a);
     }
 }
 

@@ -54,10 +54,6 @@ void freeExpression(Expr* expr)
 
         case THIS_EXPRESSION:
         {
-            ThisExpr* expression = (ThisExpr*) expr;
-
-            freeExpression(expression->variable);
-
             FREE(ThisExpr, expr);
             break;
         }
@@ -413,11 +409,9 @@ CallExpr* newCallExpr(Expr* callee, uint16_t argCount, Node* args, uint16_t line
     return expr;
 }
 
-ThisExpr* newThisExpr(Expr* variable, uint16_t line)
+ThisExpr* newThisExpr(uint16_t line)
 {
     ThisExpr* expr = (ThisExpr*) ALLOCATE_EXPRESSION(ThisExpr, CALL_EXPRESSION, true, line);
-
-    expr->variable = variable;
 
     return expr;
 }

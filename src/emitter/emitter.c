@@ -291,8 +291,6 @@ static void compileExpression(Expr* expression)
                 error("'this' cannot be used outside of methods.");
             }
 
-
-
         }
 
         case GROUPED_EXPRESSION:

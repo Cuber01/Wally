@@ -323,7 +323,7 @@ static Expr* variable(bool canAssign)
 
 static Expr* this_(__attribute__((unused)) bool canAssign)
 {
-    return (Expr*)newThisExpr(parsePrecedence(PREC_NONE), parser.line);
+    return variable(false);
 }
 
 static Expr* literal(__attribute__((unused)) bool canAssign)
