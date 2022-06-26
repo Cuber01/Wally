@@ -293,10 +293,11 @@ ReturnStmt* newReturnStmt(Expr* value, uint16_t line)
     return stmt;
 }
 
-ClassStmt* newClassStmt(ObjString* name, Statements methods, uint16_t line)
+ClassStmt* newClassStmt(ObjString* name, Expr* parent, Statements methods, uint16_t line)
 {
     ClassStmt* stmt = (ClassStmt*) ALLOCATE_STATEMENT(ClassStmt, CLASS_STATEMENT, line);
 
+    stmt->parent = parent;
     stmt->name = name;
     stmt->methods = methods;
 

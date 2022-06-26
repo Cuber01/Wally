@@ -1,5 +1,20 @@
-function foo(ala)
+class Parent
 {
-    print(ala);
+    parentStuff()
+    {
+        print("Parent");
+    }
 }
-foo("Hey");
+
+
+class Child : Parent
+{
+    childStuff()
+    {
+        print("Child");
+    }
+}
+
+var person = Child();
+person.childStuff();
+person.parentStuff();

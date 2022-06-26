@@ -592,6 +592,17 @@ static uint16_t compileStatement(Stmt* statement)
 
             emitByte(OP_DEFINE_CLASS, line);
 
+            if(stmt->parent != NULL)
+            {
+                VarExpr* parent = (VarExpr*)(stmt->parent);
+
+                emitBytes(OP_GET_VARIABLE,
+                          makeConstant(OBJ_VAL( parent->name )),
+                                line);
+
+                emitByte(OP_INHERIT, line);
+            }
+
             emitByte(OP_POP, line);
             break;
         }

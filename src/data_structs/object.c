@@ -145,7 +145,7 @@ void printObject(Value value)
             break;
 
         case OBJ_CLASS:
-            printf("%s", AS_CLASS(value)->name->chars);
+            printf("%s class", AS_CLASS(value)->name->chars);
             break;
 
         case OBJ_NATIVE:

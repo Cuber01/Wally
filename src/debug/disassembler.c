@@ -134,6 +134,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_DEFINE_CLASS", offset);
         case OP_DEFINE_METHOD:
             return simpleInstruction("OP_DEFINE_METHOD", offset);
+        case OP_INHERIT:
+            return simpleInstruction("OP_INHERIT", offset);
 
         case OP_JUMP:
             return jumpInstruction("OP_JUMP", 1, chunk, offset);

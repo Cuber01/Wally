@@ -577,6 +577,23 @@ static int run()
                 break;
             }
 
+            case OP_INHERIT:
+            {
+                Value superclass = peek(0);
+                ObjClass* subclass = AS_CLASS(peek(1));
+
+                if (!IS_CLASS(superclass))
+                {
+                    runtimeError("Superclass must be a class.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+
+                tableAddAll(&AS_CLASS(superclass)->methods,&subclass->methods);
+
+                pop(); // Subclass.
+                break;
+            }
+
             case OP_DEFINE_METHOD:
                 defineMethod();
                 break;

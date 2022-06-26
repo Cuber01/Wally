@@ -56,6 +56,7 @@ typedef enum {
     OP_SET_PROPERTY,
     OP_DEFINE_METHOD,
     OP_INVOKE,
+    OP_INHERIT,
 
     // Misc
     OP_POP,

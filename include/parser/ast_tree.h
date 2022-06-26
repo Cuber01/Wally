@@ -227,6 +227,8 @@ typedef struct
     Stmt stmt;
 
     ObjString* name;
+    Expr* parent;
+
     Statements methods;
 } ClassStmt;
 
@@ -252,7 +254,6 @@ typedef struct
 LiteralExpr* newLiteralExpr(Value value, uint16_t line);
 BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right, uint16_t line);
 LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right, uint16_t line);
-GroupedExpr* newGroupedExpr(Expr* in, uint16_t line);
 TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch, uint16_t line);
 UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line);
 VarExpr* newVarExpr(ObjString* name, uint16_t line);
@@ -273,4 +274,4 @@ FunctionStmt* newFunctionStmt(ObjString* name, Node* body, ObjString** params, u
 ReturnStmt* newReturnStmt(Expr* value, uint16_t line);
 BreakStmt* newBreakStmt(uint16_t line);
 ContinueStmt* newContinueStmt(uint16_t line);
-ClassStmt* newClassStmt(ObjString* name, Statements methods, uint16_t line);
+ClassStmt* newClassStmt(ObjString* name, Expr* parent, Statements methods, uint16_t line);

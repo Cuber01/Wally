@@ -732,6 +732,20 @@ static Stmt* functionDeclaration(bool isMethod)
 static Stmt* classDeclaration()
 {
     ObjString* name = parseVariableName("Expect class name.");
+    Token className = parser.previous;
+
+    Expr* parent = NULL;
+
+    if (match(TOKEN_COLON))
+    {
+        consume(TOKEN_IDENTIFIER, "Expect parent name.");
+        parent = variable(false);
+
+        if (identifiersEqual(&className, &parser.previous))
+        {
+            error("A class can't inherit from itself.");
+        }
+    }
 
     consume(TOKEN_LEFT_BRACE, "Expect '{' before class body.");
 
@@ -745,7 +759,7 @@ static Stmt* classDeclaration()
 
     consume(TOKEN_RIGHT_BRACE, "Expect '}' after class body.");
 
-    return (Stmt*)newClassStmt(name, *methods, parser.line);
+    return (Stmt*)newClassStmt(name, parent, *methods, parser.line);
 }
 
 static Stmt* varDeclaration()
