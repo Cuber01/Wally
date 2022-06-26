@@ -1,8 +1,6 @@
 
 Features til version 1.0:
 * modulo
-* break
-* continue
 * switch
 * classes
 * garbage collector
@@ -13,7 +11,6 @@ Big features:
 * lambda functions
 
 Milestones:
-* static typing
 * documentation
 * optimizer
 * preprocessor
