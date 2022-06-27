@@ -41,6 +41,7 @@ ObjFunction* newFunction()
     function->name = NULL;
     function->calledFromFunction = NULL;
     function->calledFromIp = NULL;
+    function->calledFromEnvironment = NULL;
 
     initChunk(&function->chunk);
 

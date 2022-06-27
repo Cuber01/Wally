@@ -147,6 +147,7 @@ static bool callValue(Value callee, uint16_t argCount)
 
                 bound->method->calledFromFunction = vm.currentFunction;
                 bound->method->calledFromIp = vm.ip;
+                bound->method->calledFromEnvironment = vm.currentEnvironment;
 
                 return call(bound->method, bound->instance, argCount);
             }
@@ -157,6 +158,7 @@ static bool callValue(Value callee, uint16_t argCount)
 
                 function->calledFromFunction = vm.currentFunction;
                 function->calledFromIp = vm.ip;
+                function->calledFromEnvironment = vm.currentEnvironment;
 
                 return call(function, NULL, argCount);
             }
@@ -173,6 +175,7 @@ static bool callValue(Value callee, uint16_t argCount)
 
                     init->calledFromFunction = vm.currentFunction;
                     init->calledFromIp = vm.ip;
+                    init->calledFromEnvironment = vm.currentEnvironment;
 
                     return call(AS_FUNCTION(initializer), AS_INSTANCE(peek(0)),  argCount);
                 }
@@ -228,7 +231,6 @@ static bool invokeFromClass(ObjInstance* instance, ObjString* name, int argCount
 
     callee->calledFromFunction = vm.currentFunction;
     callee->calledFromIp = vm.ip;
-    // todo calle closure is null
 
     return call(callee, instance, argCount);
 }
@@ -650,6 +652,7 @@ static int run()
 
                 vm.currentFunction = oldFunction->calledFromFunction;
                 vm.ip = oldFunction->calledFromIp;
+                vm.currentEnvironment = oldFunction->calledFromEnvironment;
 
                 break;
             }
@@ -721,7 +724,6 @@ int interpret(const char* source)
 
     push(OBJ_VAL(function));
 
-    // vm.currentFunction = function;
     call(function, NULL, 0);
 
     gcStarted = true;

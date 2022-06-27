@@ -87,6 +87,7 @@ typedef struct ObjFunction {
 
     struct ObjFunction* calledFromFunction;
     uint8_t* calledFromIp;
+    Environment* calledFromEnvironment;
 } ObjFunction;
 
 typedef struct {

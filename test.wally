@@ -1,20 +1,8 @@
-class Parent
+function foo()
 {
-    parentStuff()
-    {
-        print("Parent");
-    }
+    print("This should print five times!");
 }
 
-class Child : Parent
-{
-    childStuff()
-    {
-        base.parentStuff();
-    }
-}
+for(var i = 0; i < 5; i++) foo();
 
-var person = Child();
-person.childStuff();
 
-// Expect: Parent
