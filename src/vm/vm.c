@@ -231,6 +231,7 @@ static bool invokeFromClass(ObjInstance* instance, ObjString* name, int argCount
 
     callee->calledFromFunction = vm.currentFunction;
     callee->calledFromIp = vm.ip;
+    callee->calledFromEnvironment = vm.currentEnvironment;
 
     return call(callee, instance, argCount);
 }
