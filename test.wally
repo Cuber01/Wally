@@ -3,6 +3,9 @@ function foo()
     print("This should print five times!");
 }
 
-for(var i = 0; i < 5; i++) foo();
-
-
+var i = 0;
+for(;i < 5;)
+{
+    i++;
+    foo();
+}
