@@ -6,15 +6,9 @@ class Parent
     }
 }
 
-class Child : Parent
-{
-    childStuff()
-    {
-        base.parentStuff();
-    }
-}
+class Child : Parent {}
 
 var person = Child();
-person.childStuff();
+person.parentStuff();
 
 // Expect: Parent
