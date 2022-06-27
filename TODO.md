@@ -2,7 +2,6 @@
 Features til version 1.0:
 * modulo
 * switch
-* classes
 * garbage collector
 
 Big features:
