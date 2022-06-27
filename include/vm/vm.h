@@ -19,6 +19,7 @@ typedef struct
     Environment* currentEnvironment;
     Environment* currentClosure;
     ObjFunction* currentFunction;
+    ObjClass* currentParent;
 
     Environment* nativeEnvironment;
 

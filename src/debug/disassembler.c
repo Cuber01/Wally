@@ -162,6 +162,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return constantInstruction("OP_CALL", chunk, offset);
         case OP_DEFINE_ARGUMENT:
             return constantInstruction("OP_DEFINE_ARGUMENT", chunk, offset);
+        case OP_GET_BASE:
+            return constantInstruction("OP_GET_BASE", chunk, offset);
 
         case OP_INVOKE:
             return invokeInstruction("OP_INVOKE", chunk, offset);

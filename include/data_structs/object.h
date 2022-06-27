@@ -66,6 +66,8 @@ typedef struct {
     Obj obj;
     ObjString* name;
     Table methods;
+
+    struct ObjClass* parent;
 } ObjClass;
 
 typedef struct {

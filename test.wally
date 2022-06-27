@@ -11,10 +11,9 @@ class Child : Parent
 {
     childStuff()
     {
-        print("Child");
+        base.parentStuff();
     }
 }
 
 var person = Child();
 person.childStuff();
-person.parentStuff();

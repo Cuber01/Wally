@@ -17,6 +17,7 @@
 
 static uint16_t compileStatement(Stmt* statement);
 
+// TODO make it global
 UInts* breaks;
 UInts* continues;
 uint loopDepth = 0;
@@ -294,11 +295,11 @@ static void compileExpression(Expr* expression)
             break;
         }
 
-        case GROUPED_EXPRESSION:
+        case BASE_EXPRESSION:
         {
-            GroupedExpr* expr = (GroupedExpr*)expression;
+            BaseExpr* expr = (BaseExpr*)expression;
 
-            compileExpression(expr->in);
+            emitBytes(OP_GET_BASE, makeConstant(OBJ_VAL(expr->methodName)), line);
             break;
         }
 
@@ -664,7 +665,6 @@ static uint16_t compileStatement(Stmt* statement)
 
 // region MAIN
 
-// TODO this shouldn't be all global
 static void initEmitter()
 {
     continues = initUInts(continues);

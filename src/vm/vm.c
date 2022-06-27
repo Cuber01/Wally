@@ -457,6 +457,19 @@ static int run()
                 break;
             }
 
+            case OP_GET_BASE:
+            {
+                ObjString* name = READ_STRING();
+                ObjInstance* instance = AS_INSTANCE(peek(0));
+                ObjClass* base = (ObjClass*) instance->klass->parent;
+
+                if (!bindMethod(base, instance, name))
+                {
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                break;
+            }
+
             case OP_GET_PROPERTY:
             {
                 if (!IS_INSTANCE(peek(0)))
@@ -579,16 +592,20 @@ static int run()
 
             case OP_INHERIT:
             {
-                Value superclass = peek(0);
-                ObjClass* subclass = AS_CLASS(peek(1));
+                Value base = peek(0);
+                ObjClass* child = AS_CLASS(peek(1));
 
-                if (!IS_CLASS(superclass))
+                if (!IS_CLASS(base))
                 {
                     runtimeError("Superclass must be a class.");
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
-                tableAddAll(&AS_CLASS(superclass)->methods,&subclass->methods);
+                // Just for convenience.
+                ObjClass* parent = AS_CLASS(base);
+
+                tableAddAll(&parent->methods,&child->methods);
+                child->parent = (struct ObjClass*) parent;
 
                 pop(); // Subclass.
                 break;

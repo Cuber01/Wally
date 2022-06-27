@@ -6,7 +6,7 @@
 
 typedef enum {
     // Literals
-    OP_CONSTANT=1,
+    OP_CONSTANT,
     OP_NULL,
     OP_TRUE,
     OP_FALSE,
@@ -57,6 +57,7 @@ typedef enum {
     OP_DEFINE_METHOD,
     OP_INVOKE,
     OP_INHERIT,
+    OP_GET_BASE,
 
     // Misc
     OP_POP,
