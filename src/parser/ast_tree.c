@@ -111,13 +111,11 @@ void freeExpression(Expr* expr)
             break;
         }
 
-        case GROUPED_EXPRESSION:
+        case BASE_EXPRESSION:
         {
-            GroupedExpr* expression = (GroupedExpr*) expr;
+            BaseExpr* expression = (BaseExpr*) expr;
 
-            freeExpression(expression->in);
-
-            FREE(GroupedExpr, expr);
+            FREE(BaseExpr, expr);
             break;
         }
 
@@ -449,10 +447,12 @@ UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line)
     return expr;
 }
 
-GroupedExpr* newGroupedExpr(Expr* in, uint16_t line)
+BaseExpr* newBaseExpr(ObjString* methodName, uint16_t line)
 {
-    GroupedExpr* expr = (GroupedExpr*) ALLOCATE_EXPRESSION(GroupedExpr, GROUPED_EXPRESSION, true, line);
-    expr->in = in;
+    BaseExpr* expr = (BaseExpr*) ALLOCATE_EXPRESSION(BaseExpr, BASE_EXPRESSION, true, line);
+
+    expr->methodName = methodName;
+
     return expr;
 }
 

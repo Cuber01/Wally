@@ -341,6 +341,13 @@ static Expr* this_(__attribute__((unused)) bool canAssign)
     return variable(false);
 }
 
+static Expr* base(__attribute__((unused)) bool canAssign)
+{
+    consume(TOKEN_DOT, "Expect '.' after 'base'.");
+    ObjString* methodName = parseVariableName("Expect parent method name after 'base'.");
+    return (Expr*)newBaseExpr(methodName, parser.line);
+}
+
 static Expr* literal(__attribute__((unused)) bool canAssign)
 {
     switch (parser.previous.type)
@@ -876,9 +883,9 @@ ParseRule rules[] =
         [TOKEN_NULL]          = {literal,              NULL,      PREC_NONE},
         [TOKEN_OR]            = {NULL,                 logical,   PREC_OR},
         [TOKEN_RETURN]        = {NULL,                 NULL,      PREC_NONE},
-        [TOKEN_SUPER]         = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_DOT]           = {variable,             dot,       PREC_CALL},
         [TOKEN_THIS]          = {this_,                NULL,      PREC_NONE},
+        [TOKEN_BASE]          = {base,                 NULL,      PREC_NONE},
         [TOKEN_TRUE]          = {literal,              NULL,      PREC_NONE},
         [TOKEN_VAR]           = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_PLUS_PLUS]     = {NULL,                 increment, PREC_INCR_DECR},

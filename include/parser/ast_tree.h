@@ -13,11 +13,11 @@ typedef enum {
     UNARY_EXPRESSION,
     VAR_EXPRESSION,
     LOGICAL_EXPRESSION,
-    GROUPED_EXPRESSION,
     ASSIGN_EXPRESSION,
     CALL_EXPRESSION,
     TERNARY_EXPRESSION,
-    DOT_EXPRESSION
+    DOT_EXPRESSION,
+    BASE_EXPRESSION
 } ExprType;
 
 typedef enum {
@@ -54,8 +54,8 @@ typedef struct
 {
     Expr expr;
 
-    Expr* variable;
-} ThisExpr;
+    ObjString* methodName;
+} BaseExpr;
 
 typedef struct
 {
@@ -74,13 +74,6 @@ typedef struct
     TokenType operator;
     Expr* right;
 } LogicalExpr;
-
-typedef struct
-{
-    Expr expr;
-
-    Expr* in;
-} GroupedExpr;
 
 typedef struct
 {
@@ -260,6 +253,7 @@ VarExpr* newVarExpr(ObjString* name, uint16_t line);
 AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line);
 CallExpr* newCallExpr(Expr* callee, uint8_t argCount, Node* args, uint16_t line);
 DotExpr* newDotExpr(Expr* instance, ObjString* fieldName, Expr* value, bool isCall, Node* args, uint8_t argCount, uint16_t line);
+BaseExpr* newBaseExpr(ObjString* methodName, uint16_t line);
 
 // ------------ STATEMENT CONSTRUCTORS ------------
 
