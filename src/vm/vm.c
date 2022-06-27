@@ -125,7 +125,7 @@ static bool call(ObjFunction* function, ObjInstance* thisValue, uint16_t argCoun
         environmentDefine(vm.currentEnvironment, vm.thisString, OBJ_VAL(thisValue));
     }
 
-    vm.currentEnvironment->enclosing = function->closure;
+    vm.currentEnvironment->enclosing = function->closure; // TODO function closure = NULL
     vm.currentFunction = function;
 
     return true;
@@ -213,7 +213,6 @@ static bool bindMethod(ObjClass* klass, ObjInstance* instance, ObjString* name)
 
 static bool invokeFromClass(ObjInstance* instance, ObjString* name, int argCount)
 {
-
     Value method;
     if (!tableGet(&instance->klass->methods, name, &method))
     {
@@ -221,7 +220,12 @@ static bool invokeFromClass(ObjInstance* instance, ObjString* name, int argCount
         return false;
     }
 
-    return call(AS_FUNCTION(method), instance, argCount);
+    ObjFunction* callee = AS_FUNCTION(method);
+
+    callee->calledFromFunction = vm.currentFunction;
+    callee->calledFromIp = vm.ip;
+
+    return call(callee, instance, argCount);
 }
 
 static bool invoke(ObjString* name, int argCount)
@@ -234,8 +238,7 @@ static bool invoke(ObjString* name, int argCount)
         return false;
     }
 
-    ObjInstance* instance = AS_INSTANCE(receiver);
-    return invokeFromClass(instance, name, argCount);
+    return invokeFromClass(AS_INSTANCE(receiver), name, argCount);
 }
 
 // endregion

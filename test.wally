@@ -1,21 +1,8 @@
-class Parent
-{
-    parentStuff()
-    {
-        print("Parent");
-    }
-}
-
-
 class Child
 {
-    childStuff()
-    {
-        base.parentStuff();
-    }
+    childStuff() {}
 }
 
 var person = Child();
 person.childStuff();
-
-//base.hello();
+print("Fixed!");
