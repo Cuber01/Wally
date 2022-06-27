@@ -7,7 +7,7 @@ class Parent
 }
 
 
-class Child : Parent
+class Child
 {
     childStuff()
     {
@@ -17,3 +17,5 @@ class Child : Parent
 
 var person = Child();
 person.childStuff();
+
+//base.hello();

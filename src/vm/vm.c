@@ -460,8 +460,22 @@ static int run()
             case OP_GET_BASE:
             {
                 ObjString* name = READ_STRING();
-                ObjInstance* instance = AS_INSTANCE(peek(0));
+                Value instanceV = peek(0);
+
+                if(!IS_INSTANCE(instanceV))
+                {
+                    runtimeError("Cannot use 'base' outside of a method.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+
+                ObjInstance* instance = AS_INSTANCE(instanceV);
                 ObjClass* base = (ObjClass*) instance->klass->parent;
+
+                if(base == NULL)
+                {
+                    runtimeError("Cannot use 'base' in a class that does not inherit from another.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
 
                 if (!bindMethod(base, instance, name))
                 {
