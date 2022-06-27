@@ -423,7 +423,7 @@ static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
         body = body->next;
     }
 
-    emitByte(OP_SCOPE_END, line);
+    emitByte(OP_SCOPE_END, line); // todo remove?
 
     ObjFunction* function = endCompiler(true, line);
 

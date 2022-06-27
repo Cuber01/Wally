@@ -70,6 +70,10 @@ static void defineMethod()
 {
     ObjFunction* method = AS_FUNCTION(pop());
     ObjClass* klass = AS_CLASS(peek(0));
+
+    vm.currentClosure = vm.currentEnvironment;
+    method->closure = vm.currentClosure;
+
     tableSet(&klass->methods, method->name, OBJ_VAL(method));
 }
 
@@ -125,7 +129,7 @@ static bool call(ObjFunction* function, ObjInstance* thisValue, uint16_t argCoun
         environmentDefine(vm.currentEnvironment, vm.thisString, OBJ_VAL(thisValue));
     }
 
-    vm.currentEnvironment->enclosing = function->closure; // TODO function closure = NULL
+    vm.currentEnvironment->enclosing = function->closure;
     vm.currentFunction = function;
 
     return true;
@@ -224,6 +228,7 @@ static bool invokeFromClass(ObjInstance* instance, ObjString* name, int argCount
 
     callee->calledFromFunction = vm.currentFunction;
     callee->calledFromIp = vm.ip;
+    // todo calle closure is null
 
     return call(callee, instance, argCount);
 }
@@ -624,7 +629,7 @@ static int run()
                 tableAddAll(&parent->methods,&child->methods);
                 child->parent = (struct ObjClass*) parent;
 
-                pop(); // Subclass.
+                pop(); // Parent.
                 break;
             }
 

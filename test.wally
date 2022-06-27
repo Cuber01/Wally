@@ -1,6 +1,9 @@
 class Child
 {
-    childStuff() {}
+    childStuff()
+    {
+        print("Hello");
+    }
 }
 
 var person = Child();

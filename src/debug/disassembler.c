@@ -158,8 +158,6 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return constantInstruction("OP_SET_PROPERTY", chunk, offset);
         case OP_DEFINE_VARIABLE:
             return constantInstruction("OP_DEFINE_VARIABLE", chunk, offset);
-        case OP_CALL:
-            return constantInstruction("OP_CALL", chunk, offset);
         case OP_DEFINE_ARGUMENT:
             return constantInstruction("OP_DEFINE_ARGUMENT", chunk, offset);
         case OP_GET_BASE:
@@ -168,6 +166,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
         case OP_INVOKE:
             return invokeInstruction("OP_INVOKE", chunk, offset);
 
+        case OP_CALL:
+            return byteInstruction("OP_CALL", chunk, offset);
 
         default:
             printf("Unknown opcode %d\n", instruction);
