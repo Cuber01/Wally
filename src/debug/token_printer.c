@@ -35,7 +35,7 @@ char* tokenEnumToChar(TokenType type)
         case TOKEN_NULL: return "TOKEN_NULL";
         case TOKEN_OR: return "TOKEN_OR";
         case TOKEN_RETURN: return "TOKEN_RETURN";
-        case TOKEN_SUPER: return "TOKEN_SUPER";
+        case TOKEN_BASE: return "TOKEN_BASE";
         case TOKEN_THIS: return "TOKEN_THIS";
         case TOKEN_TRUE: return "TOKEN_TRUE";
         case TOKEN_VAR: return "TOKEN_VAR";

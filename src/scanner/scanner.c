@@ -183,8 +183,21 @@ static TokenType identifierType()
         case 'r': return checkKeyword(1, 5, "eturn", TOKEN_RETURN);
         case 'v': return checkKeyword(1, 2, "ar", TOKEN_VAR);
         case 'w': return checkKeyword(1, 4, "hile", TOKEN_WHILE);
-        case 'b': return checkKeyword(1, 4, "reak", TOKEN_BREAK);
+
         case 'd': return checkKeyword(1, 6, "efault", TOKEN_DEFAULT);
+        case 's': return checkKeyword(1, 5, "witch", TOKEN_SWITCH);
+
+        case 'b':
+        {
+            if (scanner.current - scanner.start > 1)
+            {
+                switch (scanner.start[1])
+                {
+                    case 'r': return checkKeyword(2, 3, "eak", TOKEN_BREAK);
+                    case 'a': return checkKeyword(2, 2, "se", TOKEN_BASE);
+                }
+            }
+        }
 
         case 'c':
         {
@@ -195,19 +208,6 @@ static TokenType identifierType()
                     case 'o': return checkKeyword(2, 6, "ntinue", TOKEN_CONTINUE);
                     case 'l': return checkKeyword(2, 3, "ass", TOKEN_CLASS);
                     case 'a': return checkKeyword(2, 2, "se", TOKEN_CASE);
-                }
-            }
-            break;
-        }
-
-        case 's':
-        {
-            if (scanner.current - scanner.start > 1)
-            {
-                switch (scanner.start[1])
-                {
-                    case 'u': return checkKeyword(2, 3, "per", TOKEN_SUPER);
-                    case 'w': return checkKeyword(2, 4, "itch", TOKEN_SWITCH);
                 }
             }
             break;
