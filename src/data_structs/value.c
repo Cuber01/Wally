@@ -35,6 +35,21 @@ void freeValueArray(ValueArray* array)
 
 bool valuesEqual(Value a, Value b)
 {
+    #ifdef NAN_BOXING
+
+    #ifdef NAN_EQUAL_NAN
+
+    if (IS_NUMBER(a) && IS_NUMBER(b))
+    {
+        return AS_NUMBER(a) == AS_NUMBER(b);
+    }
+
+    #endif
+
+    return (a == b);
+
+    #else
+
     if (a.type != b.type) return false;
 
     switch (a.type)
@@ -53,10 +68,33 @@ bool valuesEqual(Value a, Value b)
         }
         default:         return false; // Unreachable.
     }
+
+    #endif
 }
 
 void printRawValue(Value value)
 {
+    #ifdef NAN_BOXING
+
+    if (IS_BOOL(value))
+    {
+        printf(AS_BOOL(value) ? "true" : "false");
+    }
+    else if (IS_NULL(value))
+    {
+        printf("null");
+    }
+    else if (IS_NUMBER(value))
+    {
+        printf("%g", AS_NUMBER(value));
+    }
+    else if (IS_OBJ(value))
+    {
+        printObject(value);
+    }
+
+    #else
+
     switch (value.type)
     {
         case VAL_BOOL:
@@ -84,10 +122,37 @@ void printRawValue(Value value)
             break;
         }
     }
+
+    #endif
 }
 
 void printValue(Value value)
 {
+    #ifdef NAN_BOXING
+
+    if (IS_BOOL(value))
+    {
+        printf(BOLD_BLUE);
+        printf(AS_BOOL(value) ? "true" : "false");
+    }
+    else if (IS_NULL(value))
+    {
+        printf(BOLD_RED);
+        printf("null");
+    }
+    else if (IS_NUMBER(value))
+    {
+        printf(BOLD_YELLOW);
+        printf("%g", AS_NUMBER(value));
+    }
+    else if (IS_OBJ(value))
+    {
+        printf(BOLD_GREEN);
+        printObject(value);
+    }
+
+    #else
+
     switch (value.type)
     {
         case VAL_BOOL:
@@ -119,6 +184,9 @@ void printValue(Value value)
             break;
         }
     }
+
+    #endif
+
     printf(COLOR_CLEAR);
 }
 
@@ -143,6 +211,40 @@ void removeTrailingZeros(char* source)
 
 ObjString* valueToString(Value value)
 {
+    // todo true, false, null should be global constants instead of being allocated each time
+
+    #ifdef NAN_BOXING
+
+    if (IS_BOOL(value))
+    {
+        if (AS_BOOL(value))
+        {
+            return copyString("true", 4);
+        }
+        else
+        {
+            return copyString("false", 5);
+        }
+    }
+    else if (IS_NULL(value))
+    {
+        return copyString("null", 4);
+    }
+    else if (IS_NUMBER(value))
+    {
+        char output[UINT8_MAX];
+        snprintf(output, UINT8_MAX, "%.5lf", AS_NUMBER(value));
+        removeTrailingZeros(output);
+
+        return copyString(output, strlen(output));
+    }
+    else if (IS_OBJ(value))
+    {
+        return objectToString(value);
+    }
+
+    #else
+
     switch (value.type)
     {
         case VAL_BOOL:
@@ -176,6 +278,8 @@ ObjString* valueToString(Value value)
             printf("Reached unreachable.");
         }
     }
+
+    #endif
 
     return NULL;
 }

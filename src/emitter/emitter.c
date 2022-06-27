@@ -140,6 +140,25 @@ static void compileExpression(Expr* expression)
         {
             LiteralExpr* expr = (LiteralExpr*)expression;
 
+            #ifdef NAN_BOXING
+
+            Value value = expr->value;
+
+            if (IS_BOOL(value))
+            {
+                emitConstant(BOOL_VAL(AS_BOOL(value)), line);
+            }
+            else if (IS_NULL(value))
+            {
+                emitByte(OP_NULL, line);
+            }
+            else if (IS_NUMBER(value))
+            {
+                emitConstant(NUMBER_VAL(AS_NUMBER(value)), line);
+            }
+
+            #else
+
             switch (expr->value.type)
             {
                 case VAL_BOOL:
@@ -158,6 +177,8 @@ static void compileExpression(Expr* expression)
                     emitConstant(OBJ_VAL(expr->value.as.obj), line);
                     break;
             }
+
+            #endif
 
             break;
         }
