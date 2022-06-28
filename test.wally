@@ -1,0 +1,13 @@
+"str";
+
+// var b = 3;
+//
+//if(a == 3)
+//{
+//    print("bad");
+//}
+//else if (b == 3)
+//{
+//    print("good"); // Expect: good
+//}
+

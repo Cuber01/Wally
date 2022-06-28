@@ -156,6 +156,10 @@ static void compileExpression(Expr* expression)
             {
                 emitConstant(NUMBER_VAL(AS_NUMBER(value)), line);
             }
+            else if (IS_STRING(value))
+            {
+                emitConstant(OBJ_VAL(AS_STRING(value)), line);
+            }
 
             #else
 

@@ -436,7 +436,6 @@ static Expr* string(__attribute__((unused)) bool canAssign)
 
     escapeSequences(str, str);
 
-    // todo recent change
     Value string = OBJ_VAL(copyString(str, parser.previous.length - 2));
     push(string);
     Expr* rv = (Expr*)newLiteralExpr(string, parser.line);
