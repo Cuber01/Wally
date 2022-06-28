@@ -21,18 +21,13 @@ typedef uint64_t Value;
 
 static inline Value numToValue(double num)
 {
-    Value value;
-    memcpy(&value, &num, sizeof(double));
-    return value;
+    return *((Value*) &num);
 }
 
 static inline double valueToNum(Value value)
 {
-    double num;
-    memcpy(&num, &value, sizeof(Value));
-    return num;
+    return *((double*) &value);
 }
-
 
 #define NUMBER_VAL(num) numToValue(num)
 #define NULL_VAL        ((Value)(uint64_t)(QNAN | TAG_NULL))
