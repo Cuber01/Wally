@@ -1,8 +1,9 @@
 #include <string.h>
-#include "environment.h"
-#include "native_error.h"
-#include "memory.h"
 #include <stdio.h>
+
+#include "vm.h"
+#include "environment.h"
+#include "memory.h"
 
 Environment* newEnvironment()
 {
@@ -15,37 +16,37 @@ Environment* newEnvironment()
     return newEnv;
 }
 
-bool environmentDefine(Environment* env, ObjString* name, Value value)
+bool environmentDefine(Environment* env, ObjString* name, Value value, uint16_t line)
 {
     uint8_t success = tableDefineEntry(&env->values, name, value);
 
     if(success != TABLE_SUCCESS)
     {
-        nativeError("Tried to declare symbol %s, but it already exists.", name->chars);
+        runtimeError(line, "Tried to declare symbol %s, but it already exists.", name->chars);
         return false;
     }
 
     return true;
 }
 
-bool environmentSet(Environment* env, ObjString* name, Value value)
+bool environmentSet(Environment* env, ObjString* name, Value value, uint16_t line)
 {
     uint8_t success = tableSetExistingEntry(&env->values, name, value);
     if(success != TABLE_SUCCESS)
     {
         if(env->enclosing != NULL)
         {
-            return environmentSet(env->enclosing, name, value);
+            return environmentSet(env->enclosing, name, value, line);
         }
 
         if(success == TABLE_ERROR_UNDEFINED_SET)
         {
-            nativeError("Tried to set value of '%s', but it doesn't exist.", name->chars);
+            runtimeError(line, "Tried to set value of '%s', but it doesn't exist.", name->chars);
         }
 
         if(success == TABLE_ERROR_FUNCTION_SET)
         {
-            nativeError("Changing value of functions is illegal.", name->chars);
+            runtimeError(line, "Changing value of functions is illegal.", name->chars);
         }
 
         return false;

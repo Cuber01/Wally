@@ -1,9 +1,9 @@
 #include <stddef.h>
 #include <malloc.h>
 
-#include "native_error.h"
 #include "list.h"
 #include "memory.h"
+#include "vm.h"
 
 static Node* newNode(NodeValue value)
 {
@@ -33,7 +33,7 @@ void listAdd(Node** node, NodeValue value)
     lastNode->next = newNode(value);
 }
 
-void listWriteValue(Node* root, int index, NodeValue value)
+void listWriteValue(Node* root, int index, NodeValue value, uint16_t line)
 {
     Node* node = root;
     while(index > 0)
@@ -42,7 +42,7 @@ void listWriteValue(Node* root, int index, NodeValue value)
 
         if(node->next == NULL)
         {
-            nativeError("Index %d is outside the bounds of the list.", index);
+            runtimeError(line, "Index %d is outside the bounds of the list.", index);
             return;
         }
 
@@ -52,14 +52,14 @@ void listWriteValue(Node* root, int index, NodeValue value)
     node->value = value;
 }
 
-NodeValue listGet(Node* root, uint index)
+NodeValue listGet(Node* root, uint index, uint16_t line)
 {
     Node* node = root;
     while(index > 0)
     {
         if(node->next == NULL)
         {
-            nativeError("Index %d is outside the bounds of the list.", index);
+            runtimeError(line, "Index %d is outside the bounds of the list.", index);
         }
 
         node = node->next;

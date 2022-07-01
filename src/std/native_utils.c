@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdarg.h>
-#include "native_utils.h"
 
 #include "object.h"
 
@@ -27,7 +26,7 @@ void defineNativeClass(Table* table, const char* name, ObjClass* class)
 {
     tableDefineEntry(
             table,
-            copyString(name, (int)strlen(name)),
+            class->name,
             OBJ_VAL((Obj*)class)
     );
 }
@@ -37,12 +36,4 @@ void addNativeMethodToClass(ObjClass* class, const char* name, NativeFn method)
     tableDefineEntry(&class->methods,
                      copyString(name, (int)strlen(name)),
                      OBJ_VAL((Obj*)newNative(method)));
-}
-
-inline bool checkArgCount(uint8_t expected, uint8_t got)
-{
-    if(expected == got) return true;
-
-    nativeError(0, "Expected '%d' arguments but got '%d'.", expected, got); // todo line and foo name
-    return false;
 }

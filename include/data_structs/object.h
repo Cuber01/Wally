@@ -33,7 +33,7 @@
 #define AS_BOUND_METHOD(value) ((ObjBoundMethod*)AS_OBJ(value))
 
 
-typedef Value (*NativeFn)(int argCount, Value* args);
+typedef Value (*NativeFn)(uint8_t argCount, Value* args);
 
 typedef enum {
     OBJ_CLASS,

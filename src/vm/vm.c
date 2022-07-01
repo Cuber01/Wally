@@ -118,7 +118,7 @@ static bool call(ObjFunction* function, ObjInstance* thisValue, uint16_t argCoun
     // Define 'this' to be replaced by instance in methods
     if(thisValue != NULL)
     {
-        environmentDefine(vm.currentEnvironment, vm.thisString, OBJ_VAL(thisValue));
+        environmentDefine(vm.currentEnvironment, vm.thisString, OBJ_VAL(thisValue), line);
     }
 
     vm.currentEnvironment->enclosing = function->closure;
@@ -380,7 +380,7 @@ static int run()
                 Value initializer = pop();
                 ObjString* name = READ_STRING();
 
-                environmentDefine(vm.currentEnvironment, name, initializer);
+                environmentDefine(vm.currentEnvironment, name, initializer, line);
 
                 break;
             }
@@ -390,7 +390,7 @@ static int run()
                 ObjString* name = READ_STRING();
                 Value initializer = pop();
 
-                if(!environmentDefine(vm.currentEnvironment, name, initializer))
+                if(!environmentDefine(vm.currentEnvironment, name, initializer, line))
                 {
                     return INTERPRET_RUNTIME_ERROR;
                 }
@@ -421,7 +421,7 @@ static int run()
                 Value value = pop();
                 ObjString* name = READ_STRING();
 
-                if (!environmentSet(vm.currentEnvironment, name, value))
+                if (!environmentSet(vm.currentEnvironment, name, value, line))
                 {
                     return INTERPRET_RUNTIME_ERROR;
                 }
@@ -437,7 +437,7 @@ static int run()
                 vm.currentClosure = vm.currentEnvironment;
                 function->closure = vm.currentClosure;
 
-                environmentDefine(vm.currentEnvironment, function->name, OBJ_VAL(function));
+                environmentDefine(vm.currentEnvironment, function->name, OBJ_VAL(function), line);
 
                 break;
             }
@@ -446,7 +446,7 @@ static int run()
             {
                 ObjClass* klass = AS_CLASS(peek(0));
 
-                environmentDefine(vm.currentEnvironment, klass->name, OBJ_VAL(klass));
+                environmentDefine(vm.currentEnvironment, klass->name, OBJ_VAL(klass), line);
                 break;
             }
 

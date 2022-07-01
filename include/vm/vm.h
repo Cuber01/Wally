@@ -55,4 +55,6 @@ void initVM();
 void freeVM();
 int interpret(const char* source);
 
+void runtimeError(uint16_t line, const char* format, ...);
+
 #endif //WALLY_VM_H

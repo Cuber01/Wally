@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.21) # I guess you shouldn't touch the version
 
 project(Wally)
 
+
 if (DEBUG_ENABLED)
     add_definitions(-DDEBUG_PRINT_BYTECODE=1 -DDEBUG_TRACE_EXECUTION=1)
 endif(DEBUG_ENABLED)
@@ -29,7 +30,6 @@ add_executable(Wally src/main.c
                      src/data_structs/table.c
                      src/parser/ast_tree.c
                      src/data_structs/list.c
-                     src/debug/native_error.c
                      src/emitter/emitter.c
                      src/emitter/environment.c
                      src/std/core.c
@@ -37,4 +37,7 @@ add_executable(Wally src/main.c
                      src/misc/colors.c
                      src/debug/allocation_logger.c
                      src/data_structs/array.c
-                     src/preprocessor/preprocessor.c src/std/native_utils.c src/std/native_utils.h)
+                     src/preprocessor/preprocessor.c
+                     src/std/native_utils.c
+                     src/std/wally_math.c)
+

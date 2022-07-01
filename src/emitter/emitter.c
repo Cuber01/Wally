@@ -7,12 +7,9 @@
 #include "memory.h"
 #include "garbage_collector.h"
 #include "array.h"
-#include "colors.h"
 
 #ifdef DEBUG_PRINT_BYTECODE
 #include "disassembler.h"
-#include "colors.h"
-
 #endif
 
 static uint16_t compileStatement(Stmt* statement);
@@ -485,7 +482,7 @@ static uint16_t compileStatement(Stmt* statement)
 
             for(int i = 0; i <= length - 1; i++)
             {
-                compileStatement(listGet(toExecute, i).as.statement);
+                compileStatement(listGet(toExecute, i, line).as.statement);
             }
 
             emitByte(OP_SCOPE_END, line);

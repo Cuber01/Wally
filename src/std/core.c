@@ -1,7 +1,7 @@
 #include "core.h"
 #include "native_utils.h"
 
-Value printNative(int argCount, Value* args)
+NATIVE_FUNCTION(print)
 {
     printRawValue(*args);
     putchar('\n');

@@ -10,9 +10,9 @@ typedef struct Environment
 } Environment;
 
 Environment* newEnvironment();
-bool environmentDefine(Environment* env, ObjString* name, Value value);
+bool environmentDefine(Environment* env, ObjString* name, Value value, uint16_t line);
+bool environmentSet(Environment* env, ObjString* name, Value value, uint16_t line);
 bool environmentGet(Environment* env, ObjString* name, Value* result);
-bool environmentSet(Environment* env, ObjString* name, Value value);
 
 void markEnvironment(Environment* env);
 void freeEnvironmentsRecursively(Environment* env);
