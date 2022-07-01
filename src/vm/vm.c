@@ -21,10 +21,11 @@ static void resetStack()
     vm.stackTop = vm.stack;
 }
 
-void runtimeError(const char* format, ...)
+void runtimeError(uint16_t line, const char* format, ...)
 {
     va_list args;
     va_start(args, format);
+    fprintf(stderr, "[line %d] Runtime Error : ", line);
     vfprintf(stderr, format, args);
     va_end(args);
     fputs("\n", stderr);
@@ -112,11 +113,11 @@ static void concatenate()
     push(OBJ_VAL(result));
 }
 
-static bool call(ObjFunction* function, ObjInstance* thisValue, uint16_t argCount)
+static bool call(ObjFunction* function, ObjInstance* thisValue, uint16_t argCount, uint16_t line)
 {
     if(argCount != function->arity)
     {
-        runtimeError("Expected %d arguments but got %d.", function->arity, argCount);
+        runtimeError(line, "Expected %d arguments but got %d.", function->arity, argCount);
         return false;
     }
 
@@ -135,7 +136,7 @@ static bool call(ObjFunction* function, ObjInstance* thisValue, uint16_t argCoun
     return true;
 }
 
-static bool callValue(Value callee, uint16_t argCount)
+static bool callValue(Value callee, uint16_t argCount, uint16_t line)
 {
     if (IS_OBJ(callee))
     {
@@ -149,7 +150,7 @@ static bool callValue(Value callee, uint16_t argCount)
                 bound->method->calledFromIp = vm.ip;
                 bound->method->calledFromEnvironment = vm.currentEnvironment;
 
-                return call(bound->method, bound->instance, argCount);
+                return call(bound->method, bound->instance, argCount, line);
             }
 
             case OBJ_FUNCTION:
@@ -160,7 +161,7 @@ static bool callValue(Value callee, uint16_t argCount)
                 function->calledFromIp = vm.ip;
                 function->calledFromEnvironment = vm.currentEnvironment;
 
-                return call(function, NULL, argCount);
+                return call(function, NULL, argCount, line);
             }
 
             case OBJ_CLASS:
@@ -177,7 +178,7 @@ static bool callValue(Value callee, uint16_t argCount)
                     init->calledFromIp = vm.ip;
                     init->calledFromEnvironment = vm.currentEnvironment;
 
-                    return call(AS_FUNCTION(initializer), AS_INSTANCE(peek(0)),  argCount);
+                    return call(AS_FUNCTION(initializer), AS_INSTANCE(peek(0)),  argCount, line);
                 }
 
                 return true;
@@ -198,17 +199,17 @@ static bool callValue(Value callee, uint16_t argCount)
 
     }
 
-    runtimeError("Can only call functions and classes.");
+    runtimeError(line, "Can only call functions and classes.");
     return false;
 }
 
-static bool bindMethod(ObjClass* klass, ObjInstance* instance, ObjString* name)
+static bool bindMethod(ObjClass* klass, ObjInstance* instance, ObjString* name, uint16_t line)
 {
     Value method;
 
     if (!tableGet(&klass->methods, name, &method))
     {
-        runtimeError("Undefined property '%s'.", name->chars);
+        runtimeError(line, "Undefined property '%s'.", name->chars);
         return false;
     }
 
@@ -218,12 +219,12 @@ static bool bindMethod(ObjClass* klass, ObjInstance* instance, ObjString* name)
     return true;
 }
 
-static bool invokeFromClass(ObjInstance* instance, ObjString* name, int argCount)
+static bool invokeFromClass(ObjInstance* instance, ObjString* name, int argCount, uint16_t line)
 {
     Value method;
     if (!tableGet(&instance->klass->methods, name, &method))
     {
-        runtimeError("Undefined property '%s'.", name->chars);
+        runtimeError(line, "Undefined property '%s'.", name->chars);
         return false;
     }
 
@@ -233,20 +234,20 @@ static bool invokeFromClass(ObjInstance* instance, ObjString* name, int argCount
     callee->calledFromIp = vm.ip;
     callee->calledFromEnvironment = vm.currentEnvironment;
 
-    return call(callee, instance, argCount);
+    return call(callee, instance, argCount, line);
 }
 
-static bool invoke(ObjString* name, int argCount)
+static bool invoke(ObjString* name, int argCount, uint16_t line)
 {
     Value receiver = peek(argCount);
 
     if (!IS_INSTANCE(receiver))
     {
-        runtimeError("Only instances have methods.");
+        runtimeError(line, "Only instances have methods.");
         return false;
     }
 
-    return invokeFromClass(AS_INSTANCE(receiver), name, argCount);
+    return invokeFromClass(AS_INSTANCE(receiver), name, argCount, line);
 }
 
 // endregion
@@ -255,6 +256,7 @@ static bool invoke(ObjString* name, int argCount)
 
 static int run()
 {
+    uint16_t line;
 
     #define READ_BYTE() (*vm.ip++)
     #define READ_BYTE_NO_INCREMENT (*vm.ip)
@@ -266,7 +268,7 @@ static int run()
         do { \
             if (!IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1))) \
             { \
-                runtimeError("Both operands must be numbers."); \
+                runtimeError(line, "Both operands must be numbers."); \
                 return INTERPRET_RUNTIME_ERROR; \
             } \
             \
@@ -279,6 +281,8 @@ static int run()
 
     for (;;)
     {
+        line = vm.currentFunction->chunk.lines[(int)(vm.ip - vm.currentFunction->chunk.code)];
+
         #ifdef DEBUG_TRACE_EXECUTION
         disassembleInstruction(&vm.currentFunction->chunk,
         (int)(vm.ip - vm.currentFunction->chunk.code));
@@ -344,7 +348,7 @@ static int run()
             case OP_NEGATE:
                 if (!IS_NUMBER(peek(0)))
                 {
-                    runtimeError("Operand must be a number.");
+                    runtimeError(line, "Operand must be a number.");
                     return INTERPRET_RUNTIME_ERROR;
                 }
                 push(NUMBER_VAL(-AS_NUMBER(pop())));
@@ -370,7 +374,7 @@ static int run()
                 }
                 else
                 {
-                    runtimeError("Operands must be either two numbers or two strings.");
+                    runtimeError(line, "Operands must be either two numbers or two strings.");
                     return INTERPRET_RUNTIME_ERROR;
                 }
                 break;
@@ -412,7 +416,7 @@ static int run()
                 {
                     if(!environmentGet(vm.nativeEnvironment, name, &value))
                     {
-                        runtimeError("Tried to get value of '%s', but it doesn't exist.", name->chars);
+                        runtimeError(line, "Tried to get value of '%s', but it doesn't exist.", name->chars);
                         return INTERPRET_RUNTIME_ERROR;
                     }
                 }
@@ -460,7 +464,7 @@ static int run()
                 ObjString* method = READ_STRING();
                 uint8_t argCount = READ_BYTE();
 
-                if (!invoke(method, argCount))
+                if (!invoke(method, argCount, line))
                 {
                     return INTERPRET_RUNTIME_ERROR;
                 }
@@ -475,7 +479,7 @@ static int run()
 
                 if(!IS_INSTANCE(instanceV))
                 {
-                    runtimeError("Cannot use 'base' outside of a method.");
+                    runtimeError(line, "Cannot use 'base' outside of a method.");
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
@@ -484,11 +488,11 @@ static int run()
 
                 if(base == NULL)
                 {
-                    runtimeError("Cannot use 'base' in a class that does not inherit from another.");
+                    runtimeError(line, "Cannot use 'base' in a class that does not inherit from another.");
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
-                if (!bindMethod(base, instance, name))
+                if (!bindMethod(base, instance, name, line))
                 {
                     return INTERPRET_RUNTIME_ERROR;
                 }
@@ -499,7 +503,7 @@ static int run()
             {
                 if (!IS_INSTANCE(peek(0)))
                 {
-                    runtimeError("Only instances have properties.");
+                    runtimeError(line, "Only instances have properties.");
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
@@ -510,7 +514,7 @@ static int run()
 
                 if (!tableGet(&instance->fields, name, &value))
                 {
-                    if (!bindMethod(instance->klass, instance, name))
+                    if (!bindMethod(instance->klass, instance, name, line))
                     {
                         return INTERPRET_RUNTIME_ERROR;
                     }
@@ -531,7 +535,7 @@ static int run()
 
                 if (!IS_INSTANCE(instanceVal))
                 {
-                    runtimeError("Only instances have fields.");
+                    runtimeError(line, "Only instances have fields.");
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
@@ -610,7 +614,7 @@ static int run()
                 Value callee = pop();
                 uint8_t argCount = READ_BYTE();
 
-                callValue(callee, argCount);
+                callValue(callee, argCount, line);
 
                 break;
             }
@@ -622,7 +626,7 @@ static int run()
 
                 if (!IS_CLASS(base))
                 {
-                    runtimeError("Superclass must be a class.");
+                    runtimeError(line, "Superclass must be a class.");
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
@@ -725,7 +729,7 @@ int interpret(const char* source)
 
     push(OBJ_VAL(function));
 
-    call(function, NULL, 0);
+    call(function, NULL, 0, 0);
 
     gcStarted = true;
     return run();

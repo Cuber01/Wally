@@ -17,7 +17,7 @@
 
 static uint16_t compileStatement(Stmt* statement);
 
-// TODO make it global
+// TODO make it not global
 UInts* breaks;
 UInts* continues;
 uint loopDepth = 0;
@@ -27,9 +27,9 @@ bool hadError = false;
 
 // region ERROR
 
-static void error(const char* message)
+static void error(const char* message, uint16_t line)
 {
-    colorWriteLine(RED, "%s", message);
+    fprintf(stderr, "[line %d] Emitter Error : %s\n", line, message);
     hadError = true;
 }
 
@@ -53,12 +53,12 @@ static void emitBytes(uint8_t byte1, uint8_t byte2, uint16_t line)
     emitByte(byte2, line);
 }
 
-static uint8_t makeConstant(Value value)
+static uint8_t makeConstant(Value value, uint16_t line)
 {
     int constant = addConstant(currentChunk(), value);
     if (constant > UINT8_MAX)
     {
-        error("Too many constants in one chunk.");
+        error("Too many constants in one chunk.", line);
         return 0;
     }
 
@@ -67,7 +67,7 @@ static uint8_t makeConstant(Value value)
 
 static void emitConstant(Value value, uint16_t line)
 {
-    emitBytes(OP_CONSTANT, makeConstant(value), line);
+    emitBytes(OP_CONSTANT, makeConstant(value, line), line);
 }
 
 static uint emitJump(uint8_t instruction, uint16_t line)
@@ -81,25 +81,25 @@ static uint emitJump(uint8_t instruction, uint16_t line)
     return currentChunk()->codeCount - 2;
 }
 
-static void patchJump(uint offset)
+static void patchJump(uint offset, uint16_t line)
 {
     // -2 to adjust for the bytecode for the jump offset itself
     uint jump = currentChunk()->codeCount - offset - 2;
 
     if (jump > UINT16_MAX)
     {
-        error("Too much code to jump over.");
+        error("Too much code to jump over.", line);
     }
 
     currentChunk()->code[offset] = (jump >> 8) & 0xff;
     currentChunk()->code[offset + 1] = jump & 0xff;
 }
 
-static void patchLoopJumps(UInts* jumps)
+static void patchLoopJumps(UInts* jumps, uint16_t line)
 {
     for (uint i = 0; i < jumps->count; i++)
     {
-        patchJump(jumps->values[i]);
+        patchJump(jumps->values[i], line);
     }
 
     freeUInts(jumps);
@@ -110,7 +110,7 @@ static void emitLoop(uint loopStart, uint16_t line)
     emitByte(OP_LOOP, line);
 
     uint offset = currentChunk()->codeCount - loopStart + 2;
-    if (offset > UINT16_MAX) error("Loop body too large.");
+    if (offset > UINT16_MAX) error("Loop body too large.", line);
 
     emitByte((offset >> 8) & 0xff, line);
     emitByte(offset & 0xff, line);
@@ -228,7 +228,7 @@ static void compileExpression(Expr* expression)
                     break;
 
                 default:
-                    error("Unknown operator in binary expression.");
+                    error("Unknown operator in binary expression.", line);
             }
 
             break;
@@ -251,7 +251,7 @@ static void compileExpression(Expr* expression)
                     break;
 
                 default:
-                    error("Unrecognized operand in unary expression.");
+                    error("Unrecognized operand in unary expression.", line);
             }
             break;
         }
@@ -272,7 +272,7 @@ static void compileExpression(Expr* expression)
         {
             VarExpr* expr = (VarExpr*)expression;
 
-            emitBytes(OP_GET_VARIABLE, makeConstant(OBJ_VAL(expr->name)), line);
+            emitBytes(OP_GET_VARIABLE, makeConstant(OBJ_VAL(expr->name), line), line);
 
             break;
         }
@@ -283,7 +283,7 @@ static void compileExpression(Expr* expression)
 
             compileExpression(expr->value);
 
-            emitBytes(OP_SET_VARIABLE, makeConstant(OBJ_VAL(expr->name)), line);
+            emitBytes(OP_SET_VARIABLE, makeConstant(OBJ_VAL(expr->name), line), line);
 
             break;
         }
@@ -304,17 +304,17 @@ static void compileExpression(Expr* expression)
                     node = node->next;
                 }
 
-                emitBytes(OP_INVOKE, makeConstant(OBJ_VAL(expr->fieldName)), line);
+                emitBytes(OP_INVOKE, makeConstant(OBJ_VAL(expr->fieldName), line), line);
                 emitByte(expr->argCount, line);
             }
             else if (expr->value != NULL) // Setter
             {
                 compileExpression(expr->value);
-                emitBytes(OP_SET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName)), line);
+                emitBytes(OP_SET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName), line), line);
             }
             else // Getter
             {
-                emitBytes(OP_GET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName)), line);
+                emitBytes(OP_GET_PROPERTY, makeConstant(OBJ_VAL(expr->fieldName), line), line);
             }
 
             break;
@@ -324,7 +324,7 @@ static void compileExpression(Expr* expression)
         {
             BaseExpr* expr = (BaseExpr*)expression;
 
-            emitBytes(OP_GET_BASE, makeConstant(OBJ_VAL(expr->methodName)), line);
+            emitBytes(OP_GET_BASE, makeConstant(OBJ_VAL(expr->methodName), line), line);
             break;
         }
 
@@ -360,7 +360,7 @@ static void compileExpression(Expr* expression)
                     emitByte(OP_POP, line);
                     compileExpression(expr->right);
 
-                    patchJump(endJump);
+                    patchJump(endJump, line);
                     break;
                 }
 
@@ -372,7 +372,7 @@ static void compileExpression(Expr* expression)
                     emitByte(OP_POP, line);
                     compileExpression(expr->right);
 
-                    patchJump(endJump);
+                    patchJump(endJump, line);
                     break;
                 }
 
@@ -408,7 +408,7 @@ static void compileVariable(ObjString* name, Expr* initializer, uint16_t line)
         compileExpression(initializer);
     }
 
-    emitBytes(OP_DEFINE_VARIABLE, makeConstant(OBJ_VAL(name)), line);
+    emitBytes(OP_DEFINE_VARIABLE, makeConstant(OBJ_VAL(name), line), line);
 }
 
 static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
@@ -435,7 +435,7 @@ static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
 
     while (paramCount >= 0)
     {
-        emitBytes(OP_DEFINE_ARGUMENT, makeConstant(OBJ_VAL(params[paramCount])), line);
+        emitBytes(OP_DEFINE_ARGUMENT, makeConstant(OBJ_VAL(params[paramCount]), line), line);
         paramCount--;
     }
 
@@ -505,12 +505,12 @@ static uint16_t compileStatement(Stmt* statement)
             compileStatement(stmt->thenBranch);
 
             uint elseJump = emitJump(OP_JUMP, line);
-            patchJump(thenJump);
+            patchJump(thenJump, line);
             emitByte(OP_POP, line);
 
             compileStatement(stmt->elseBranch);
 
-            patchJump(elseJump);
+            patchJump(elseJump, line);
 
             break;
         }
@@ -537,10 +537,10 @@ static uint16_t compileStatement(Stmt* statement)
 
             compileStatement(stmt->body);
 
-            patchLoopJumps(continues);
+            patchLoopJumps(continues, line);
             emitLoop(loopStart, line);
-            patchJump(exitJump);
-            patchLoopJumps(breaks);
+            patchJump(exitJump, line);
+            patchLoopJumps(breaks, line);
 
             emitByte(OP_POP, line);
             loopDepth--;
@@ -576,19 +576,19 @@ static uint16_t compileStatement(Stmt* statement)
             emitByte(OP_POP, line); // Pop Condition
 
             compileStatement(stmt->body);
-            patchLoopJumps(continues);
+            patchLoopJumps(continues, line);
 
             compileExpression(stmt->increment);
 
             emitLoop(loopStart, line);
 
-            patchLoopJumps(breaks);
+            patchLoopJumps(breaks, line);
             emitByte(OP_SCOPE_END, line);
 
             // Jump out of the loop
             if (exitJump != -1)
             {
-                patchJump(exitJump);
+                patchJump(exitJump, line);
                 emitByte(OP_SCOPE_END, line);
                 emitByte(OP_POP, line);
             }
@@ -623,7 +623,7 @@ static uint16_t compileStatement(Stmt* statement)
                 VarExpr* parent = (VarExpr*)(stmt->parent);
 
                 emitBytes(OP_GET_VARIABLE,
-                          makeConstant(OBJ_VAL( parent->name )),
+                          makeConstant(OBJ_VAL( parent->name ), line),
                                 line);
 
                 emitByte(OP_INHERIT, line);
@@ -637,12 +637,12 @@ static uint16_t compileStatement(Stmt* statement)
         {
             if (current->type == TYPE_SCRIPT)
             {
-                error("Can't return from top-level code.");
+                error("Can't return from top-level code.", line);
             }
 
             if (current->type == TYPE_INITIALIZER)
             {
-                error("Can't return custom values from initializer. It always returns the instance of your class.");
+                error("Can't return custom values from initializer. It always returns the instance of your class.", line);
             }
 
             ReturnStmt* stmt = (ReturnStmt*) statement;
@@ -664,7 +664,7 @@ static uint16_t compileStatement(Stmt* statement)
         case CONTINUE_STATEMENT:
             if (loopDepth == 0)
             {
-                error("Can't 'continue' from top-level code.");
+                error("Can't 'continue' from top-level code.", line);
             }
 
             uintsWrite(continues, emitJump(OP_JUMP, statement->line));
@@ -673,7 +673,7 @@ static uint16_t compileStatement(Stmt* statement)
         case BREAK_STATEMENT:
             if (loopDepth == 0)
             {
-                error("Can't break from top-level code.");
+                error("Can't break from top-level code.", line);
             }
 
             uintsWrite(breaks, emitJump(OP_JUMP, statement->line));

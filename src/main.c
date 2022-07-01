@@ -51,7 +51,7 @@ static void runFile(const char* path)
     int result = interpret(source);
     free(source);
 
-    freeVM();
+    if(result == 0) freeVM();
 
     exit(result);
 }
