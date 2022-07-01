@@ -37,4 +37,4 @@ add_executable(Wally src/main.c
                      src/misc/colors.c
                      src/debug/allocation_logger.c
                      src/data_structs/array.c
-                     src/preprocessor/preprocessor.c)
+                     src/preprocessor/preprocessor.c src/std/native_utils.c src/std/native_utils.h)

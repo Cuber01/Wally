@@ -3,6 +3,6 @@
 
 #include "list.h"
 
-Value printNative(int argCount, Value* args);
+void defineCore(Table* table);
 
 #endif //WALLY_CORE_H

@@ -58,15 +58,6 @@ static Value peek(int distance)
 
 // region Runtime Utils
 
-static void defineNative(const char* name, NativeFn function)
-{
-    tableDefineEntry(
-            &vm.nativeEnvironment->values,
-            copyString(name, (int)strlen(name)),
-            OBJ_VAL((Obj*)newNative(function))
-    );
-}
-
 static void defineMethod()
 {
     ObjFunction* method = AS_FUNCTION(pop());
@@ -697,7 +688,7 @@ void initVM()
     vm.thisString = NULL;
     vm.thisString = copyString("this", 4);
 
-    defineNative("print", printNative);
+    defineCore(&vm.nativeEnvironment->values);
 
     vm.objects = NULL;
 }
