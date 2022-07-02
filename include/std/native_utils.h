@@ -18,4 +18,9 @@ inline bool checkArgCount(uint8_t expected, uint8_t got)
     return false;
 }
 
+inline double checkNumber(Value num)
+{
+    if(IS_NUMBER(num)) return AS_NUMBER(num);
+}
+
 #endif //WALLY_NATIVE_UTILS_H

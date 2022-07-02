@@ -3,7 +3,14 @@
 
 NATIVE_FUNCTION(print)
 {
-    printRawValue(*args);
+    printRawValue(args[0]);
+    putchar('\n');
+    return NULL_VAL;
+}
+
+NATIVE_FUNCTION(type)
+{
+    printRawValue(args[0]);
     putchar('\n');
     return NULL_VAL;
 }
