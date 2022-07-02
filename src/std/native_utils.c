@@ -22,18 +22,11 @@ void defineNativeFunction(Table* table, const char* name, NativeFn function)
     );
 }
 
-void defineNativeClass(Table* table, const char* name, ObjClass* class)
+void defineNativeClass(Table* table, ObjClass* class)
 {
     tableDefineEntry(
             table,
             class->name,
             OBJ_VAL((Obj*)class)
     );
-}
-
-void addNativeMethodToClass(ObjClass* class, const char* name, NativeFn method)
-{
-    tableDefineEntry(&class->methods,
-                     copyString(name, (int)strlen(name)),
-                     OBJ_VAL((Obj*)newNative(method)));
 }

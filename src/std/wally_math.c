@@ -93,3 +93,35 @@ NATIVE_FUNCTION(round)
     return NUMBER_VAL(round(AS_NUMBER(args[0])));
 }
 
+void defineMath(Table* table)
+{
+    ObjClass* math = newClass(copyString("math", 4));
+
+    #define DEFINE_MATH_METHOD(name, method) defineNativeFunction(&math->methods, name, method)
+
+    DEFINE_MATH_METHOD("abs",   absNative);
+    DEFINE_MATH_METHOD("round", roundNative);
+    DEFINE_MATH_METHOD("sqrt",  sqrtNative);
+    DEFINE_MATH_METHOD("tan",   tanNative);
+    DEFINE_MATH_METHOD("cos",   cosNative);
+    DEFINE_MATH_METHOD("sin",   sinNative);
+    DEFINE_MATH_METHOD("min",   minNative);
+    DEFINE_MATH_METHOD("max",   maxNative);
+    DEFINE_MATH_METHOD("mod",   modNative);
+    DEFINE_MATH_METHOD("exp",   expNative);
+    DEFINE_MATH_METHOD("degreesToRadians",   degreesToRadiansNative);
+    DEFINE_MATH_METHOD("radiansToDegrees",   radiansToDegreesNative);
+    DEFINE_MATH_METHOD("floor", floorNative);
+    DEFINE_MATH_METHOD("ceil",  ceilNative);
+    DEFINE_MATH_METHOD("atan2", atan2Native);
+    DEFINE_MATH_METHOD("atan",  atanNative);
+    DEFINE_MATH_METHOD("asin",  asinNative);
+    DEFINE_MATH_METHOD("acos",  acosNative);
+    DEFINE_MATH_METHOD("atan2", atan2Native);
+    DEFINE_MATH_METHOD("atan2", atan2Native);
+
+    #undef DEFINE_MATH_METHOD
+
+    defineNativeClass(table, math);
+}
+

@@ -1,6 +1,3 @@
-var a = true;
-var b = type(a);
+include("math");
 
-b += "str";
-
-print(b);
+print(abs(-1));

@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.21) # I guess you shouldn't touch the version
 
 project(Wally)
 
-
 if (DEBUG_ENABLED)
     add_definitions(-DDEBUG_PRINT_BYTECODE=1 -DDEBUG_TRACE_EXECUTION=1)
 endif(DEBUG_ENABLED)
@@ -41,3 +40,4 @@ add_executable(Wally src/main.c
                      src/std/native_utils.c
                      src/std/wally_math.c)
 
+target_link_libraries(Wally m)
