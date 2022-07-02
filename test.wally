@@ -1,6 +1,6 @@
-function hello()
-{
+var a = true;
+var b = type(a);
 
-}
+b += "str";
 
-"str"();
+print(b);
