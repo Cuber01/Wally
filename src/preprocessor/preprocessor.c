@@ -6,6 +6,8 @@
 #include "scanner.h"
 #include "memory.h"
 
+Preprocessor preprocessor;
+
 // region Main
 
 void initPreprocessor(char* source)

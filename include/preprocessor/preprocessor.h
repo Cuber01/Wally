@@ -31,7 +31,7 @@ typedef struct {
     uint line;
 } Preprocessor;
 
-Preprocessor preprocessor;
+extern Preprocessor preprocessor;
 
 char* preprocess(char* text);
 
