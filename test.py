@@ -378,6 +378,7 @@ def run_suite(name):
 
     walk(join(REPO_DIR, 'scripts/tests/expressions'), run_script)
     walk(join(REPO_DIR, 'scripts/tests/statements'), run_script)
+    walk(join(REPO_DIR, 'scripts/tests/libs'), run_script)
     walk(join(REPO_DIR, 'scripts/tests/functions'), run_script)
     walk(join(REPO_DIR, 'scripts/tests/data_manipulation'), run_script)
     walk(join(REPO_DIR, 'scripts/tests/oop'), run_script)

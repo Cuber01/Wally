@@ -1,0 +1,38 @@
+include("math");
+
+print(math.abs(-1.2));
+print(math.acos(0.3));
+print(math.asin(0.3));
+print(math.atan(-1.2));
+print(math.atan2(-1.2, 8.6));
+print(math.ceil(-1.2));
+print(math.floor(-1.2));
+print(math.exp(-1.2));
+print(math.mod(-1.2, 8.6));
+print(math.max(-1.2, 8.6));
+print(math.min(-1.2, 8.6));
+print(math.sin(-1.2));
+print(math.cos(-1.2));
+print(math.tan(-1.2));
+print(math.round(-1.2));
+print(math.radiansToDegrees(-1.2));
+print(math.degreesToRadians(-1.2));
+
+// Expect: 1.2
+// Expect: 1.2661
+// Expect: 0.304693
+// Expect: -0.876058
+// Expect: -0.13864
+// Expect: -1
+// Expect: -2
+// Expect: 0.301194
+// Expect: -1.2
+// Expect: 8.6
+// Expect: -1.2
+// Expect: -0.932039
+// Expect: 0.362358
+// Expect: -2.57215
+// Expect: -1
+// Expect: -68.7549
+// Expect: -0.020944
+

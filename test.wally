@@ -1,3 +1,4 @@
 include("math");
 
-print(math.abs(-1));
+print(math.radiansToDegrees(-1.2));
+print(math.degreesToRadians(-1.2));
