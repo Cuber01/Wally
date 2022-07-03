@@ -1,5 +1,7 @@
 
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "memory.h"
 #include "object.h"
@@ -14,7 +16,7 @@ void initTable(Table* table)
     table->count = 0;
     table->capacity = 0;
     table->entries = NULL;
-    table->keys = reallocate(NULL, 0, sizeof(table->keys));
+    table->keys = NULL;
 }
 
 void freeTable(Table* table)
@@ -34,6 +36,7 @@ static Entry* findEntry(Entry* entries, int capacity, ObjString* key)
 
     for (;;)
     {
+
         Entry* entry = &entries[index];
         if (entry->key == NULL)
         {
@@ -49,7 +52,9 @@ static Entry* findEntry(Entry* entries, int capacity, ObjString* key)
                 if (tombstone == NULL) tombstone = entry;
             }
 
-        } else if (entry->key == key) {
+        }
+        else if (entry->key == key)
+        {
             // We found the key.
             return entry;
         }
@@ -62,18 +67,23 @@ static void adjustCapacity(Table* table, int capacity)
 {
     // Basically rewrite the array
     Entry* entries = ALLOCATE(Entry, capacity);
+    ObjString** keys = ALLOCATE(ObjString*, capacity);
     table->count = 0;
 
     for (int i = 0; i < capacity; i++)
     {
         entries[i].key = NULL;
         entries[i].value = NULL_VAL;
+
+        keys[i] = NULL;
     }
 
     for (int i = 0; i < table->capacity; i++)
     {
         Entry* entry = &table->entries[i];
         if (entry->key == NULL) continue;
+
+        keys[i] = entry->key;
 
         Entry* dest = findEntry(entries, capacity, entry->key);
         dest->key = entry->key;
@@ -82,7 +92,9 @@ static void adjustCapacity(Table* table, int capacity)
     }
 
     FREE_ARRAY(Entry, table->entries, table->capacity);
+    FREE_ARRAY(Entry, table->keys, table->capacity);
     table->entries = entries;
+    table->keys = keys;
     table->capacity = capacity;
 }
 
@@ -220,6 +232,7 @@ bool tableDelete(Table* table, ObjString* key)
     if (table->count == 0) return false;
 
     // Find the entry
+    // todo remove key from ObjString** keys ?
     Entry* entry = findEntry(table->entries, table->capacity, key);
     if (entry->key == NULL) return false;
 

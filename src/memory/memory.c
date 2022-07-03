@@ -28,7 +28,7 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize)
     #else
     if (vm.bytesAllocated > vm.nextGC)
     {
-        collectGarbage();
+        //collectGarbage();
     }
     #endif
 
