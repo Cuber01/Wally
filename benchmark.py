@@ -12,7 +12,7 @@ import subprocess
 import sys
 from os.path import relpath
 
-BENCHMARK_DIR = 'benchmarks'
+BENCHMARK_DIR = 'scripts/benchmarks'
 BENCHMARK_DIR = relpath(BENCHMARK_DIR).replace("\\", "/")
 NUM_TRIALS = 10
 

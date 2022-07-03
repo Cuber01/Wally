@@ -376,11 +376,11 @@ def run_suite(name):
     num_skipped = 0
     expectations = 0
 
-    walk(join(REPO_DIR, 'tests/expressions'), run_script)
-    walk(join(REPO_DIR, 'tests/statements'), run_script)
-    walk(join(REPO_DIR, 'tests/functions'), run_script)
-    walk(join(REPO_DIR, 'tests/data_manipulation'), run_script)
-    walk(join(REPO_DIR, 'tests/oop'), run_script)
+    walk(join(REPO_DIR, 'scripts/tests/expressions'), run_script)
+    walk(join(REPO_DIR, 'scripts/tests/statements'), run_script)
+    walk(join(REPO_DIR, 'scripts/tests/functions'), run_script)
+    walk(join(REPO_DIR, 'scripts/tests/data_manipulation'), run_script)
+    walk(join(REPO_DIR, 'scripts/tests/oop'), run_script)
     print_line()
 
     if failed == 0:
