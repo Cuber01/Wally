@@ -127,7 +127,15 @@ static bool call(ObjFunction* function, ObjInstance* thisValue, uint16_t argCoun
     return true;
 }
 
-static bool callValue(Value callee, uint16_t argCount, uint16_t line)
+static void callNative(Value callee, uint8_t argCount)
+{
+    NativeFn native = AS_NATIVE(callee);
+    Value result = native(argCount, vm.stackTop - argCount);
+    pop();
+    push(result);
+}
+
+static bool callValue(Value callee, uint8_t argCount, uint16_t line)
 {
     if (IS_OBJ(callee))
     {
@@ -177,10 +185,7 @@ static bool callValue(Value callee, uint16_t argCount, uint16_t line)
 
             case OBJ_NATIVE:
             {
-                NativeFn native = AS_NATIVE(callee);
-                Value result = native(argCount, vm.stackTop - argCount);
-                pop();
-                push(result);
+                callNative(callee, argCount);
                 return true;
             }
 
@@ -210,13 +215,19 @@ static bool bindMethod(ObjClass* klass, ObjInstance* instance, ObjString* name, 
     return true;
 }
 
-static bool invokeFromClass(ObjInstance* instance, ObjString* name, int argCount, uint16_t line)
+static bool invokeFromClass(ObjInstance* instance, ObjString* name, uint8_t argCount, uint16_t line)
 {
     Value method;
     if (!tableGet(&instance->klass->methods, name, &method))
     {
         runtimeError(line, "Undefined property '%s'.", name->chars);
         return false;
+    }
+
+    if(IS_NATIVE(method))
+    {
+        callNative(method, argCount);
+        return true;
     }
 
     ObjFunction* callee = AS_FUNCTION(method);
