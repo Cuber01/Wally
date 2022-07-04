@@ -277,6 +277,7 @@ static Expr* dot(Expr* previous, bool canAssign)
 
     if (match(TOKEN_EQUAL) && canAssign)
     {
+        // Syntax sugar like += -=
         TokenType operator = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
 
         if(operator == 0)
@@ -285,12 +286,16 @@ static Expr* dot(Expr* previous, bool canAssign)
         }
         else
         {
-            return (Expr*)newAssignExpr(name, (Expr*)newBinaryExpr(
-                                                (Expr*)newDotExpr(previous, name, value, isCall, args, argCount, parser.line),
-                                                operator,
-                                                expression(),
-                                                parser.line),
-                                        parser.line);
+            /* this.x += 2 */
+
+            // get this.x
+            Expr* getPreviousVal = (Expr*)newDotExpr(previous, name, value, isCall, args, argCount, parser.line);
+            // calculate this.x + 2
+            Expr* calculateNewVal = (Expr*)newBinaryExpr(getPreviousVal, operator, expression(), parser.line);
+            // set this.x
+            Expr* setNewVal = (Expr*)newDotExpr(previous, name, calculateNewVal, isCall, args, argCount, parser.line);
+
+            return setNewVal;
         }
 
     }

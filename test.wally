@@ -1,14 +1,129 @@
-function helloWorld()
+
+
+class A
 {
+    init()
     {
-        var a = "Not hello >:(";
+        this.x = 1;
+        this.x += 1;
+        print(this.x);
     }
-    
-    print(a);
 }
 
-var a = "Hello";
+var a = A();
 
-helloWorld();
-
-// Expect: Hello
+//var canvasHeight = 128;
+//var canvasWidth = 128;
+//
+//collide(x1, y1, w1, h1, x2, y2, w2, h2)
+//{
+//    if( x1 >= x2 && x1 <= x2 + w2 && y1 >= y2 && y1 <= y2 + h2 )
+//    {
+//        return true;
+//    }
+//    else
+//    {
+//        return false;
+//    }
+//}
+//
+//class Input
+//{
+//    init()
+//    {
+//        this.right = false;
+//        this.left = true;
+//        this.A = false;
+//        this.D = true;
+//    }
+//}
+//
+//class Paddle
+//{
+//    init()
+//    {
+//        this.w = 40;
+//        this.h = 20;
+//    }
+//}
+//
+//class PaddleA : Paddle
+//{
+//    init()
+//    {
+//        this.x = 50;
+//        this.y = 20;
+//        base.init();
+//    }
+//
+//    update(input)
+//    {
+//
+//        if(input.right)
+//        {
+//            this.x++;
+//        }
+//        else if (input.left)
+//        {
+//            this.x--;
+//        }
+//
+//    }
+//}
+//
+//class PaddleB
+//{
+//    update(input)
+//    {
+//
+//        if(input.D)
+//        {
+//            this.x++;
+//        }
+//        else if (input.A)
+//        {
+//            this.x--;
+//        }
+//
+//    }
+//}
+//
+//class Ball
+//{
+//    init()
+//    {
+//        this.x = 64;
+//        this.y = 64;
+//        this.w = 4;
+//        this.h = 4;
+//        this.vel_x = 1;
+//        this.vel_y = 1;
+//    }
+//
+//    update(padA, padB)
+//    {
+//        if( collide(this.x, this.y, this.w, this.h, padA.x, padA.y, padA.w, padA.h)
+//            || collide(this.x, this.y, this.w, this.h, padB.x, padB.y, padB.w, padB.h)
+//            || x >= canvasWidth || x <= 0 || y >= canvasHeight || y <= 0)
+//        {
+//            this.vel_x = -vel_x;
+//            this.vel_y = -vel_y;
+//        }
+//
+//        this.x += this.vel_x;
+//        this.y += this.vel_y;
+//
+//    }
+//}
+//
+//var paddleA = PaddleA();
+//var paddleB = PaddleB();
+//var ball = Ball();
+//var input = Input();
+//
+//while(true)
+//{
+//    paddleA.update(input);
+//    paddleB.update(input);
+//    ball.update(input);
+//}
