@@ -24,22 +24,14 @@ class Input
     }
 }
 
-class Paddle
+class PaddleA
 {
     init()
     {
         this.w = 40;
         this.h = 20;
-    }
-}
-
-class PaddleA : Paddle
-{
-    init()
-    {
         this.x = 50;
         this.y = 20;
-        base.init();
     }
 
     update(input)
@@ -59,6 +51,14 @@ class PaddleA : Paddle
 
 class PaddleB
 {
+    init()
+    {
+        this.w = 40;
+        this.h = 20;
+        this.x = 50;
+        this.y = 20;
+    }
+
     update(input)
     {
 
@@ -111,5 +111,5 @@ while(true)
 {
     paddleA.update(input);
     paddleB.update(input);
-    ball.update(input);
+    ball.update(paddleA, paddleB);
 }
