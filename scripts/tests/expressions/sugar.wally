@@ -10,3 +10,17 @@ a--;
 print(a);
 
 // Expect: 4
+
+class A
+{
+    init()
+    {
+        this.x = 1;
+        this.x += 1;
+        print(this.x);
+    }
+}
+
+var b = A();
+
+// Expect: 2
