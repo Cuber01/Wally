@@ -1,17 +1,43 @@
-var a = 1;
+class Paddle
+{
+//    init()
+//    {
+//    }
+    ala()
+    {
+        print("Wrong");
+    }
+}
 
-//a++;
-//a += 2;
-//a -= 3;
-//a *= 2;
-//a /= 2;
-a--;
+class PaddleA : Paddle
+{
+//    init()
+//    {
+//        this.x = 50;
+//        base.init();
+//    }
 
-print(a);
+//    update()
+//    {
+//        this.x++;
+//        print(this.x);
+//    }
+
+    ala()
+    {
+        print("Good");
+        base.ala();
+    }
+}
+
+var paddleA = PaddleA();
+paddleA.ala();
+
+
 //var canvasHeight = 128;
 //var canvasWidth = 128;
 //
-//collide(x1, y1, w1, h1, x2, y2, w2, h2)
+//function collide(x1, y1, w1, h1, x2, y2, w2, h2)
 //{
 //    if( x1 >= x2 && x1 <= x2 + w2 && y1 >= y2 && y1 <= y2 + h2 )
 //    {

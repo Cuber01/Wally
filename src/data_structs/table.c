@@ -106,9 +106,10 @@ void tableAddAll(Table* from, Table* to)
 
         if (entry->key != NULL)
         {
-            tableSet(to, entry->key, entry->value);
+            tableDefineEntry(to, entry->key, entry->value);
         }
     }
+
 }
 
 ObjString* tableFindString(Table* table, const char* chars, uint length, uint32_t hash)

@@ -636,6 +636,7 @@ static int run()
                 ObjClass* parent = AS_CLASS(base);
 
                 tableAddAll(&parent->methods,&child->methods);
+
                 child->parent = (struct ObjClass*) parent;
 
                 pop(); // Parent.
