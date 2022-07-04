@@ -2,6 +2,7 @@
 #include "wally_math.h"
 #include "native_utils.h"
 #include "vm.h"
+#include "colors.h"
 
 ObjString* boolStringConst;
 ObjString* nullStringConst;
@@ -22,13 +23,14 @@ NATIVE_FUNCTION(include)
 {
     ObjString* moduleName = AS_STRING(args[0]);
 
-    if(true) //stringEqualToChar(moduleName, "math", 4)
+    if(charsEqual(moduleName->chars, "math", moduleName->length, 4))
     {
         defineMath(&vm.nativeEnvironment->values);
     }
     else
     {
-        // todo error handle
+        colorWriteLine(RED, "Tried to include unknown module '%s'.", moduleName->chars);
+        // TODO better error handling
     }
 
     return NULL_VAL;

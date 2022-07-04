@@ -1,38 +1,21 @@
 class Paddle
 {
-//    init()
-//    {
-//    }
-    ala()
+    init()
     {
-        print("Wrong");
+
     }
 }
 
 class PaddleA : Paddle
 {
-//    init()
-//    {
-//        this.x = 50;
-//        base.init();
-//    }
-
-//    update()
-//    {
-//        this.x++;
-//        print(this.x);
-//    }
-
-    ala()
+    init()
     {
-        print("Good");
-        base.ala();
+        base.init();
     }
+
 }
 
 var paddleA = PaddleA();
-paddleA.ala();
-
 
 //var canvasHeight = 128;
 //var canvasWidth = 128;

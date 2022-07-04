@@ -106,11 +106,9 @@ static inline bool isObjType(Value value, ObjType type)
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
 
-inline bool stringEqualToChar(ObjString* string, char* chars, uint charLength)
+static inline bool charsEqual(char* a, char* b, uint lengthA, uint lengthB)
 {
-    return string->length == charLength &&
-           memcmp(string->chars, chars,
-                  string->length) == 0;
+    return (lengthA == lengthB && strcmp(a, b) == 0);
 }
 
 ObjString* copyString(const char* chars, uint length);

@@ -477,6 +477,13 @@ static int run()
             case OP_GET_BASE:
             {
                 ObjString* name = READ_STRING();
+
+                if(charsEqual(name->chars, "init", name->length, 4))
+                {
+                    runtimeError(line, "Cannot call base initializer.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+
                 Value instanceV = peek(0);
 
                 if(!IS_INSTANCE(instanceV))
