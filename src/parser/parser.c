@@ -695,7 +695,7 @@ static Stmt* switchStatement()
 
 static Stmt* statement()
 {
-    parser.line = parser.previous.line;
+    parser.line = parser.current.line;
 
     if (match(TOKEN_IF))              return ifStatement();
     else if (match(TOKEN_WHILE))      return whileStatement();
