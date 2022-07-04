@@ -17,10 +17,11 @@ class A
     {
         this.x = 1;
         this.x += 1;
+        this.x++;
         print(this.x);
     }
 }
 
 var b = A();
 
-// Expect: 2
+// Expect: 3

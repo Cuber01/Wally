@@ -209,26 +209,60 @@ static Expr* binary(Expr* previous, __attribute__((unused)) bool canAssign)
 
 static Expr* increment(Expr* previous, __attribute__((unused)) bool canAssign)
 {
-    VarExpr* prev = (VarExpr*)previous;
+    if(previous->type == VAR_EXPRESSION)
+    {
+        VarExpr* prev = (VarExpr*)previous;
 
-    return (Expr*)newAssignExpr(prev->name, (Expr*)newBinaryExpr(
+        return (Expr*)newAssignExpr(prev->name, (Expr*)newBinaryExpr(
                                             (Expr*)newVarExpr(prev->name, parser.line),
                                             TOKEN_PLUS,
                                             (Expr*)newLiteralExpr(NUMBER_VAL(1), parser.line),
-                                             parser.line),
-                                parser.line);
+                                            parser.line),
+                                    parser.line);
+    }
+    else if(previous->type == DOT_EXPRESSION)
+    {
+        DotExpr* getPreviousVal = (DotExpr*)previous;
+        Expr* calculateNewVal = (Expr*)newBinaryExpr(previous, TOKEN_PLUS,  (Expr*)newLiteralExpr(NUMBER_VAL(1), parser.line), parser.line);
+        Expr* setNewVal = (Expr*)newDotExpr(getPreviousVal->instance, getPreviousVal->fieldName, calculateNewVal,
+                                            false, NULL, 0, parser.line);
+
+        return setNewVal;
+    }
+    else
+    {
+        printf("Unknown expression");
+        return NULL;
+    }
 }
 
 static Expr* decrement(Expr* previous, __attribute__((unused)) bool canAssign)
 {
-    VarExpr* prev = (VarExpr*)previous;
+    if(previous->type == VAR_EXPRESSION)
+    {
+        VarExpr* prev = (VarExpr*)previous;
 
-    return (Expr*)newAssignExpr(prev->name, (Expr*)newBinaryExpr(
-                                        (Expr*)newVarExpr(prev->name, parser.line),
-                                        TOKEN_MINUS,
-                                        (Expr*)newLiteralExpr(NUMBER_VAL(1), parser.line),
-                                        parser.line),
-                                parser.line);
+        return (Expr*)newAssignExpr(prev->name, (Expr*)newBinaryExpr(
+                                            (Expr*)newVarExpr(prev->name, parser.line),
+                                            TOKEN_MINUS,
+                                            (Expr*)newLiteralExpr(NUMBER_VAL(1), parser.line),
+                                            parser.line),
+                                    parser.line);
+    }
+    else if(previous->type == DOT_EXPRESSION)
+    {
+        DotExpr* getPreviousVal = (DotExpr*)previous;
+        Expr* calculateNewVal = (Expr*)newBinaryExpr(previous, TOKEN_MINUS,  (Expr*)newLiteralExpr(NUMBER_VAL(1), parser.line), parser.line);
+        Expr* setNewVal = (Expr*)newDotExpr(getPreviousVal->instance, getPreviousVal->fieldName, calculateNewVal,
+                                            false, NULL, 0, parser.line);
+
+        return setNewVal;
+    }
+    else
+    {
+        printf("Unknown expression");
+        return NULL;
+    }
 }
 
 

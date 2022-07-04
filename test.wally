@@ -1,6 +1,13 @@
-this.x++;
+var a = 1;
 
+//a++;
+//a += 2;
+//a -= 3;
+//a *= 2;
+//a /= 2;
+a--;
 
+print(a);
 //var canvasHeight = 128;
 //var canvasWidth = 128;
 //
