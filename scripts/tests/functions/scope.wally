@@ -3,7 +3,7 @@ function helloWorld()
     {
         var a = "Not hello >:(";
     }
-    
+
     print(a);
 }
 

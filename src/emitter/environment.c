@@ -13,6 +13,8 @@ Environment* newEnvironment()
     initTable(values);
     newEnv->values = *values;
 
+    newEnv->enclosing = NULL;
+
     return newEnv;
 }
 

@@ -682,7 +682,6 @@ void initVM()
 {
     resetStack();
     initTable(&vm.strings);
-    vm.currentEnvironment = newEnvironment();
     vm.nativeEnvironment = newEnvironment();
     vm.currentClosure = vm.currentEnvironment;
 
@@ -728,6 +727,8 @@ int interpret(const char* source)
 
     ObjFunction* function = emit(statements);
     if (function == NULL) return INTERPRET_COMPILE_ERROR;
+
+    function->closure = NULL;
 
     push(OBJ_VAL(function));
 

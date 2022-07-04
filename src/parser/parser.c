@@ -277,7 +277,22 @@ static Expr* dot(Expr* previous, bool canAssign)
 
     if (match(TOKEN_EQUAL) && canAssign)
     {
-        value = expression();
+        TokenType operator = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
+
+        if(operator == 0)
+        {
+            value = expression();
+        }
+        else
+        {
+            return (Expr*)newAssignExpr(name, (Expr*)newBinaryExpr(
+                                                (Expr*)newDotExpr(previous, name, value, isCall, args, argCount, parser.line),
+                                                operator,
+                                                expression(),
+                                                parser.line),
+                                        parser.line);
+        }
+
     }
     else if (match(TOKEN_LEFT_PAREN))
     {

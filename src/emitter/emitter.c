@@ -424,8 +424,6 @@ static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
               stmt->paramCount,
                           type);
 
-    emitByte(OP_SCOPE_START, line);
-
     // Params
     ObjString** params = stmt->params;
     int paramCount = stmt->paramCount - 1;
@@ -444,8 +442,6 @@ static void compileFunction(FunctionStmt* stmt, bool isMethod, uint16_t line)
         compileStatement(AS_STATEMENT(body));
         body = body->next;
     }
-
-    emitByte(OP_SCOPE_END, line); // todo remove?
 
     ObjFunction* function = endCompiler(true, line);
 
