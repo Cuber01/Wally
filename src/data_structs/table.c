@@ -78,12 +78,14 @@ static void adjustCapacity(Table* table, int capacity)
         keys[i] = NULL;
     }
 
+    uint keyIndex = 0;
     for (int i = 0; i < table->capacity; i++)
     {
         Entry* entry = &table->entries[i];
         if (entry->key == NULL) continue;
 
-        keys[i] = entry->key;
+        keys[keyIndex] = entry->key;
+        keyIndex++;
 
         Entry* dest = findEntry(entries, capacity, entry->key);
         dest->key = entry->key;

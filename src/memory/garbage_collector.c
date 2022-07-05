@@ -77,7 +77,7 @@ static void markRoots()
 
     for (Value* slot = vm.stack; slot < vm.stackTop; slot++)
     {
-        // markValue(*slot); //todo try to remove
+        markValue(*slot); //todo try to remove
     }
 
     if(vm.currentEnvironment != NULL)

@@ -90,7 +90,8 @@ class Ball
     {
         if( collide(this.x, this.y, this.w, this.h, padA.x, padA.y, padA.w, padA.h)
             || collide(this.x, this.y, this.w, this.h, padB.x, padB.y, padB.w, padB.h)
-            || x >= canvasWidth || x <= 0 || y >= canvasHeight || y <= 0)
+            || this.x >= canvasWidth || this.x <= 0 ||
+            this.y >= canvasHeight || this.y <= 0)
         {
             this.vel_x = -vel_x;
             this.vel_y = -vel_y;
