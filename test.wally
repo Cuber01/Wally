@@ -1,7 +1,3 @@
-class Input {}
-class PaddleA {}
-class PaddleB {}
-class Ball {}
-class Inat {}
-class PadeA {}
-class Pad {}
+include("math");
+
+print(math.abs(-1.2));

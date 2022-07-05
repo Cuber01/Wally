@@ -93,8 +93,8 @@ class Ball
             || this.x >= canvasWidth || this.x <= 0 ||
             this.y >= canvasHeight || this.y <= 0)
         {
-            this.vel_x = -vel_x;
-            this.vel_y = -vel_y;
+            this.vel_x = -this.vel_x;
+            this.vel_y = -this.vel_y;
         }
 
         this.x += this.vel_x;

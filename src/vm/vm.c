@@ -249,6 +249,7 @@ static bool invoke(ObjString* name, int argCount, uint16_t line)
         return false;
     }
 
+
     return invokeFromClass(AS_INSTANCE(receiver), name, argCount, line);
 }
 
@@ -470,6 +471,14 @@ static int run()
                 {
                     return INTERPRET_RUNTIME_ERROR;
                 }
+
+                /* This is kind of ugly but that's the best way I could do this.
+                   What it does is that it pops the return value of a method, then pops the instance from which it has been called from,
+                   and then it pushes back the return value. If not this, the instance would be left on the stack.
+                */
+                Value returnValue = pop();
+                pop();
+                push(returnValue);
 
                 break;
             }
