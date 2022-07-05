@@ -1,11 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include "vm.h"
-#include "preprocessor.h"
-#include "memory.h"
 
 static char* readFile(const char* path)
 {

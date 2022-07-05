@@ -1,7 +1,4 @@
-
 #include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "memory.h"
 #include "object.h"
@@ -22,10 +19,8 @@ void initTable(Table* table)
 void freeTable(Table* table)
 {
     FREE_ARRAY(Entry, table->entries, table->capacity);
-    table->count = 0;
-    table->capacity = 0;
-    table->entries = NULL;
-    table->keys = NULL;
+    FREE_ARRAY(Entry, table->keys, table->capacity);
+    FREE(Table, table);
 }
 
 static Entry* findEntry(Entry* entries, int capacity, ObjString* key)

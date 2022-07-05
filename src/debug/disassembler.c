@@ -2,7 +2,6 @@
 
 #include "disassembler.h"
 #include "colors.h"
-#include "object.h"
 
 void disassembleChunk(Chunk* chunk, const char* name)
 {

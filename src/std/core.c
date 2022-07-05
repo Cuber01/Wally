@@ -25,7 +25,7 @@ NATIVE_FUNCTION(include)
 
     if(charsEqual(moduleName->chars, "math", moduleName->length, 4))
     {
-        defineMath(&vm.nativeEnvironment->values);
+        defineMath(vm.nativeEnvironment->values);
     }
     else
     {

@@ -576,6 +576,7 @@ static int run()
             case OP_SCOPE_END:
             {
                 Environment* old = vm.currentEnvironment;
+
                 vm.currentEnvironment = vm.currentEnvironment->enclosing;
                 freeEnvironment(old);
                 break;
@@ -715,7 +716,7 @@ void initVM()
     vm.thisString = NULL;
     vm.thisString = copyString("this", 4);
 
-    defineCore(&vm.nativeEnvironment->values);
+    defineCore(vm.nativeEnvironment->values);
 
     vm.objects = NULL;
 }

@@ -11,7 +11,7 @@ Environment* newEnvironment()
 
     Table* values = reallocate(NULL, 0, sizeof(Table));
     initTable(values);
-    newEnv->values = *values;
+    newEnv->values = values;
 
     newEnv->enclosing = NULL;
 
@@ -20,7 +20,7 @@ Environment* newEnvironment()
 
 bool environmentDefine(Environment* env, ObjString* name, Value value, uint16_t line)
 {
-    uint8_t success = tableDefineEntry(&env->values, name, value);
+    uint8_t success = tableDefineEntry(env->values, name, value);
 
     if(success != TABLE_SUCCESS)
     {
@@ -33,7 +33,7 @@ bool environmentDefine(Environment* env, ObjString* name, Value value, uint16_t 
 
 bool environmentSet(Environment* env, ObjString* name, Value value, uint16_t line)
 {
-    uint8_t success = tableSetExistingEntry(&env->values, name, value);
+    uint8_t success = tableSetExistingEntry(env->values, name, value);
     if(success != TABLE_SUCCESS)
     {
         if(env->enclosing != NULL)
@@ -59,7 +59,7 @@ bool environmentSet(Environment* env, ObjString* name, Value value, uint16_t lin
 
 bool environmentGet(Environment* env, ObjString* name, Value* result)
 {
-    bool success = tableGet(&env->values, name, result);
+    bool success = tableGet(env->values, name, result);
     if(!success)
     {
         if(env->enclosing != NULL)
@@ -77,14 +77,14 @@ void printVariables(Environment* env)
 {
      while(env != NULL)
      {
-         Table table = env->values;
+         Table* table = env->values;
 
-         for(uint i = 0; i < table.count; i++)
+         for(uint i = 0; i < table->count; i++)
          {
-             ObjString* key = table.keys[i];
+             ObjString* key = table->keys[i];
 
              Value value;
-             tableGet(&table, key, &value);
+             tableGet(table, key, &value);
 
              printf("%s: ", key->chars);
              printRawValue(value);
@@ -97,7 +97,7 @@ void printVariables(Environment* env)
 
 void markEnvironment(Environment* env)
 {
-    markTable(&env->values);
+    markTable(env->values);
 
     if(env->enclosing != NULL)
     {
@@ -112,12 +112,17 @@ void freeEnvironmentsRecursively(Environment* env)
         freeEnvironmentsRecursively(env->enclosing);
     }
 
-    FREE_ARRAY(Entry, env->values.entries, env->values.capacity);
+
+    freeTable(env->values);
     FREE(Environment, env);
 }
 
 void freeEnvironment(Environment* env)
 {
-    FREE_ARRAY(Entry, env->values.entries, env->values.capacity);
+    freeTable(env->values);
     FREE(Environment, env);
 }
+
+
+//    FREE_ARRAY(Entry, env->values.entries, env->values.capacity);
+//    FREE_ARRAY(Entry, env->values.keys, env->values.capacity);
