@@ -6,6 +6,7 @@
 #include "table.h"
 #include "value.h"
 #include "vm.h"
+#include "emitter.h"
 
 static Obj* allocateObject(size_t size, ObjType type)
 {
@@ -33,12 +34,13 @@ ObjBoundMethod* newBoundMethod(ObjInstance* instance, ObjFunction* method)
     return bound;
 }
 
-ObjFunction* newFunction()
+ObjFunction* newFunction(ObjString* name, uint8_t arity, FunctionType type)
 {
     ObjFunction* function = ALLOCATE_OBJ(ObjFunction, OBJ_FUNCTION);
 
-    function->arity = 0;
-    function->name = NULL;
+    function->arity = arity;
+    function->name = name;
+    function->type = type;
     function->calledFromFunction = NULL;
     function->calledFromIp = NULL;
     function->calledFromEnvironment = NULL;
@@ -176,6 +178,9 @@ char* objectTypeToChar(ObjType type)
         case OBJ_FUNCTION: return "OBJ_FUNCTION";
         case OBJ_NATIVE: return "OBJ_NATIVE";
         case OBJ_STRING: return "OBJ_STRING";
+        case OBJ_CLASS: return "OBJ_CLASS";
+        case OBJ_INSTANCE: return "OBJ_INSTANCE";
+        case OBJ_BOUND_METHOD: return "OBJ_BOUND_METHOD";
 
         default: return "UNREACHABLE REACHED";
     }

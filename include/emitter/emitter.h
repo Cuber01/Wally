@@ -1,8 +1,12 @@
 #include "list.h"
 #include "environment.h"
+#include "object.h"
 
 #ifndef WALLY_EMITTER_H
 #define WALLY_EMITTER_H
+
+typedef struct ObjFunction ObjFunction;
+typedef struct Node Node;
 
 typedef enum
 {
@@ -14,7 +18,6 @@ typedef enum
 
 typedef struct {
     ObjFunction* function;
-    FunctionType type;
 
     struct Compiler* enclosing;
 } Compiler;

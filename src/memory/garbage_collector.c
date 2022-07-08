@@ -77,7 +77,7 @@ static void markRoots()
 
     for (Value* slot = vm.stack; slot < vm.stackTop; slot++)
     {
-        markValue(*slot); //todo try to remove
+        markValue(*slot);
     }
 
     if(vm.currentEnvironment != NULL)
@@ -104,7 +104,8 @@ static void blackenObject(Obj* object)
         case OBJ_NATIVE:
         case OBJ_STRING: break;
 
-        case OBJ_BOUND_METHOD: {
+        case OBJ_BOUND_METHOD:
+        {
             ObjBoundMethod* bound = (ObjBoundMethod*)object;
             markObject((Obj*)bound->instance);
             markObject((Obj*)bound->method);
@@ -129,7 +130,6 @@ static void blackenObject(Obj* object)
 
         case OBJ_FUNCTION:
         {
-            // todo do something with environment (current environment and its branches are marked already though) and MAYBE calledFromFunction (yeah no?)
             ObjFunction* function = (ObjFunction*)object;
             markObject((Obj*)function->name);
             markArray(&function->chunk.constants);

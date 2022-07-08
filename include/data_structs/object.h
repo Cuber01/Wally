@@ -5,6 +5,7 @@
 #include "value.h"
 #include "chunk.h"
 #include "environment.h"
+#include "emitter.h"
 
 // Objects are kept on the heap, and we just keep a pointer to them in Value.
 // This allows us to make objects as big, or as small, as we want (in theory).
@@ -79,9 +80,10 @@ typedef struct {
 typedef struct ObjFunction {
     Obj obj;
 
-    int arity;
+    uint8_t arity;
     Chunk chunk;
     ObjString* name;
+    FunctionType type;
 
     Environment* closure;
 
@@ -118,7 +120,7 @@ void printObject(Value value);
 ObjString* objectToString(Value value);
 
 ObjNative* newNative(NativeFn function);
-ObjFunction* newFunction();
+ObjFunction* newFunction(ObjString* name, uint8_t arity, FunctionType type);
 ObjClass* newClass(ObjString* name);
 ObjInstance* newInstance(ObjClass* klass);
 ObjBoundMethod* newBoundMethod(ObjInstance* instance, ObjFunction* method);

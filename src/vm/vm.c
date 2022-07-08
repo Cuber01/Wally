@@ -210,7 +210,6 @@ static bool bindMethod(ObjClass* klass, ObjInstance* instance, ObjString* name, 
     }
 
     ObjBoundMethod* bound = newBoundMethod(instance, AS_FUNCTION(method));
-    pop();
     push(OBJ_VAL(bound));
     return true;
 }
@@ -472,14 +471,6 @@ static int run()
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
-                /* This is kind of ugly but that's the best way I could do this.
-                   What it does is that it pops the return value of a method, then pops the instance from which it has been called from,
-                   and then it pushes back the return value. If not this, the instance would be left on the stack.
-                */
-                Value returnValue = pop();
-                pop();
-                push(returnValue);
-
                 break;
             }
 
@@ -503,6 +494,7 @@ static int run()
 
                 ObjInstance* instance = AS_INSTANCE(instanceV);
                 ObjClass* base = (ObjClass*) instance->klass->parent;
+                push(OBJ_VAL(base)); // Just to feed the pops and returns
 
                 if(base == NULL)
                 {
@@ -675,6 +667,11 @@ static int run()
                     return INTERPRET_OK;
                 }
 
+                if(oldFunction->type == TYPE_METHOD)
+                {
+                    pop(); // Instance.
+                }
+
                 vm.currentFunction = oldFunction->calledFromFunction;
                 vm.ip = oldFunction->calledFromIp;
                 vm.currentEnvironment = oldFunction->calledFromEnvironment;
@@ -748,8 +745,6 @@ int interpret(const char* source)
     if (function == NULL) return INTERPRET_COMPILE_ERROR;
 
     function->closure = NULL;
-
-    push(OBJ_VAL(function));
 
     call(function, NULL, 0, 0);
 

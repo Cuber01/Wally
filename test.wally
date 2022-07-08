@@ -1,3 +1,20 @@
-include("math");
+class Parent
+{
+    parentStuff()
+    {
+        print("Parent");
+    }
+}
 
-print(math.abs(-1.2));
+class Child : Parent
+{
+    childStuff()
+    {
+        base.parentStuff();
+    }
+}
+
+
+
+var person = Child();
+person.childStuff();

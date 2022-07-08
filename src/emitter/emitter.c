@@ -4,7 +4,6 @@
 #include "emitter.h"
 #include "chunk.h"
 #include "list.h"
-#include "memory.h"
 #include "garbage_collector.h"
 #include "array.h"
 
@@ -119,7 +118,7 @@ static void emitReturn(uint16_t line)
 }
 
 // endregion
-static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t functionArity, FunctionType type);
+static void initCompiler(Compiler* compiler, ObjString* fooName, uint16_t fooArity, FunctionType type);
 static ObjFunction* endCompiler(bool emitNull, uint16_t line);
 
 static void compileExpression(Expr* expression)
@@ -628,12 +627,12 @@ static uint16_t compileStatement(Stmt* statement)
 
         case RETURN_STATEMENT:
         {
-            if (current->type == TYPE_SCRIPT)
+            if (current->function->type == TYPE_SCRIPT)
             {
                 error("Can't return from top-level code.", line);
             }
 
-            if (current->type == TYPE_INITIALIZER)
+            if (current->function->type == TYPE_INITIALIZER)
             {
                 error("Can't return custom values from initializer. It always returns the instance of your class.", line);
             }
@@ -695,28 +694,27 @@ static void freeEmitter()
     freeUInts(breaks);
 }
 
-static void initCompiler(Compiler* compiler, ObjString* functionName, uint16_t functionArity, FunctionType type)
+static void initCompiler(Compiler* compiler, ObjString* fooName, uint16_t fooArity, FunctionType type)
 {
     compiler->enclosing = (struct Compiler*) current;
     compiler->function = NULL;
-    compiler->type = type;
 
     current = compiler;
 
-    compiler->function = newFunction();
-    compiler->function->arity = functionArity;
-
-    if(functionName != NULL)
-    {
-        current->function->name = copyString(functionName->chars,
-                                             functionName->length);
-    }
+    compiler->function = newFunction(fooName, fooArity, type);
+//    compiler->function->arity = functionArity;
+//
+//    if(functionName != NULL)
+//    {
+//        current->function->name = copyString(functionName->chars,
+//                                             functionName->length);
+//    }
 }
 
 static ObjFunction* endCompiler(bool emitNull, uint16_t line)
 {
     // We emit null if user didn't return anything else via the return statement
-    if(current->type != TYPE_INITIALIZER && emitNull)
+    if(current->function->type != TYPE_INITIALIZER && emitNull)
     {
         emitByte(OP_NULL, line);
     }
