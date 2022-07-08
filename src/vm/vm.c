@@ -308,6 +308,7 @@ static int run()
             {
                 Value constant = READ_CONSTANT();
                 push(constant);
+                collectGarbage();
                 break;
             }
 

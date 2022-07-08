@@ -134,6 +134,12 @@ static void blackenObject(Obj* object)
             ObjFunction* function = (ObjFunction*)object;
             markObject((Obj*)function->name);
             markArray(&function->chunk.constants);
+
+            if(function->calledFromFunction != NULL)
+            {
+                markObject((Obj*)function->calledFromFunction);
+            }
+
             break;
         }
     }
