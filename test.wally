@@ -1,20 +1,11 @@
-class Parent
+
+
+"Hello World";
+
+function boo()
 {
-    parentStuff()
-    {
-        print("Parent");
-    }
+    "Goodbye World";
+
 }
 
-class Child : Parent
-{
-    childStuff()
-    {
-        base.parentStuff();
-    }
-}
-
-
-
-var person = Child();
-person.childStuff();
+boo();
