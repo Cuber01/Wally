@@ -12,7 +12,7 @@ Preprocessor preprocessor;
 
 void initPreprocessor(char* source)
 {
-    preprocessor.defines = reallocate(preprocessor.defines, 0, sizeof(Table)); // todo zamiast edytować source directly przepisuj chary które pasują
+    preprocessor.defines = ALLOCATE_TABLE(); // todo zamiast edytować source directly przepisuj chary które pasują
     initTable(preprocessor.defines);
 
     preprocessor.start = source;

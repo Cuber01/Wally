@@ -9,6 +9,9 @@
 #define TABLE_ERROR_FUNCTION_SET 2
 #define TABLE_ERROR_UNDEFINED_SET 3
 
+#define ALLOCATE_TABLE() \
+    reallocate(NULL, 0, sizeof(Table))
+
 typedef struct {
     ObjString* key;
     Value value;

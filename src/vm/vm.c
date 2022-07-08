@@ -66,7 +66,7 @@ static void defineMethod()
     vm.currentClosure = vm.currentEnvironment;
     method->closure = vm.currentClosure;
 
-    tableSet(&klass->methods, method->name, OBJ_VAL(method));
+    tableSet(klass->methods, method->name, OBJ_VAL(method));
 }
 
 static bool isFalsey(Value value)
@@ -169,7 +169,7 @@ static bool callValue(Value callee, uint8_t argCount, uint16_t line)
                 push(OBJ_VAL(newInstance(klass)));
 
                 Value initializer;
-                if (tableGet(&klass->methods, vm.initString,&initializer))
+                if (tableGet(klass->methods, vm.initString,&initializer))
                 {
                     ObjFunction* init = AS_FUNCTION(initializer);
 
@@ -203,7 +203,7 @@ static bool bindMethod(ObjClass* klass, ObjInstance* instance, ObjString* name, 
 {
     Value method;
 
-    if (!tableGet(&klass->methods, name, &method))
+    if (!tableGet(klass->methods, name, &method))
     {
         runtimeError(line, "Undefined property '%s'.", name->chars);
         return false;
@@ -218,7 +218,7 @@ static bool bindMethod(ObjClass* klass, ObjInstance* instance, ObjString* name, 
 static bool invokeFromClass(ObjInstance* instance, ObjString* name, uint8_t argCount, uint16_t line)
 {
     Value method;
-    if (!tableGet(&instance->klass->methods, name, &method))
+    if (!tableGet(instance->klass->methods, name, &method))
     {
         runtimeError(line, "Undefined property '%s'.", name->chars);
         return false;
@@ -530,7 +530,7 @@ static int run()
 
                 Value value;
 
-                if (!tableGet(&instance->fields, name, &value))
+                if (!tableGet(instance->fields, name, &value))
                 {
                     if (!bindMethod(instance->klass, instance, name, line))
                     {
@@ -559,7 +559,7 @@ static int run()
 
                 ObjInstance* instance = AS_INSTANCE(instanceVal);
 
-                tableSet(&instance->fields, fieldName, initializer);
+                tableSet(instance->fields, fieldName, initializer);
                 push(initializer);
                 break;
             }
@@ -652,7 +652,7 @@ static int run()
                 // Just for convenience.
                 ObjClass* parent = AS_CLASS(base);
 
-                tableAddAll(&parent->methods,&child->methods);
+                tableAddAll(parent->methods,child->methods);
 
                 child->parent = (struct ObjClass*) parent;
 
@@ -699,7 +699,7 @@ static int run()
 void initVM()
 {
     resetStack();
-    vm.strings = reallocate(NULL, 0, sizeof(Table));
+    vm.strings = ALLOCATE_TABLE();
     initTable(vm.strings);
     vm.nativeEnvironment = newEnvironment();
     vm.currentClosure = vm.currentEnvironment;

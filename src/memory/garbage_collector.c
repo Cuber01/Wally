@@ -115,7 +115,7 @@ static void blackenObject(Obj* object)
         {
             ObjClass* klass = (ObjClass*)object;
             markObject((Obj*)klass->name);
-            markTable(&klass->methods);
+            markTable(klass->methods);
             break;
         }
 
@@ -123,7 +123,7 @@ static void blackenObject(Obj* object)
         {
             ObjInstance* instance = (ObjInstance*)object;
             markObject((Obj*)instance->klass);
-            markTable(&instance->fields);
+            markTable(instance->fields);
             break;
         }
 

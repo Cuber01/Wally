@@ -82,7 +82,7 @@ void freeObject(Obj* object)
         case OBJ_CLASS:
         {
             ObjClass* klass = (ObjClass*)object;
-            freeTable(&klass->methods);
+            freeTable(klass->methods);
             FREE(ObjClass, object);
             break;
         }
@@ -90,7 +90,7 @@ void freeObject(Obj* object)
         case OBJ_INSTANCE:
         {
             ObjInstance* instance = (ObjInstance*)object;
-            freeTable(&instance->fields);
+            freeTable(instance->fields);
 
             FREE(ObjInstance, object);
             break;

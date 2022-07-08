@@ -52,7 +52,8 @@ ObjClass* newClass(ObjString* name)
 {
     ObjClass* klass = ALLOCATE_OBJ(ObjClass, OBJ_CLASS);
     klass->name = name;
-    initTable(&klass->methods);
+    klass->methods = ALLOCATE_TABLE();
+    initTable(klass->methods);
     return klass;
 }
 
@@ -60,7 +61,8 @@ ObjInstance* newInstance(ObjClass* klass)
 {
     ObjInstance* instance = ALLOCATE_OBJ(ObjInstance, OBJ_INSTANCE);
     instance->klass = klass;
-    initTable(&instance->fields);
+    instance->fields = ALLOCATE_TABLE();
+    initTable(instance->fields);
 
     return instance;
 }

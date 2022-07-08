@@ -65,7 +65,7 @@ struct ObjString {
 typedef struct {
     Obj obj;
     ObjString* name;
-    Table methods;
+    Table* methods;
 
     struct ObjClass* parent;
 } ObjClass;
@@ -73,7 +73,7 @@ typedef struct {
 typedef struct {
     Obj obj;
     ObjClass* klass;
-    Table fields;
+    Table* fields;
 } ObjInstance;
 
 typedef struct ObjFunction {
