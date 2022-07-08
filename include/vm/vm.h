@@ -34,7 +34,7 @@ typedef struct
     Value stack[STACK_MAX];
     Value* stackTop; // Points towards where the next pushed value will go, a.k.a. an empty place in the stack array.
 
-    Table strings;
+    Table* strings;
     Obj* objects;
 
     // -- Garbage Collector --

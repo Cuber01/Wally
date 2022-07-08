@@ -81,7 +81,7 @@ static ObjString* allocateString(char* chars, uint length, uint32_t hash)
     string->hash = hash;
 
     push(OBJ_VAL(string));
-    tableSet(&vm.strings, string, NULL_VAL);
+    tableSet(vm.strings, string, NULL_VAL);
     pop();
 
     return string;
@@ -113,7 +113,7 @@ ObjString* copyString(const char* chars, uint length)
     uint32_t hash = hashString(chars, length);
 
     // If the string was already interned, just return it
-    ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
+    ObjString* interned = tableFindString(vm.strings, chars, length, hash);
     if (interned != NULL) return interned;
 
     // Allocate memory and then copy over the chars

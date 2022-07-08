@@ -699,7 +699,8 @@ static int run()
 void initVM()
 {
     resetStack();
-    initTable(&vm.strings);
+    vm.strings = reallocate(NULL, 0, sizeof(Table));
+    initTable(vm.strings);
     vm.nativeEnvironment = newEnvironment();
     vm.currentClosure = vm.currentEnvironment;
 
@@ -728,7 +729,7 @@ void freeVM()
 
     freeEnvironmentsRecursively(vm.currentEnvironment);
     freeEnvironment(vm.nativeEnvironment);
-    freeTable(&vm.strings);
+    freeTable(vm.strings);
     freeObjects();
 }
 

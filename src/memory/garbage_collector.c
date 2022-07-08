@@ -191,7 +191,7 @@ void collectGarbage()
     markRoots(); // Mark objects as gray
     traceReferences(); // Mark gray objects as black
 
-    tableRemoveWhite(&vm.strings); // Remove white objects from the string table
+    tableRemoveWhite(vm.strings); // Remove white objects from the string table
     sweep(); // Remove remaining whites
 
     vm.nextGC = vm.bytesAllocated * GC_HEAP_GROW_FACTOR;

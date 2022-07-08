@@ -8,6 +8,7 @@
 
 #define TABLE_MAX_LOAD 0.75
 
+// This function does not allocate memory! Make sure to allocate it yourself before initialization!
 void initTable(Table* table)
 {
     table->count = 0;
