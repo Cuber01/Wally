@@ -1,6 +1,3 @@
-class A
-{
+include("math");
 
-}
-
-var b = A();
+print(math.abs(-1.2));

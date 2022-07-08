@@ -97,7 +97,7 @@ void defineMath(Table* table)
 {
     ObjClass* math = newClass(copyString("math", 4));
 
-    #define DEFINE_MATH_METHOD(name, method) defineNativeFunction(&math->methods, name, method)
+    #define DEFINE_MATH_METHOD(name, method) defineNativeFunction(math->methods, name, method)
 
     DEFINE_MATH_METHOD("abs",   absNative);
     DEFINE_MATH_METHOD("round", roundNative);
