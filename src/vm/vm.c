@@ -127,10 +127,10 @@ static bool call(ObjFunction* function, ObjInstance* thisValue, uint16_t argCoun
     return true;
 }
 
-static void callNative(Value callee, uint8_t argCount)
+static void callNative(Value callee, uint16_t line, uint8_t argCount)
 {
     NativeFn native = AS_NATIVE(callee);
-    Value result = native(argCount, vm.stackTop - argCount);
+    Value result = native(argCount, line, vm.stackTop - argCount);
     pop();
     push(result);
 }
@@ -185,7 +185,7 @@ static bool callValue(Value callee, uint8_t argCount, uint16_t line)
 
             case OBJ_NATIVE:
             {
-                callNative(callee, argCount);
+                callNative(callee, line, argCount);
                 return true;
             }
 
@@ -225,7 +225,7 @@ static bool invokeFromClass(ObjInstance* instance, ObjString* name, uint8_t argC
 
     if(IS_NATIVE(method))
     {
-        callNative(method, argCount);
+        callNative(method, line, argCount);
         return true;
     }
 

@@ -1,11 +1,3 @@
+include("math");
 
-
-"Hello World";
-
-function boo()
-{
-    "Goodbye World";
-
-}
-
-boo();
+print(math.abs(-1, "STR"));

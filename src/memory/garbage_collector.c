@@ -89,6 +89,8 @@ static void markRoots()
     markObject((Obj*)vm.initString);
     markObject((Obj*)vm.thisString);
 
+    markEnvironment(vm.nativeEnvironment);
+
     markCompilerRoots();
 }
 

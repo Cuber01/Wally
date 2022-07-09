@@ -38,6 +38,6 @@ add_executable(Wally src/main.c
                      src/data_structs/array.c
                      src/preprocessor/preprocessor.c
                      src/std/native_utils.c
-                     src/std/wally_math.c)
+                     src/std/wally_math.c src/std/wally_os.c include/std/wally_os.h)
 
 target_link_libraries(Wally m)
