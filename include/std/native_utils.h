@@ -3,7 +3,7 @@
 
 #include "object.h"
 
-#define NATIVE_FUNCTION(name) static Value name##Native(uint8_t argCount, uint16_t line, Value* args)
+#define NATIVE_FUNCTION(name) static Value name##Native(uint8_t argCount, uint16_t line, const Value* args)
 #define CHECK_ARG_COUNT(name, expected) checkArgCount(name, line, expected, argCount)
 
 void defineNativeFunction(Table* table, const char* name, NativeFn function);
