@@ -140,10 +140,14 @@ void defineMath(Table* table)
 
     #undef DEFINE_MATH_METHOD
 
+    ObjInstance* instance = newInstance(math);
+    tableDefineEntry(instance->fields, copyString("pi", 2),
+                     NUMBER_VAL(M_PI));
+
     tableDefineEntry(
             table,
             math->name,
-            OBJ_VAL((Obj*)newInstance(math))
+            OBJ_VAL(instance)
     );
 
 }

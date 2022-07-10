@@ -11,7 +11,6 @@
 #ifdef WIN32
 #include <io.h>
 #define F_OK 0
-#define access _access
 #define strcasecmp stricmp
 #endif
 
@@ -241,10 +240,22 @@ void defineOS(Table* table)
 
     #undef DEFINE_OS_METHOD
 
+    char pathSeparator;
+
+    #ifdef WIN32
+    pathSeparator = '\';
+    #else
+    pathSeparator = '/';
+    #endif
+
+    ObjInstance* instance = newInstance(os);
+    tableDefineEntry(instance->fields, copyString("pathSeparator", 13),
+                     OBJ_VAL(copyString(&pathSeparator, 1)));
+
     tableDefineEntry(
             table,
             os->name,
-            OBJ_VAL((Obj*)newInstance(os))
+            OBJ_VAL(instance)
     );
 
 }
