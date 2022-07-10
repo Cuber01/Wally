@@ -140,7 +140,6 @@ void defineMath(Table* table)
 
     #undef DEFINE_MATH_METHOD
 
-    //defineNativeClass(table, math);
     tableDefineEntry(
             table,
             math->name,

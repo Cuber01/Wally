@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <time.h>
+
 #include "value.h"
 #include "native_utils.h"
 
@@ -136,22 +137,21 @@ NATIVE_FUNCTION(directoryExists)
         closedir(dir);
         return TRUE_VAL;
     }
-    else if (ENOENT == errno)
+    else
     {
         return FALSE_VAL;
     }
-    else
-    {
-        nativeError(line, "directoryExists", "opendir() failure.");
-        return NULL_VAL;
-    }
+
 }
 
 NATIVE_FUNCTION(fileExists)
 {
     CHECK_ARG_COUNT("fileExists", 1);
 
-    if (access(AS_CSTRING(args[0]), F_OK) == 0)
+    struct stat path_stat;
+    stat(AS_CSTRING(args[0]), &path_stat);
+
+    if(S_ISREG(path_stat.st_mode))
     {
         return TRUE_VAL;
     }
@@ -159,6 +159,7 @@ NATIVE_FUNCTION(fileExists)
     {
         return FALSE_VAL;
     }
+
 }
 
 NATIVE_FUNCTION(inputString)
@@ -212,8 +213,38 @@ NATIVE_FUNCTION(getDate)
     time_t t = time(NULL);
     struct tm* timeData = localtime(&t);
 
-    char* str;
+    char str[64];
     strftime(str, sizeof(str), "%c", timeData);
 
     return OBJ_VAL(copyString(str, strlen(str)));
 }
+
+void defineOS(Table* table)
+{
+    ObjClass* os = newClass(copyString("os", 2));
+
+    #define DEFINE_OS_METHOD(name, method) defineNativeFunction(os->methods, name, method)
+
+    DEFINE_OS_METHOD("getDate",         getDateNative);
+    DEFINE_OS_METHOD("inputYesNo",      inputYesNoNative);
+    DEFINE_OS_METHOD("inputNumber",     inputNumberNative);
+    DEFINE_OS_METHOD("inputString",     inputStringNative);
+    DEFINE_OS_METHOD("fileExists",      fileExistsNative);
+    DEFINE_OS_METHOD("directoryExists", directoryExistsNative);
+    DEFINE_OS_METHOD("directoryRemove", directoryRemoveNative);
+    DEFINE_OS_METHOD("directoryCreate", directoryCreateNative);
+    DEFINE_OS_METHOD("fileRemove",      fileRemoveNative);
+    DEFINE_OS_METHOD("fileCreate",      fileCreateNative);
+    DEFINE_OS_METHOD("fileWrite",       fileWriteNative);
+    DEFINE_OS_METHOD("fileRead",        fileReadNative);
+
+    #undef DEFINE_OS_METHOD
+
+    tableDefineEntry(
+            table,
+            os->name,
+            OBJ_VAL((Obj*)newInstance(os))
+    );
+
+}
+

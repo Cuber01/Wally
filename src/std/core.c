@@ -3,6 +3,7 @@
 #include "native_utils.h"
 #include "vm.h"
 #include "colors.h"
+#include "wally_os.h"
 
 ObjString* boolStringConst;
 ObjString* nullStringConst;
@@ -27,10 +28,9 @@ NATIVE_FUNCTION(include)
     {
         defineMath(vm.nativeEnvironment->values);
     }
-    else
+    else if (charsEqual(moduleName->chars, "os", moduleName->length, 2))
     {
-        colorWriteLine(RED, "Tried to include unknown module '%s'.", moduleName->chars);
-        // TODO better error handling
+        defineOS(vm.nativeEnvironment->values);
     }
 
     return NULL_VAL;
