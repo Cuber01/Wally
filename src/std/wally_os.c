@@ -164,48 +164,50 @@ NATIVE_FUNCTION(fileExists)
 
 NATIVE_FUNCTION(inputString)
 {
-    CHECK_ARG_COUNT("inputString", 0);
+    CHECK_ARG_COUNT("inputString", 1);
 
-    char* str;
+    int bufferLength = (int)AS_NUMBER(args[0]);
 
-    scanf("%s", &str);
+    char buffer[bufferLength];
 
-    return OBJ_VAL(copyString(str, strlen(str)));
-}
+    if (fgets(buffer, bufferLength, stdin) != NULL)
+    {
+        return OBJ_VAL(copyString(buffer, strlen(buffer)));
+    }
+    else
+    {
+        return NULL_VAL;
+    }
 
-NATIVE_FUNCTION(inputNumber)
-{
-    CHECK_ARG_COUNT("inputNumber", 0);
-
-    double num;
-
-    scanf("%g", &num);
-
-    return AS_NUMBER(num);
 }
 
 NATIVE_FUNCTION(inputYesNo)
 {
     CHECK_ARG_COUNT("inputYesNo", 0);
 
-    char* str;
+    char str[4];
 
-    scanf("%s", &str);
+    if (fgets(str, 4, stdin) != NULL)
+    {
+        if(strcasecmp(str, "yes") == 0 ||
+           (strlen(str) == 2 && (str[0] == 'Y' || str[0] == 'y')))
+        {
+            return TRUE_VAL;
+        }
+        // For whatever reason I had to add \n here, but not in yes
+        else if(strcasecmp(str, "no\n") == 0 ||
+                (strlen(str) == 2 && (str[0] == 'N' || str[0] == 'n')))
+        {
+            return FALSE_VAL;
+        }
+        else
+        {
+            return NULL_VAL;
+        }
+    }
 
-    if(strcasecmp(str, "yes") == 0 ||
-    (strlen(str) == 1 && (str[0] == 'Y' || str[0] == 'y')))
-    {
-        return TRUE_VAL;
-    }
-    else if(strcasecmp(str, "no") == 0 ||
-    (strlen(str) == 1 && (str[0] == 'N' || str[0] == 'n')))
-    {
-        return FALSE_VAL;
-    }
-    else
-    {
-        return NULL_VAL;
-    }
+    return NULL_VAL;
+
 }
 
 NATIVE_FUNCTION(getDate)
@@ -227,7 +229,6 @@ void defineOS(Table* table)
 
     DEFINE_OS_METHOD("getDate",         getDateNative);
     DEFINE_OS_METHOD("inputYesNo",      inputYesNoNative);
-    DEFINE_OS_METHOD("inputNumber",     inputNumberNative);
     DEFINE_OS_METHOD("inputString",     inputStringNative);
     DEFINE_OS_METHOD("fileExists",      fileExistsNative);
     DEFINE_OS_METHOD("directoryExists", directoryExistsNative);
