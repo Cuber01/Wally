@@ -1,0 +1,88 @@
+include("random");
+include("os");
+
+var rock = "
+    _______
+---'   ____)
+      (_____)
+      (_____)
+      (____)
+---.__(___)
+";
+
+var paper = "
+     _______
+---'    ____)____
+           ______)
+          _______)
+         _______)
+---.__________)
+";
+
+
+var scissors = "
+    _______
+---'   ____)____
+          ______)
+       __________)
+      (____)
+---.__(___)
+";
+
+random.init();
+
+print("Welcome to Rock, Paper, Scissors! Start by typing 'rock', 'paper', 'scissors' respectively.");
+
+var playerAnswer = os.inputString(32);
+
+if(playerAnswer == "rock")
+{
+    playerAnswer = 0;
+}
+else if(playerAnswer == "paper")
+{
+    playerAnswer = 1;
+}
+else if(playerAnswer == "scissors")
+{
+    playerAnswer = 2;
+}
+else
+{
+    print("What is this? Try again.");
+    os.exit(0);
+}
+
+var opponentsAnswer = random.integerBetween(0, 2);
+
+
+if(opponentsAnswer == 0)
+{
+    print(rock);
+}
+else if(opponentsAnswer == 1)
+{
+    print(paper);
+}
+else if(opponentsAnswer == 2)
+{
+    print(scissors);
+}
+
+if(opponentsAnswer == playerAnswer)
+{
+    print("Draw! I'll get you next time.");
+    os.exit(0);
+}
+
+if(opponentsAnswer == 0 && playerAnswer == 1 ||
+   opponentsAnswer == 2 && playerAnswer == 0 ||
+   opponentsAnswer == 1 && playerAnswer == 2)
+{
+    print("I lost! Impossible!!!");
+}
+else
+{
+    print("I won! Just like always.");
+}
+

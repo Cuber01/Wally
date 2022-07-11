@@ -2,30 +2,30 @@ include("random");
 include("os");
 
 var rock = "
-_______
+    _______
 ---'   ____)
-(_____)
-(_____)
-(____)
+      (_____)
+      (_____)
+      (____)
 ---.__(___)
 ";
 
 var paper = "
-_______
+     _______
 ---'    ____)____
-______)
-_______)
-_______)
+           ______)
+          _______)
+         _______)
 ---.__________)
 ";
 
 
 var scissors = "
-_______
+    _______
 ---'   ____)____
-______)
-__________)
-(____)
+          ______)
+       __________)
+      (____)
 ---.__(___)
 ";
 
@@ -76,8 +76,8 @@ if(opponentsAnswer == playerAnswer)
 }
 
 if(opponentsAnswer == 0 && playerAnswer == 1 ||
-    opponentsAnswer == 2 && playerAnswer == 0 ||
-    opponentsAnswer == 1 && playerAnswer == 2)
+   opponentsAnswer == 2 && playerAnswer == 0 ||
+   opponentsAnswer == 1 && playerAnswer == 2)
 {
     print("I lost! Impossible!!!");
 }
