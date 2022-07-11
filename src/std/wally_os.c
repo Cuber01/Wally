@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <time.h>
+#include <stdlib.h>
 
 #include "value.h"
 #include "native_utils.h"
@@ -171,7 +172,7 @@ NATIVE_FUNCTION(inputString)
 
     if (fgets(buffer, bufferLength, stdin) != NULL)
     {
-        return OBJ_VAL(copyString(buffer, strlen(buffer)));
+        return OBJ_VAL(copyString(buffer, strlen(buffer) - 1));
     }
     else
     {
@@ -209,8 +210,17 @@ NATIVE_FUNCTION(inputYesNo)
 
 }
 
+NATIVE_FUNCTION(exit)
+{
+    CHECK_ARG_COUNT("exit", 1);
+
+    exit(AS_NUMBER(args[0]));
+}
+
 NATIVE_FUNCTION(getDate)
 {
+    CHECK_ARG_COUNT("getDate", 0);
+
     time_t t = time(NULL);
     struct tm* timeData = localtime(&t);
 
@@ -237,6 +247,7 @@ void defineOS(Table* table)
     DEFINE_OS_METHOD("fileCreate",      fileCreateNative);
     DEFINE_OS_METHOD("fileWrite",       fileWriteNative);
     DEFINE_OS_METHOD("fileRead",        fileReadNative);
+    DEFINE_OS_METHOD("exit",            exitNative);
 
     #undef DEFINE_OS_METHOD
 

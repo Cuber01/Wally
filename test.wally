@@ -1,5 +1,0 @@
-include("random");
-
-random.init();
-
-print(random.between(0, 10));
