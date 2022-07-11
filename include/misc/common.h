@@ -19,8 +19,8 @@
 
 // #define DEBUG_PRINT_PREPROCESSOR // WIP
 
-#define DEBUG_STRESS_GC          // Trigger the Garbage Collector on each allocation (after bring turned on)
-#define DEBUG_LOG_GC             // Log all actions performed by the Garbage Collector
+// #define DEBUG_STRESS_GC          // Trigger the Garbage Collector on each allocation (after bring turned on)
+// #define DEBUG_LOG_GC             // Log all actions performed by the Garbage Collector
 // #define DEBUG_LOG_ALLOCATION     // Log all memory allocations, reallocations and frees
 
 #include <stdbool.h>

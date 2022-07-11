@@ -22,7 +22,7 @@ NATIVE_FUNCTION(bool)
         nativeError(line, "bool", "Chance equals '%g' and is outside of the 0-1 range. For 0% chance provide '0' and for 100% '1'.", chance);
     }
 
-    bool result = chance > (rand() / RAND_MAX);
+    bool result = chance > ((double)rand() / (double)RAND_MAX);
 
     return BOOL_VAL(result);
 }
@@ -40,7 +40,7 @@ NATIVE_FUNCTION(integerBetween)
     int min = AS_NUMBER(args[0]);
     int max = AS_NUMBER(args[1]);
 
-    return AS_NUMBER(rand() % (max + 1 - min) + min);
+    return NUMBER_VAL(rand() % (max - min + 1));
 }
 
 NATIVE_FUNCTION(between)
