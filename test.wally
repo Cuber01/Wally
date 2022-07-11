@@ -2,6 +2,7 @@ include("random");
 include("os");
 
 var rock = "
+ROCK
     _______
 ---'   ____)
       (_____)
@@ -11,6 +12,7 @@ var rock = "
 ";
 
 var paper = "
+PAPER
      _______
 ---'    ____)____
            ______)
@@ -21,6 +23,7 @@ var paper = "
 
 
 var scissors = "
+SCISSORS
     _______
 ---'   ____)____
           ______)
