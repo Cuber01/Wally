@@ -1,3 +1,5 @@
-include("math");
+include("random");
 
-print(math.pi);
+random.init();
+
+print(random.integer());

@@ -1,5 +1,6 @@
 #include "core.h"
 #include "wally_math.h"
+#include "wally_random.h"
 #include "native_utils.h"
 #include "vm.h"
 #include "colors.h"
@@ -31,6 +32,10 @@ NATIVE_FUNCTION(include)
     else if (charsEqual(moduleName->chars, "os", moduleName->length, 2))
     {
         defineOS(vm.nativeEnvironment->values);
+    }
+    else if (charsEqual(moduleName->chars, "random", moduleName->length, 6))
+    {
+        defineRandom(vm.nativeEnvironment->values);
     }
 
     return NULL_VAL;
