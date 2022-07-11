@@ -254,7 +254,7 @@ void defineOS(Table* table)
     char pathSeparator;
 
     #ifdef WIN32
-    pathSeparator = '\';
+    pathSeparator = '\\';
     #else
     pathSeparator = '/';
     #endif

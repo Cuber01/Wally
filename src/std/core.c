@@ -3,7 +3,6 @@
 #include "wally_random.h"
 #include "native_utils.h"
 #include "vm.h"
-#include "colors.h"
 #include "wally_os.h"
 
 ObjString* boolStringConst;
