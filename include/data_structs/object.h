@@ -71,7 +71,7 @@ typedef struct ObjClass {
     struct ObjClass* parent;
 } ObjClass;
 
-typedef struct ObjInstance {
+typedef struct {
     Obj obj;
     ObjClass* klass;
     Table* fields;
@@ -92,13 +92,13 @@ typedef struct ObjFunction {
     Environment* calledFromEnvironment;
 } ObjFunction;
 
-typedef struct ObjBoundMethod {
+typedef struct {
     Obj obj;
     ObjFunction* method;
     ObjInstance* instance;
 } ObjBoundMethod;
 
-typedef struct ObjNative {
+typedef struct {
     Obj obj;
     NativeFn function;
 } ObjNative;

@@ -4,7 +4,7 @@
 // HELPERS
 
 #define UINT8_COUNT (UINT8_MAX + 1)
-#define uint unsigned int
+#include "sys/types.h"
 
 // -------------- OPTIMIZATIONS -----------------
 
