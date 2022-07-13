@@ -63,7 +63,7 @@ struct ObjString {
     uint32_t hash; // Used in hashtables
 };
 
-typedef struct {
+typedef struct ObjClass {
     Obj obj;
     ObjString* name;
     Table* methods;
@@ -71,7 +71,7 @@ typedef struct {
     struct ObjClass* parent;
 } ObjClass;
 
-typedef struct {
+typedef struct ObjInstance {
     Obj obj;
     ObjClass* klass;
     Table* fields;
@@ -92,13 +92,13 @@ typedef struct ObjFunction {
     Environment* calledFromEnvironment;
 } ObjFunction;
 
-typedef struct {
+typedef struct ObjBoundMethod {
     Obj obj;
     ObjFunction* method;
     ObjInstance* instance;
 } ObjBoundMethod;
 
-typedef struct {
+typedef struct ObjNative {
     Obj obj;
     NativeFn function;
 } ObjNative;
