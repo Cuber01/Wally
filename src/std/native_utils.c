@@ -3,7 +3,7 @@
 
 #include "object.h"
 
-void nativeError(uint16_t line, char* fooName, const char* format, ...)
+void nativeError(uint16_t line, const char* fooName, const char* format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -13,7 +13,7 @@ void nativeError(uint16_t line, char* fooName, const char* format, ...)
     fputs("\n", stderr);
 }
 
-bool checkArgCount(char* fooName, uint16_t line, uint8_t expected, uint8_t got)
+bool checkArgCount(const char* fooName, uint16_t line, uint8_t expected, uint8_t got)
 {
     if(expected == got) return true;
 

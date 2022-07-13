@@ -7,7 +7,7 @@
 #define CHECK_ARG_COUNT(name, expected) checkArgCount(name, line, expected, argCount)
 
 void defineNativeFunction(Table* table, const char* name, NativeFn function);
-void nativeError(uint16_t line, char* fooName, const char* format, ...);
-bool checkArgCount(char* fooName, uint16_t line, uint8_t expected, uint8_t got);
+void nativeError(uint16_t line, const char* fooName, const char* format, ...);
+bool checkArgCount(const char* fooName, uint16_t line, uint8_t expected, uint8_t got);
 
 #endif //WALLY_NATIVE_UTILS_H
