@@ -62,7 +62,7 @@ typedef struct
     Expr expr;
 
     Expr* left;
-    TokenType operator;
+    TokenType op;
     Expr* right;
 } BinaryExpr;
 
@@ -71,7 +71,7 @@ typedef struct
     Expr expr;
 
     Expr* left;
-    TokenType operator;
+    TokenType op;
     Expr* right;
 } LogicalExpr;
 
@@ -89,7 +89,7 @@ typedef struct
     Expr expr;
 
     Expr* target;
-    TokenType operator;
+    TokenType op;
 } UnaryExpr;
 
 typedef struct
@@ -245,10 +245,10 @@ typedef struct
 // ------------ EXPRESSION CONSTRUCTORS ------------
 
 LiteralExpr* newLiteralExpr(Value value, uint16_t line);
-BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right, uint16_t line);
-LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right, uint16_t line);
+BinaryExpr* newBinaryExpr(Expr* left, TokenType op, Expr* right, uint16_t line);
+LogicalExpr* newLogicalExpr(Expr* left, TokenType op, Expr* right, uint16_t line);
 TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch, uint16_t line);
-UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line);
+UnaryExpr* newUnaryExpr(Expr* target, TokenType op, uint16_t line);
 VarExpr* newVarExpr(ObjString* name, uint16_t line);
 AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line);
 CallExpr* newCallExpr(Expr* callee, uint8_t argCount, Node* args, uint16_t line);

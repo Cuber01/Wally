@@ -437,12 +437,12 @@ VarExpr* newVarExpr(ObjString* name, uint16_t line)
     return expr;
 }
 
-UnaryExpr* newUnaryExpr(Expr* target, TokenType operator, uint16_t line)
+UnaryExpr* newUnaryExpr(Expr* target, TokenType op, uint16_t line)
 {
     UnaryExpr* expr = (UnaryExpr*) ALLOCATE_EXPRESSION(UnaryExpr, UNARY_EXPRESSION, true, line);
 
     expr->target = target;
-    expr->operator = operator;
+    expr->op = op;
 
     return expr;
 }
@@ -467,23 +467,23 @@ TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch,
     return expr;
 }
 
-LogicalExpr* newLogicalExpr(Expr* left, TokenType operator, Expr* right, uint16_t line)
+LogicalExpr* newLogicalExpr(Expr* left, TokenType op, Expr* right, uint16_t line)
 {
     LogicalExpr* expr = (LogicalExpr*) ALLOCATE_EXPRESSION(LogicalExpr, LOGICAL_EXPRESSION, true, line);
 
     expr->left = left;
-    expr->operator = operator;
+    expr->op = op;
     expr->right = right;
 
     return expr;
 }
 
-BinaryExpr* newBinaryExpr(Expr* left, TokenType operator, Expr* right, uint16_t line)
+BinaryExpr* newBinaryExpr(Expr* left, TokenType op, Expr* right, uint16_t line)
 {
     BinaryExpr* expr = (BinaryExpr*) ALLOCATE_EXPRESSION(BinaryExpr, BINARY_EXPRESSION, true, line);
 
     expr->left = left;
-    expr->operator = operator;
+    expr->op = op;
     expr->right = right;
 
     return expr;

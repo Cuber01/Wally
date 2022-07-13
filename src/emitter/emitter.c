@@ -190,7 +190,7 @@ static void compileExpression(Expr* expression)
             compileExpression(expr->left);
             compileExpression(expr->right);
 
-            switch (expr->operator)
+            switch (expr->op)
             {
                 case TOKEN_PLUS:
                     emitByte(OP_ADD, line);
@@ -224,7 +224,7 @@ static void compileExpression(Expr* expression)
                     break;
 
                 default:
-                    error("Unknown operator in binary expression.", line);
+                    error("Unknown op in binary expression.", line);
             }
 
             break;
@@ -236,7 +236,7 @@ static void compileExpression(Expr* expression)
 
             compileExpression(expr->target);
 
-            switch (expr->operator)
+            switch (expr->op)
             {
                 case TOKEN_MINUS:
                     emitByte(OP_NEGATE, line);
@@ -346,7 +346,7 @@ static void compileExpression(Expr* expression)
         {
             LogicalExpr* expr = (LogicalExpr*)expression;
 
-            switch (expr->operator)
+            switch (expr->op)
             {
                 case TOKEN_AND:
                 {

@@ -199,12 +199,12 @@ static Expr* expression()
 
 static Expr* binary(Expr* previous, __attribute__((unused)) bool canAssign)
 {
-    TokenType operatorType = parser.previous.type;
-    ParseRule* rule = getRule(operatorType);
+    TokenType opType = parser.previous.type;
+    ParseRule* rule = getRule(opType);
     // We want to use a higher level because binary is left associative
     Expr* right = parsePrecedence((Precedence)(rule->precedence + 1));
 
-    return (Expr*)newBinaryExpr(previous, operatorType, right, parser.line);
+    return (Expr*)newBinaryExpr(previous, opType, right, parser.line);
 }
 
 static Expr* increment(Expr* previous, __attribute__((unused)) bool canAssign)
@@ -312,9 +312,9 @@ static Expr* dot(Expr* previous, bool canAssign)
     if (match(TOKEN_EQUAL) && canAssign)
     {
         // Syntax sugar like += -=
-        TokenType operator = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
+        TokenType op = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
 
-        if(operator == 0)
+        if(op == 0)
         {
             value = expression();
         }
@@ -325,7 +325,7 @@ static Expr* dot(Expr* previous, bool canAssign)
             // get this.x
             Expr* getPreviousVal = (Expr*)newDotExpr(previous, name, value, isCall, args, argCount, parser.line);
             // calculate this.x + 2
-            Expr* calculateNewVal = (Expr*)newBinaryExpr(getPreviousVal, operator, expression(), parser.line);
+            Expr* calculateNewVal = (Expr*)newBinaryExpr(getPreviousVal, op, expression(), parser.line);
             // set this.x
             Expr* setNewVal = (Expr*)newDotExpr(previous, name, calculateNewVal, isCall, args, argCount, parser.line);
 
@@ -365,9 +365,9 @@ static Expr* variable(bool canAssign)
 
     if(match(TOKEN_EQUAL) && canAssign)
     {
-        TokenType operator = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
+        TokenType op = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
 
-        if(operator == 0)
+        if(op == 0)
         {
             Expr* value = expression();
             return (Expr*)newAssignExpr(name, value, parser.line);
@@ -376,7 +376,7 @@ static Expr* variable(bool canAssign)
         {
             return (Expr*)newAssignExpr(name, (Expr*)newBinaryExpr(
                                                 (Expr*)newVarExpr(name, parser.line),
-                                                operator,
+                                                op,
                                                 expression(),
                                                 parser.line),
                                         parser.line);
@@ -505,11 +505,11 @@ static Expr* interpolatedString(__attribute__((unused)) bool canAssign)
 
 static Expr* unary(__attribute__((unused)) bool canAssign)
 {
-    TokenType operatorType = parser.previous.type;
+    TokenType opType = parser.previous.type;
 
     Expr* expr = parsePrecedence(PREC_UNARY);
 
-    return (Expr*) newUnaryExpr(expr, operatorType, parser.line);
+    return (Expr*) newUnaryExpr(expr, opType, parser.line);
 }
 
 static Expr* grouping(__attribute__((unused)) bool canAssign)
@@ -547,11 +547,11 @@ static Stmt* block()
 
 static Expr* logical(Expr* previous, __attribute__((unused)) bool canAssign)
 {
-    TokenType operatorType = parser.previous.type;
-    ParseRule* rule = getRule(operatorType);
+    TokenType opType = parser.previous.type;
+    ParseRule* rule = getRule(opType);
     Expr* right = parsePrecedence((Precedence)(rule->precedence + 1));
 
-    return (Expr*)newLogicalExpr(previous, operatorType, right, parser.line);
+    return (Expr*)newLogicalExpr(previous, opType, right, parser.line);
 }
 
 static Stmt* forStatement()
