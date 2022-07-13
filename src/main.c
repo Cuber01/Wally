@@ -76,7 +76,7 @@ static void repl()
     freeVM();
 }
 
-int main(int argc, const char* argv[])
+int runWally(int argc, const char* argv[])
 {
     initVM();
 
@@ -95,7 +95,11 @@ int main(int argc, const char* argv[])
     }
 
     return 0;
+}
 
+int main(int argc, const char* argv[])
+{
+    return runWally(argc, argv);
 }
 
 
