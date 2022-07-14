@@ -308,7 +308,6 @@ static int run()
             {
                 Value constant = READ_CONSTANT();
                 push(constant);
-                collectGarbage();
                 break;
             }
 
@@ -664,7 +663,7 @@ static int run()
                 if(oldFunction->calledFromFunction == NULL)
                 {
                     // printVariables(vm.currentEnvironment);
-                    collectGarbage();
+                    // collectGarbage();
                     return INTERPRET_OK;
                 }
 

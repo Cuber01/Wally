@@ -191,6 +191,8 @@ static void sweep()
 
 void collectGarbage()
 {
+    if(!gcStarted) return;
+
     #ifdef DEBUG_LOG_GC
     colorWriteLine(PURPLE, "-- Garbage Collector Begin");
 
