@@ -78,8 +78,6 @@ static void repl()
 
 int runWally(int argc, const char* argv[])
 {
-    initVM();
-
     if (argc == 1)
     {
         repl();
@@ -100,6 +98,7 @@ int runWally(int argc, const char* argv[])
 #ifndef LIBRARY
 int main(int argc, const char* argv[])
 {
+    initVM();
     return runWally(argc, argv);
 }
 #endif
