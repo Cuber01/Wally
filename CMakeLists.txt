@@ -17,6 +17,8 @@ include_directories(Wally PRIVATE include/ include/data_structs/ include/misc/ i
                     include/std/ include/preprocessor/)
 
 if(BUILD_LIBRARY)
+    add_compile_definitions(LIBRARY)
+
     add_library(Wally STATIC
                 src/main.c
                 src/memory/memory.c

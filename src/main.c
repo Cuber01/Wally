@@ -97,9 +97,10 @@ int runWally(int argc, const char* argv[])
     return 0;
 }
 
+#ifndef LIBRARY
 int main(int argc, const char* argv[])
 {
     return runWally(argc, argv);
 }
-
+#endif
 
