@@ -113,7 +113,7 @@ static bool call(ObjFunction* function, ObjInstance* thisValue, uint16_t argCoun
     }
 
     vm.ip = function->chunk.code;
-    vm.currentEnvironment = newEnvironment();
+    vm.currentEnvironment = newEnvironment(); // todo found the culprit
 
     // Define 'this' to be replaced by instance in methods
     if(thisValue != NULL)
@@ -674,6 +674,7 @@ static int run()
 
                 vm.currentFunction = oldFunction->calledFromFunction;
                 vm.ip = oldFunction->calledFromIp;
+                freeEnvironment(vm.currentEnvironment);
                 vm.currentEnvironment = oldFunction->calledFromEnvironment;
 
                 break;

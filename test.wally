@@ -1,6 +1,3 @@
-function foo() {}
+include("math");
 
-while(true)
-{
-    foo();
-}
+math.atan2(-1.2, 8.6);

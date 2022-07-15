@@ -2,6 +2,7 @@
 #include <stdarg.h>
 
 #include "object.h"
+#include "vm.h"
 
 void nativeError(uint16_t line, const char* fooName, const char* format, ...)
 {
@@ -15,7 +16,17 @@ void nativeError(uint16_t line, const char* fooName, const char* format, ...)
 
 bool checkArgCount(const char* fooName, uint16_t line, uint8_t expected, uint8_t got)
 {
-    if(expected == got) return true;
+    if(expected == got)
+    {
+        uint8_t i = got;
+        while(i > 0)
+        {
+            pop();
+            i--;
+        }
+
+        return true;
+    }
 
     nativeError(line, fooName, "Expected '%d' arguments but got '%d'.", expected, got);
     return false;
