@@ -27,6 +27,10 @@ cmake_minimum_required(VERSION <YOUR CMAKE VERSION>)
 
 See the documentation or `--help` for more info.
 
+# Documentation
+
+See wiki at https://github.com/Cuber01/Wally/wiki.
+
 # Tests
 
 ## Running
