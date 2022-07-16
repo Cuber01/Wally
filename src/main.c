@@ -93,7 +93,7 @@ int runWally(int argc, const char* argv[])
             printf("Commandline arguments:\n");
             printf("    --help            - Display this message\n");
             printf("    [path to file]    - Run Wally script\n");
-            printf("    [none]            - Run repl\n");
+            printf("    [none]            - Run interactive repl\n");
         }
         else
         {
