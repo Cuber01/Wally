@@ -312,7 +312,7 @@ static Expr* dot(Expr* previous, bool canAssign)
     if (match(TOKEN_EQUAL) && canAssign)
     {
         // Syntax sugar like += -=
-        TokenType op = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
+        TokenType op = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS_E, TOKEN_STAR, TOKEN_SLASH);
 
         if(op == 0)
         {
@@ -365,7 +365,7 @@ static Expr* variable(bool canAssign)
 
     if(match(TOKEN_EQUAL) && canAssign)
     {
-        TokenType op = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH);
+        TokenType op = matchMultiple(4, TOKEN_PLUS, TOKEN_MINUS_E, TOKEN_STAR, TOKEN_SLASH);
 
         if(op == 0)
         {

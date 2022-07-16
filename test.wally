@@ -1,3 +1,4 @@
-include("math");
+var a = 2;
 
-math.atan2(-1.2, 8.6);
+a -= 3;
+//a--;

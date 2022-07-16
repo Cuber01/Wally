@@ -310,7 +310,7 @@ Token scanToken()
         case '-':
             if (match('='))
             {
-                scanner.returnNext = TOKEN_MINUS;
+                scanner.returnNext = TOKEN_MINUS_E;
                 return makeToken(TOKEN_EQUAL);
             }
             else if (match('-'))

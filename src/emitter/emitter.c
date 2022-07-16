@@ -196,6 +196,7 @@ static void compileExpression(Expr* expression)
                     emitByte(OP_ADD, line);
                     break;
                 case TOKEN_MINUS:
+                case TOKEN_MINUS_E:
                     emitByte(OP_SUBTRACT, line);
                     break;
                 case TOKEN_SLASH:
@@ -224,7 +225,7 @@ static void compileExpression(Expr* expression)
                     break;
 
                 default:
-                    error("Unknown op in binary expression.", line);
+                    error("Unknown operator in binary expression.", line);
             }
 
             break;
