@@ -84,11 +84,25 @@ int runWally(int argc, const char* argv[])
     }
     else if (argc == 2)
     {
-        runFile(argv[1]);
+        if(strcmp(argv[1], "--help") == 0)
+        {
+            printf("Wally is a dynamically-typed interpreted programming language.\n");
+            printf("Repo: https://github.com/Cuber01/Wally\n");
+            printf("Documentation: https://github.com/Cuber01/Wally/wiki\n\n");
+
+            printf("Commandline arguments:\n");
+            printf("    --help            - Display this message\n");
+            printf("    [path to file]    - Run Wally script\n");
+            printf("    [none]            - Run repl\n");
+        }
+        else
+        {
+            runFile(argv[1]);
+        }
     }
     else
     {
-        fprintf(stderr, "Usage: Wally [path]\n");
+        fprintf(stderr, "Usage: Wally [path to file]\n");
         exit(64);
     }
 
