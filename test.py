@@ -138,7 +138,11 @@ class Test:
 
     def run(self):
         # Invoke the interpreter and run the test.
-        args = ["./build/release/Wally", self.path]
+        if sys.platform == "win32":
+            args = ["./build/release-mingw/Wally.exe", self.path]
+        else:
+            args = ["./build/release/Wally", self.path]
+
         proc = Popen(args, stdin=PIPE, stdout=PIPE, stderr=PIPE)
 
         out, err = proc.communicate()
