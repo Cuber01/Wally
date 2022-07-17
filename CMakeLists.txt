@@ -4,6 +4,14 @@ cmake_minimum_required(VERSION 3.21) # I guess you shouldn't touch the version
 
 project(Wally)
 
+if (MINGW32)
+    set(CMAKE_SYSTEM_NAME Windows)
+    SET(CMAKE_C_COMPILER i686-w64-mingw32-gcc)
+    SET(CMAKE_CXX_COMPILER i686-w64-mingw32-g++)
+    SET(CMAKE_RC_COMPILER i686-w64-mingw32-windres)
+    set(CMAKE_RANLIB i686-w64-mingw32-ranlib)
+endif()
+
 if (DEBUG_ENABLED)
     add_definitions(-DDEBUG_PRINT_BYTECODE=1 -DDEBUG_TRACE_EXECUTION=1)
 endif(DEBUG_ENABLED)

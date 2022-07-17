@@ -1,18 +1,12 @@
-
-Features til version 1.0:
-* modulo
-* switch
-* garbage collector
-
-Big features:
+Features:
+* string interpolation
 * arrays
 * foreach
+* modulo
+* switch
 * lambda functions
 
 Milestones:
-* documentation
 * optimizer
 * preprocessor
-* library binding
-* framework for gamedev
-* standard libraries: math, https, json, filesystem
+* standard libraries: https, json
