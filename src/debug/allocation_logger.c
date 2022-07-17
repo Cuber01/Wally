@@ -1,4 +1,8 @@
+#ifdef WIN32
+#include <corecrt.h>
+#else
 #include <glob.h>
+#endif
 
 #include "colors.h"
 #include "allocation_logger.h"

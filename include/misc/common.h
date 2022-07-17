@@ -6,6 +6,12 @@
 #define UINT8_COUNT (UINT8_MAX + 1)
 #include "sys/types.h"
 
+#ifndef uint
+#define uint unsigned int
+#endif
+
+
+
 // -------------- OPTIMIZATIONS -----------------
 
 #define NAN_BOXING                // Makes values to be stored in unit64_t instead of a struct therefore saving memory

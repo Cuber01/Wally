@@ -12,7 +12,6 @@
 #ifdef WIN32
 #include <io.h>
 #define F_OK 0
-#define strcasecmp stricmp
 #endif
 
 
@@ -106,10 +105,17 @@ NATIVE_FUNCTION(directoryCreate)
 {
     CHECK_ARG_COUNT("directoryCreate", 1);
 
+    #ifdef WIN32
+    if (mkdir(AS_CSTRING(args[0])) == -1)
+    {
+        nativeError(line, "directoryCreate", strerror(errno));
+    }
+    #else
     if (mkdir(AS_CSTRING(args[0]), S_IRWXU | S_IRWXG | S_IRWXO) == -1)
     {
         nativeError(line, "directoryCreate", strerror(errno));
     }
+    #endif
 
     return NULL_VAL;
 }
