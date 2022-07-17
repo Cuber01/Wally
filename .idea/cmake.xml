@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeSharedSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" GENERATION_DIR="build/debug" CONFIG_NAME="Debug" GENERATION_OPTIONS="-G &quot;Unix Makefiles&quot; -DDEBUG_ENABLED=1" />
+      <configuration PROFILE_NAME="Release" ENABLED="true" GENERATION_DIR="build/release" CONFIG_NAME="Release" GENERATION_OPTIONS="-G &quot;Unix Makefiles&quot; -DDEBUG_ENABLED=0" />
+      <configuration PROFILE_NAME="RelWithDebInfo" ENABLED="true" GENERATION_DIR="build/release-with-debug-info" CONFIG_NAME="RelWithDebInfo" GENERATION_OPTIONS="-G &quot;Unix Makefiles&quot;" />
+      <configuration PROFILE_NAME="LibraryRelease" ENABLED="true" GENERATION_DIR="build/library-release" CONFIG_NAME="Release" GENERATION_OPTIONS="-G &quot;Unix Makefiles&quot; -DBUILD_LIBRARY=1" />
+      <configuration PROFILE_NAME="LibraryDebug" ENABLED="true" GENERATION_DIR="build/library-debug" CONFIG_NAME="Debug" GENERATION_OPTIONS="-G &quot;Unix Makefiles&quot; -DBUILD_LIBRARY=1 -DNO_OPTIMIZE=1 -DDEBUG_ENABLED=1" />
+      <configuration PROFILE_NAME="LibraryUnoptimized" ENABLED="true" GENERATION_DIR="build/library-unoptimized" CONFIG_NAME="Debug" GENERATION_OPTIONS="-G &quot;Unix Makefiles&quot; -DBUILD_LIBRARY=1 -DNO_OPTIMIZE=1" />
+    </configurations>
+  </component>
+</project>
