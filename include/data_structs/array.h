@@ -25,7 +25,6 @@ typedef struct name {             \
 	void free##name(name* array) \
     { \
 		FREE_ARRAY(type, array->values, array->capacity); \
-		init##name(array); \
 	} \
 	\
 	void snake_case_name##Write(name* array, type value) \

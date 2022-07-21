@@ -688,12 +688,6 @@ static void initEmitter()
     breaks = initUInts(breaks);
 }
 
-static void freeEmitter()
-{
-    freeUInts(continues);
-    freeUInts(breaks);
-}
-
 static void initCompiler(Compiler* compiler, ObjString* fooName, uint16_t fooArity, FunctionType type)
 {
     compiler->enclosing = (struct Compiler*) current;
@@ -752,8 +746,6 @@ ObjFunction* emit(Node* statements)
     }
 
     freeList(root);
-
-    freeEmitter();
 
     ObjFunction* function = endCompiler(false, lastLine);
     return hadError ? NULL : function;
