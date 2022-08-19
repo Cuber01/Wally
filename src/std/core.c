@@ -10,6 +10,7 @@ ObjString* nullStringConst;
 ObjString* numberStringConst;
 ObjString* functionStringConst;
 ObjString* classStringConst;
+ObjString* listStringConst;
 ObjString* instanceStringConst;
 ObjString* stringStringConst;
 
@@ -68,6 +69,10 @@ NATIVE_FUNCTION(type)
     {
         return OBJ_VAL((Obj*)classStringConst);
     }
+    else if (IS_LIST(value))
+    {
+        return OBJ_VAL((Obj*)listStringConst);
+    }
     else if (IS_FUNCTION(value) || IS_BOUND_METHOD(value) || IS_NATIVE(value))
     {
         return OBJ_VAL((Obj*)functionStringConst);
@@ -91,6 +96,7 @@ void defineCore(Table* table)
     numberStringConst = copyString("string", 6);
     functionStringConst = copyString("function", 8);
     classStringConst = copyString("class", 5);
+    listStringConst = copyString("list", 4);
     instanceStringConst = copyString("instance", 8);
     stringStringConst = copyString("string", 5);
 }

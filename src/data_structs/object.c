@@ -76,6 +76,61 @@ ObjNative* newNative(NativeFn function)
     return native;
 }
 
+ObjWList* newWList()
+{
+    ObjWList* list = ALLOCATE_OBJ(ObjWList, OBJ_LIST);
+
+    list->items = NULL;
+    list->count = 0;
+    list->capacity = 0;
+
+    return list;
+}
+
+void appendWList(ObjWList* list, Value value)
+{
+    if (list->capacity < list->count + 1)
+    {
+        uint oldCapacity = list->capacity;
+        list->capacity = GROW_CAPACITY(oldCapacity);
+        list->items = GROW_ARRAY(Value, list->items, oldCapacity, list->capacity);
+    }
+
+    list->items[list->count] = value;
+    list->count++;
+}
+
+void replaceIndexWList(ObjWList* list, Value value, uint index)
+{
+    list->items[index] = value;
+}
+
+Value indexFromWList(ObjWList* list, int index)
+{
+    return list->items[index];
+}
+
+void deleteFromWList(ObjWList* list, int index)
+{
+    for (int i = index; i < list->count - 1; i++)
+    {
+        list->items[i] = list->items[i+1];
+    }
+
+    list->items[list->count - 1] = NULL_VAL;
+    list->count--;
+}
+
+bool isValidWListIndex(ObjWList* list, int index)
+{
+    if (index < 0 || index > list->count - 1)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 static ObjString* allocateString(char* chars, uint length, uint32_t hash)
 {
     // Allocate new string object and set fields
@@ -141,6 +196,20 @@ static void printFunction(ObjFunction* function)
     printf("<fn %s>", function->name->chars);
 }
 
+static void printList(ObjWList* list)
+{
+    printf("[ ");
+
+    for(uint i = 0; i < list->count; i++)
+    {
+        printObject(list->items[i]);
+
+        if(i+1 < list->count) printf(", ");
+    }
+
+    printf(" ]");
+}
+
 void printObject(Value value)
 {
     switch (OBJ_TYPE(value))
@@ -163,6 +232,10 @@ void printObject(Value value)
 
         case OBJ_INSTANCE:
             printf("%s instance", AS_INSTANCE(value)->klass->name->chars);
+            break;
+
+        case OBJ_LIST:
+            printList(AS_LIST(value));
             break;
 
         case OBJ_BOUND_METHOD:
