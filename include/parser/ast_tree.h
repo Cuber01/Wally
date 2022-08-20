@@ -11,6 +11,7 @@ typedef enum {
     BINARY_EXPRESSION,
     LITERAL_EXPRESSION,
     LIST_EXPRESSION,
+    SUBSCRIPT_EXPRESSION,
     UNARY_EXPRESSION,
     VAR_EXPRESSION,
     LOGICAL_EXPRESSION,
@@ -57,6 +58,14 @@ typedef struct
 
     Node* expressions;
 } ListExpr;
+
+typedef struct
+{
+    Expr expr;
+
+    Expr* index;
+    Expr* value;
+} SubscriptExpr;
 
 typedef struct
 {
@@ -254,6 +263,7 @@ typedef struct
 
 LiteralExpr* newLiteralExpr(Value value, uint16_t line);
 ListExpr* newListExpr(Node* expressions, uint16_t line);
+SubscriptExpr* newSubscriptExpr(Expr* index, Expr* valueToStore, uint16_t line);
 BinaryExpr* newBinaryExpr(Expr* left, TokenType op, Expr* right, uint16_t line);
 LogicalExpr* newLogicalExpr(Expr* left, TokenType op, Expr* right, uint16_t line);
 TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch, uint16_t line);

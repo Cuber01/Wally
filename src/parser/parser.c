@@ -554,7 +554,23 @@ static Expr* logical(Expr* previous, __attribute__((unused)) bool canAssign)
     return (Expr*)newLogicalExpr(previous, opType, right, parser.line);
 }
 
-static Expr* list(bool canAssign)
+static Expr* subscript(bool canAssign)
+{
+    Expr* index = parsePrecedence(PREC_OR);
+    consume(TOKEN_RIGHT_BRACKET, "Expect ']' after index.");
+
+    Expr* value = NULL;
+
+    // If value is not NULL, it's a store expression 'a[0] = 1', else it is 'a[0]'
+    if (canAssign && match(TOKEN_EQUAL))
+    {
+        value = expression();
+    }
+
+    return (Expr*)newSubscriptExpr(index, value, parser.line);
+}
+
+static Expr* list(__attribute__((unused)) bool canAssign)
 {
 
     Node* list = NULL;
