@@ -50,6 +50,11 @@ typedef enum {
     OP_RETURN,
     OP_DEFINE_FUNCTION,
 
+    // List
+    OP_BUILD_LIST,
+    OP_LIST_STORE,
+    OP_LIST_GET,
+
     // OOP
     OP_DEFINE_CLASS,
     OP_GET_PROPERTY,

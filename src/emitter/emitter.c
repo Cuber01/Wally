@@ -379,6 +379,46 @@ static void compileExpression(Expr* expression)
             break;
         }
 
+        case LIST_EXPRESSION:
+        {
+            ListExpr* expr = (ListExpr*)expression;
+
+            Node* processed = expr->expressions;
+            uint count = 0;
+
+            while(processed != NULL)
+            {
+                compileExpression(AS_EXPRESSION(processed));
+                count++;
+
+                processed = processed->next;
+            }
+
+            emitBytes(OP_BUILD_LIST, makeConstant(count, line), line);
+
+            break;
+        }
+
+        case SUBSCRIPT_EXPRESSION:
+        {
+            SubscriptExpr* expr = (SubscriptExpr*)expression;
+
+            // Get
+            if(expr->value == NULL)
+            {
+                compileExpression(expr->index);
+                emitByte(OP_LIST_GET, line);
+            }
+            // Set
+            else
+            {
+                compileExpression(expr->index);
+                compileExpression(expr->value);
+                emitByte(OP_LIST_STORE, line);
+            }
+
+            break;
+        }
     }
 }
 
