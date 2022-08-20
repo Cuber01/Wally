@@ -489,6 +489,13 @@ BinaryExpr* newBinaryExpr(Expr* left, TokenType op, Expr* right, uint16_t line)
     return expr;
 }
 
+ListExpr* newListExpr(Node* expressions, uint16_t line)
+{
+    ListExpr* expr = (ListExpr*) ALLOCATE_EXPRESSION(ListExpr, LIST_EXPRESSION, true, line);
+    expr->expressions = expressions;
+    return expr;
+}
+
 LiteralExpr* newLiteralExpr(Value value, uint16_t line)
 {
     LiteralExpr* expr = (LiteralExpr*) ALLOCATE_EXPRESSION(LiteralExpr, LITERAL_EXPRESSION, true, line);

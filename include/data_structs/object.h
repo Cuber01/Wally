@@ -135,6 +135,13 @@ ObjClass* newClass(ObjString* name);
 ObjInstance* newInstance(ObjClass* klass);
 ObjBoundMethod* newBoundMethod(ObjInstance* instance, ObjFunction* method);
 
+ObjWList* newWList();
+void appendWList(ObjWList* list, Value value);
+void replaceIndexWList(ObjWList* list, Value value, uint index);
+Value indexFromWList(ObjWList* list, int index);
+void deleteFromWList(ObjWList* list, int index);
+bool isValidWListIndex(ObjWList* list, int index);
+
 char* objectTypeToChar(ObjType type);
 
 #endif //WALLY_OBJECT_H

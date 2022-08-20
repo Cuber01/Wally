@@ -10,6 +10,7 @@ typedef struct Node Node;
 typedef enum {
     BINARY_EXPRESSION,
     LITERAL_EXPRESSION,
+    LIST_EXPRESSION,
     UNARY_EXPRESSION,
     VAR_EXPRESSION,
     LOGICAL_EXPRESSION,
@@ -49,6 +50,13 @@ typedef struct
 
     Value value;
 } LiteralExpr;
+
+typedef struct
+{
+    Expr expr;
+
+    Node* expressions;
+} ListExpr;
 
 typedef struct
 {
@@ -245,6 +253,7 @@ typedef struct
 // ------------ EXPRESSION CONSTRUCTORS ------------
 
 LiteralExpr* newLiteralExpr(Value value, uint16_t line);
+ListExpr* newListExpr(Node* expressions, uint16_t line);
 BinaryExpr* newBinaryExpr(Expr* left, TokenType op, Expr* right, uint16_t line);
 LogicalExpr* newLogicalExpr(Expr* left, TokenType op, Expr* right, uint16_t line);
 TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch, uint16_t line);

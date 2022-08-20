@@ -554,6 +554,40 @@ static Expr* logical(Expr* previous, __attribute__((unused)) bool canAssign)
     return (Expr*)newLogicalExpr(previous, opType, right, parser.line);
 }
 
+static Expr* list(bool canAssign)
+{
+
+    Node* list = NULL;
+
+    uint itemCount = 0;
+
+    if (!check(TOKEN_RIGHT_BRACKET))
+    {
+        do
+        {
+
+            if (check(TOKEN_RIGHT_BRACKET))
+            {
+                // Trailing comma case
+                break;
+            }
+
+            listAdd(&list, NODE_EXPRESSION_VALUE(parsePrecedence(PREC_OR)));
+
+            if (itemCount == UINT8_COUNT)
+            {
+                error("Cannot have more than 256 items in a list literal.");
+            }
+            itemCount++;
+
+        } while (match(TOKEN_COMMA));
+    }
+
+    consume(TOKEN_RIGHT_BRACKET, "Expect ']' after list literal.");
+
+    return (Expr*)newListExpr(list, parser.line);
+}
+
 static Stmt* forStatement()
 {
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
@@ -906,6 +940,8 @@ ParseRule rules[] =
         [TOKEN_RIGHT_PAREN]   = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_LEFT_BRACE]    = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_RIGHT_BRACE]   = {NULL,                 NULL,      PREC_NONE},
+        [TOKEN_LEFT_BRACKET]  = {list,                 subscript, PREC_SUBSCRIPT},
+        [TOKEN_RIGHT_BRACKET] = {NULL,                 NULL,      PREC_NONE },
         [TOKEN_COMMA]         = {NULL,                 NULL,      PREC_NONE},
         [TOKEN_MINUS]         = {unary,                binary,    PREC_TERM},
         [TOKEN_PLUS]          = {NULL,                 binary,    PREC_TERM},
