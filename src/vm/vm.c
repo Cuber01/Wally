@@ -656,6 +656,43 @@ static int run()
                 defineMethod();
                 break;
 
+            case OP_BUILD_LIST:
+            {
+                ObjWList* list = newWList();
+                uint count = READ_BYTE();
+
+                while(count > 0)
+                {
+                    addWList(list, pop());
+                    count--;
+                }
+
+                push(OBJ_VAL(list));
+
+                break;
+            }
+
+            case OP_LIST_STORE:
+            {
+                uint index = AS_NUMBER(pop());
+                Value value = pop();
+                ObjWList* list = AS_LIST(pop());
+
+                storeWList(list, value, index);
+
+                break;
+            }
+
+            case OP_LIST_GET:
+            {
+                uint index = AS_NUMBER(pop());
+                ObjWList* list = AS_LIST(pop());
+
+                push(indexFromWList(list, index));
+
+                break;
+            }
+
             case OP_RETURN:
             {
                 ObjFunction* oldFunction = vm.currentFunction;

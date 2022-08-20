@@ -87,7 +87,7 @@ ObjWList* newWList()
     return list;
 }
 
-void appendWList(ObjWList* list, Value value)
+void addWList(ObjWList* list, Value value)
 {
     if (list->capacity < list->count + 1)
     {
@@ -100,17 +100,17 @@ void appendWList(ObjWList* list, Value value)
     list->count++;
 }
 
-void replaceIndexWList(ObjWList* list, Value value, uint index)
+void storeWList(ObjWList* list, Value value, uint index)
 {
     list->items[index] = value;
 }
 
-Value indexFromWList(ObjWList* list, int index)
+Value indexFromWList(ObjWList* list, uint index)
 {
     return list->items[index];
 }
 
-void deleteFromWList(ObjWList* list, int index)
+void deleteFromWList(ObjWList* list, uint index)
 {
     for (int i = index; i < list->count - 1; i++)
     {
@@ -121,7 +121,7 @@ void deleteFromWList(ObjWList* list, int index)
     list->count--;
 }
 
-bool isValidWListIndex(ObjWList* list, int index)
+bool isValidWListIndex(ObjWList* list, uint index)
 {
     if (index < 0 || index > list->count - 1)
     {

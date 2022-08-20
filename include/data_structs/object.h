@@ -136,11 +136,11 @@ ObjInstance* newInstance(ObjClass* klass);
 ObjBoundMethod* newBoundMethod(ObjInstance* instance, ObjFunction* method);
 
 ObjWList* newWList();
-void appendWList(ObjWList* list, Value value);
-void replaceIndexWList(ObjWList* list, Value value, uint index);
-Value indexFromWList(ObjWList* list, int index);
-void deleteFromWList(ObjWList* list, int index);
-bool isValidWListIndex(ObjWList* list, int index);
+void addWList(ObjWList* list, Value value);
+void storeWList(ObjWList* list, Value value, uint index);
+Value indexFromWList(ObjWList* list, uint index);
+void deleteFromWList(ObjWList* list, uint index);
+bool isValidWListIndex(ObjWList* list, uint index);
 
 char* objectTypeToChar(ObjType type);
 
