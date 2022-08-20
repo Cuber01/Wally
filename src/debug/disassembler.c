@@ -135,6 +135,10 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return simpleInstruction("OP_DEFINE_METHOD", offset);
         case OP_INHERIT:
             return simpleInstruction("OP_INHERIT", offset);
+        case OP_LIST_STORE:
+            return simpleInstruction("OP_LIST_STORE", offset);
+        case OP_LIST_GET:
+            return simpleInstruction("OP_LIST_GET", offset);
 
         case OP_JUMP:
             return jumpInstruction("OP_JUMP", 1, chunk, offset);
@@ -161,6 +165,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return constantInstruction("OP_DEFINE_ARGUMENT", chunk, offset);
         case OP_GET_BASE:
             return constantInstruction("OP_GET_BASE", chunk, offset);
+        case OP_BUILD_LIST:
+            return constantInstruction("OP_BUILD_LIST", chunk, offset);
 
         case OP_INVOKE:
             return invokeInstruction("OP_INVOKE", chunk, offset);

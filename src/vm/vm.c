@@ -659,11 +659,20 @@ static int run()
             case OP_BUILD_LIST:
             {
                 ObjWList* list = newWList();
-                uint count = READ_BYTE();
+                int count = READ_BYTE();
 
-                while(count > 0)
+                push(OBJ_VAL(list));
+
+                for (int i = count; i > 0; i--)
                 {
-                    addWList(list, pop());
+                    addWList(list, peek(i));
+                }
+
+                pop();
+
+                while (count > 0)
+                {
+                    pop();
                     count--;
                 }
 
