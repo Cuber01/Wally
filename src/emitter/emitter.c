@@ -403,6 +403,8 @@ static void compileExpression(Expr* expression)
         {
             SubscriptExpr* expr = (SubscriptExpr*)expression;
 
+            compileExpression(expr->list);
+
             // Get
             if(expr->value == NULL)
             {

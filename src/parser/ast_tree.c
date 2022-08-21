@@ -496,11 +496,14 @@ ListExpr* newListExpr(Node* expressions, uint16_t line)
     return expr;
 }
 
-SubscriptExpr* newSubscriptExpr(Expr* index, Expr* valueToStore, uint16_t line)
+SubscriptExpr* newSubscriptExpr(Expr* list, Expr* index, Expr* valueToStore, uint16_t line)
 {
-    SubscriptExpr* expr = (SubscriptExpr*) ALLOCATE_EXPRESSION(SubscriptExpr, SUBSCRIPT_EXPRESSION, true, line);
+    bool pop = valueToStore == NULL ? true : false;
+
+    SubscriptExpr* expr = (SubscriptExpr*) ALLOCATE_EXPRESSION(SubscriptExpr, SUBSCRIPT_EXPRESSION, pop, line);
     expr->index = index;
     expr->value = valueToStore;
+    expr->list = list;
 
     return expr;
 }

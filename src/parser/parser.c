@@ -554,7 +554,7 @@ static Expr* logical(Expr* previous, __attribute__((unused)) bool canAssign)
     return (Expr*)newLogicalExpr(previous, opType, right, parser.line);
 }
 
-static Expr* subscript(bool canAssign)
+static Expr* subscript(Expr* previous, bool canAssign)
 {
     Expr* index = parsePrecedence(PREC_OR);
     consume(TOKEN_RIGHT_BRACKET, "Expect ']' after index.");
@@ -567,7 +567,7 @@ static Expr* subscript(bool canAssign)
         value = expression();
     }
 
-    return (Expr*)newSubscriptExpr(index, value, parser.line);
+    return (Expr*)newSubscriptExpr(previous, index, value, parser.line);
 }
 
 static Expr* list(__attribute__((unused)) bool canAssign)
