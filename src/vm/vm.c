@@ -683,8 +683,8 @@ static int run()
 
             case OP_LIST_STORE:
             {
-                uint index = AS_NUMBER(pop());
                 Value value = pop();
+                uint index = AS_NUMBER(pop());
                 ObjWList* list = AS_LIST(pop());
 
                 storeWList(list, value, index);
