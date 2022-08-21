@@ -125,6 +125,8 @@ static inline bool charsEqual(char* a, char* b, uint lengthA, uint lengthB)
 
 ObjString* copyString(const char* chars, uint length);
 ObjString* takeString(char* chars, uint length);
+void replaceIndexString(ObjString* string, uint index, char c);
+bool isValidStringIndex(ObjString* string, uint index);
 
 void printObject(Value value);
 ObjString* objectToString(Value value);

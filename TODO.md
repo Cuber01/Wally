@@ -1,10 +1,15 @@
 Features:
 * string interpolation
-* arrays
 * foreach
 * modulo
 * switch
 * lambda functions
+
+Lists:
+* add two lists
+* append
+* remove
+* count
 
 Milestones:
 * optimizer

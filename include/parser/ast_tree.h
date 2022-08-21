@@ -264,7 +264,7 @@ typedef struct
 
 LiteralExpr* newLiteralExpr(Value value, uint16_t line);
 ListExpr* newListExpr(Node* expressions, uint16_t line);
-SubscriptExpr* newSubscriptExpr(Expr* list, Expr* index, Expr* valueToStore, uint16_t line);
+SubscriptExpr* newSubscriptExpr(Expr* indexedValue, Expr* index, Expr* valueToStore, uint16_t line);
 BinaryExpr* newBinaryExpr(Expr* left, TokenType op, Expr* right, uint16_t line);
 LogicalExpr* newLogicalExpr(Expr* left, TokenType op, Expr* right, uint16_t line);
 TernaryExpr* newTernaryExpr(Expr* condition, Expr* thenBranch, Expr* elseBranch, uint16_t line);

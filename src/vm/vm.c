@@ -681,18 +681,53 @@ static int run()
                 break;
             }
 
-            case OP_LIST_STORE:
+            case OP_SUBSCRIPT_STORE:
             {
                 Value value = pop();
                 uint index = AS_NUMBER(pop());
-                ObjWList* list = AS_LIST(pop());
+                Value indexedValue = pop();
 
-                storeWList(list, value, index);
+                if(IS_LIST(indexedValue))
+                {
+                    ObjWList* list = AS_LIST(indexedValue);
+
+                    if(!isValidWListIndex(list, index))
+                    {
+                        runtimeError(line, "'%d' is not a valid index of the indexed list.", index);
+                        return INTERPRET_RUNTIME_ERROR;
+                    }
+
+                    storeWList(AS_LIST(indexedValue), value, index);
+                }
+                else if (IS_STRING(indexedValue))
+                {
+                    ObjString* string = AS_STRING(indexedValue);
+                    char* c = AS_CSTRING(value);
+
+                    if(!isValidStringIndex(string, index))
+                    {
+                        runtimeError(line, "'%d' is not a valid index of the indexed string.", index);
+                        return INTERPRET_RUNTIME_ERROR;
+                    }
+
+                    if(strlen(c) > 1)
+                    {
+                        runtimeError(line, "Cannot replace a string index with a string longer than 1.", index);
+                        return INTERPRET_RUNTIME_ERROR;
+                    }
+
+                    replaceIndexString(string, index, *c);
+                }
+                else
+                {
+                    runtimeError(line, "Cannot index this value.", index);
+                    return INTERPRET_RUNTIME_ERROR;
+                }
 
                 break;
             }
 
-            case OP_LIST_GET:
+            case OP_SUBSCRIPT_GET:
             {
                 uint index = AS_NUMBER(pop());
                 ObjWList* list = AS_LIST(pop());

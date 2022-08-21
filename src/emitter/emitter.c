@@ -409,14 +409,14 @@ static void compileExpression(Expr* expression)
             if(expr->value == NULL)
             {
                 compileExpression(expr->index);
-                emitByte(OP_LIST_GET, line);
+                emitByte(OP_SUBSCRIPT_GET, line);
             }
             // Set
             else
             {
                 compileExpression(expr->index);
                 compileExpression(expr->value);
-                emitByte(OP_LIST_STORE, line);
+                emitByte(OP_SUBSCRIPT_STORE, line);
             }
 
             break;

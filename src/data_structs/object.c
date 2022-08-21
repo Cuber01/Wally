@@ -185,6 +185,17 @@ ObjString* copyString(const char* chars, uint length)
     return allocateString(heapChars, length, hash);
 }
 
+bool isValidStringIndex(ObjString* string, uint index)
+{
+    // uint index cannot be < 0
+    return index <= string->length;
+}
+
+void replaceIndexString(ObjString* string, uint index, char c)
+{
+    string->chars[index] = c;
+}
+
 static void printFunction(ObjFunction* function)
 {
     if (function->name == NULL)
