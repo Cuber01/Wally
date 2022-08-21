@@ -198,16 +198,16 @@ static void printFunction(ObjFunction* function)
 
 static void printList(ObjWList* list)
 {
-    printf("[ ");
+    printf("{ ");
 
     for(uint i = 0; i < list->count; i++)
     {
-        printObject(list->items[i]);
+        printValue(list->items[i]);
 
         if(i+1 < list->count) printf(", ");
     }
 
-    printf(" ]");
+    printf(" }");
 }
 
 void printObject(Value value)

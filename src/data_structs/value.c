@@ -147,7 +147,9 @@ void printValue(Value value)
     }
     else if (IS_OBJ(value))
     {
-        printf(BOLD_GREEN);
+        if(OBJ_TYPE(value) != OBJ_LIST)
+            printf(BOLD_GREEN);
+
         printObject(value);
     }
 
