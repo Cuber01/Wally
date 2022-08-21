@@ -1,23 +1,5 @@
-var a = [0, 1, 2];
+var a = "bow";
+a["s"] = "c";
 
-print(a[0]);
-
-//var i = 0;
-//
-//while(i < 6)
-//{
-//    print(a[i]);
-//    i++;
-//}
-//
-//a[0] = "str";
-//
-//print(a[0]);
-
-// Expect: 0
-// Expect: 1
-// Expect: 2
-// Expect: 3
-// Expect: 4
-// Expect: 5
-// Expect: str
+print(a); // Expect: cow
+print(a[2]); // Expect: w

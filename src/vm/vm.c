@@ -683,8 +683,17 @@ static int run()
 
             case OP_SUBSCRIPT_STORE:
             {
-                Value value = pop();
-                uint index = AS_NUMBER(pop());
+                Value storedValue = pop();
+                Value indexVal = pop();
+
+                if(!IS_NUMBER(indexVal))
+                {
+                    runtimeError(line, "Index must be a number.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+
+                uint index = AS_NUMBER(indexVal);
+
                 Value indexedValue = pop();
 
                 if(IS_LIST(indexedValue))
@@ -697,18 +706,18 @@ static int run()
                         return INTERPRET_RUNTIME_ERROR;
                     }
 
-                    storeWList(AS_LIST(indexedValue), value, index);
+                    storeWList(AS_LIST(indexedValue), storedValue, index);
                 }
                 else if (IS_STRING(indexedValue))
                 {
-                    if(!IS_STRING(value))
+                    if(!IS_STRING(storedValue))
                     {
                         runtimeError(line, "String index can only store other strings.", index);
                         return INTERPRET_RUNTIME_ERROR;
                     }
 
                     ObjString* string = AS_STRING(indexedValue);
-                    char* c = AS_CSTRING(value);
+                    char* c = AS_CSTRING(storedValue);
 
                     if(!isValidStringIndex(string, index))
                     {
@@ -735,12 +744,20 @@ static int run()
 
             case OP_SUBSCRIPT_GET:
             {
-                uint index = AS_NUMBER(pop());
-                Value value = pop();
+                Value indexVal = pop();
+                Value indexedValue = pop();
 
-                if(IS_LIST(value))
+                if(!IS_NUMBER(indexVal))
                 {
-                    ObjWList* list = AS_LIST(value);
+                    runtimeError(line, "Index must be a number.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+
+                uint index = AS_NUMBER(indexVal);
+
+                if(IS_LIST(indexedValue))
+                {
+                    ObjWList* list = AS_LIST(indexedValue);
 
                     if(!isValidWListIndex(list, index))
                     {
@@ -750,9 +767,9 @@ static int run()
 
                     push(indexFromWList(list, index));
                 }
-                else if (IS_STRING(value))
+                else if (IS_STRING(indexedValue))
                 {
-                    ObjString* string = AS_STRING(value);
+                    ObjString* string = AS_STRING(indexedValue);
 
                     if(!isValidStringIndex(string, index))
                     {
