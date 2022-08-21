@@ -740,7 +740,7 @@ static int run()
 
                 if(IS_LIST(value))
                 {
-                    ObjWList* list = AS_LIST(pop());
+                    ObjWList* list = AS_LIST(value);
 
                     if(!isValidWListIndex(list, index))
                     {

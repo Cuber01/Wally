@@ -3,3 +3,9 @@ print("str" + "ing");   // Expect: string
 print("very " + true);  // Expect: very true
 print("very " + false); // Expect: very false
 print("very " + null);   // Expect: very null
+
+var a = "bow";
+a[0] = "c";
+
+print(a); // Expect: cow
+print(a[2]); // Expect: w
