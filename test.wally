@@ -1,5 +1,5 @@
 var a = "str";
 
-a[1] = "k";
+//a[1] = "k";
 
-print(a);
+print(a[0]);

@@ -701,18 +701,24 @@ static int run()
                 }
                 else if (IS_STRING(indexedValue))
                 {
+                    if(!IS_STRING(value))
+                    {
+                        runtimeError(line, "String index can only store other strings.", index);
+                        return INTERPRET_RUNTIME_ERROR;
+                    }
+
                     ObjString* string = AS_STRING(indexedValue);
                     char* c = AS_CSTRING(value);
 
                     if(!isValidStringIndex(string, index))
                     {
-                        runtimeError(line, "'%d' is not a valid index of the indexed string.", index);
+                        runtimeError(line, "'%d' is not a valid index of '%s'.", index, string->chars);
                         return INTERPRET_RUNTIME_ERROR;
                     }
 
                     if(strlen(c) > 1)
                     {
-                        runtimeError(line, "Cannot replace a string index with a string longer than 1.", index);
+                        runtimeError(line, "Cannot replace a string index with a string longer than 1 ('%s').", c);
                         return INTERPRET_RUNTIME_ERROR;
                     }
 
@@ -720,7 +726,7 @@ static int run()
                 }
                 else
                 {
-                    runtimeError(line, "Cannot index this value.", index);
+                    runtimeError(line, "Cannot index this value type.");
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
@@ -730,9 +736,37 @@ static int run()
             case OP_SUBSCRIPT_GET:
             {
                 uint index = AS_NUMBER(pop());
-                ObjWList* list = AS_LIST(pop());
+                Value value = pop();
 
-                push(indexFromWList(list, index));
+                if(IS_LIST(value))
+                {
+                    ObjWList* list = AS_LIST(pop());
+
+                    if(!isValidWListIndex(list, index))
+                    {
+                        runtimeError(line, "'%d' is not a valid index of the indexed list.", index);
+                        return INTERPRET_RUNTIME_ERROR;
+                    }
+
+                    push(indexFromWList(list, index));
+                }
+                else if (IS_STRING(value))
+                {
+                    ObjString* string = AS_STRING(value);
+
+                    if(!isValidStringIndex(string, index))
+                    {
+                        runtimeError(line, "'%d' is not a valid index of '%s'.", index, string->chars);
+                        return INTERPRET_RUNTIME_ERROR;
+                    }
+
+                    push(OBJ_VAL(getIndexString(string, index)));
+                }
+                else
+                {
+                    runtimeError(line, "Cannot index this value type.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
 
                 break;
             }

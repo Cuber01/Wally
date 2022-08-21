@@ -136,9 +136,9 @@ int disassembleInstruction(Chunk* chunk, int offset)
         case OP_INHERIT:
             return simpleInstruction("OP_INHERIT", offset);
         case OP_SUBSCRIPT_STORE:
-            return simpleInstruction("OP_LIST_STORE", offset);
+            return simpleInstruction("OP_SUBSCRIPT_STORE", offset);
         case OP_SUBSCRIPT_GET:
-            return simpleInstruction("OP_LIST_GET", offset);
+            return simpleInstruction("OP_SUBSCRIPT_GET", offset);
 
         case OP_JUMP:
             return jumpInstruction("OP_JUMP", 1, chunk, offset);

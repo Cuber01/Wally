@@ -191,6 +191,12 @@ bool isValidStringIndex(ObjString* string, uint index)
     return index <= string->length;
 }
 
+ObjString* getIndexString(ObjString* string, uint index)
+{
+    char* c = &string->chars[index];
+    return copyString(c, 1);
+}
+
 void replaceIndexString(ObjString* string, uint index, char c)
 {
     string->chars[index] = c;
