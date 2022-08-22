@@ -77,7 +77,7 @@ else()
               src/std/wally_math.c
               src/std/wally_os.c
               src/std/wally_random.c
-              )
+            src/std/wally_list.c)
 endif(BUILD_LIBRARY)
 
 target_link_libraries(Wally m)

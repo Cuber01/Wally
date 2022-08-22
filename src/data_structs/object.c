@@ -105,14 +105,14 @@ void storeWList(ObjWList* list, Value value, uint index)
     list->items[index] = value;
 }
 
-Value indexFromWList(ObjWList* list, uint index)
+Value getIndexWList(ObjWList* list, uint index)
 {
     return list->items[index];
 }
 
-void deleteFromWList(ObjWList* list, uint index)
+void removeIndexWList(ObjWList* list, uint index)
 {
-    for (int i = index; i < list->count - 1; i++)
+    for (uint i = index; i < list->count - 1; i++)
     {
         list->items[i] = list->items[i+1];
     }
@@ -123,7 +123,7 @@ void deleteFromWList(ObjWList* list, uint index)
 
 bool isValidWListIndex(ObjWList* list, uint index)
 {
-    if (index < 0 || index > list->count - 1)
+    if (index > list->count - 1)
     {
         return false;
     }

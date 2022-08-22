@@ -765,7 +765,7 @@ static int run()
                         return INTERPRET_RUNTIME_ERROR;
                     }
 
-                    push(indexFromWList(list, index));
+                    push(getIndexWList(list, index));
                 }
                 else if (IS_STRING(indexedValue))
                 {

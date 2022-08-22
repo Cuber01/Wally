@@ -1,9 +1,13 @@
+#include <stdio.h>
+
 #include "core.h"
+#include "vm.h"
+
 #include "wally_math.h"
 #include "wally_random.h"
 #include "native_utils.h"
-#include "vm.h"
 #include "wally_os.h"
+#include "wally_list.h"
 
 ObjString* boolStringConst;
 ObjString* nullStringConst;
@@ -36,6 +40,10 @@ NATIVE_FUNCTION(include)
     else if (charsEqual(moduleName->chars, "random", moduleName->length, 6))
     {
         defineRandom(vm.nativeEnvironment->values);
+    }
+    else if (charsEqual(moduleName->chars, "list", moduleName->length, 4))
+    {
+        defineList(vm.nativeEnvironment->values);
     }
 
     return NULL_VAL;

@@ -1,5 +1,40 @@
-var a = "bow";
-a["s"] = "c";
+//include("list");
 
-print(a); // Expect: cow
-print(a[2]); // Expect: w
+1;
+var a = [1, 2];
+//var b = [3, 4, 5];
+//var ab;
+
+//print(list.count(a)); // Expect: 2
+//print(list.count(b)); // Expect: 3
+//
+//ab = list.join(a, b);
+//
+//var i = 0;
+//while(i < list.count(ab))
+//{
+//    print(a[i]);
+//    i++;
+//}
+//
+//// Expect: 1
+//// Expect: 2
+//// Expect: 3
+//// Expect: 4
+//// Expect: 5
+//
+//list.append(ab, null);
+//list.remove(ab, 0);
+//
+//var i = 0;
+//while(i < list.count(ab))
+//{
+//    print(a[i]);
+//    i++;
+//}
+//
+//// Expect: 2
+//// Expect: 3
+//// Expect: 4
+//// Expect: 5
+//// Expect: null

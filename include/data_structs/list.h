@@ -29,4 +29,4 @@ void listWriteValue(Node* root, int index, NodeValue value, uint16_t line);
 void freeList(Node* root);
 int listGetLength(Node* root);
 
-#endif //WALLY_LIST_H
+#endif //WALLY_WALLY_LIST_H

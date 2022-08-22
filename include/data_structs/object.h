@@ -141,8 +141,8 @@ ObjBoundMethod* newBoundMethod(ObjInstance* instance, ObjFunction* method);
 ObjWList* newWList();
 void addWList(ObjWList* list, Value value);
 void storeWList(ObjWList* list, Value value, uint index);
-Value indexFromWList(ObjWList* list, uint index);
-void deleteFromWList(ObjWList* list, uint index);
+Value getIndexWList(ObjWList* list, uint index);
+void removeIndexWList(ObjWList* list, uint index);
 bool isValidWListIndex(ObjWList* list, uint index);
 
 char* objectTypeToChar(ObjType type);
