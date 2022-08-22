@@ -1,22 +1,18 @@
 //include("list");
-
-1;
-var a = [1, 2];
+[1,2];
+//var a = [1, 2];
 //var b = [3, 4, 5];
 //var ab;
 
-//print(list.count(a)); // Expect: 2
-//print(list.count(b)); // Expect: 3
 //
 //ab = list.join(a, b);
 //
-//var i = 0;
-//while(i < list.count(ab))
+//for(var i = 0; i < list.count(ab); i++)
 //{
 //    print(a[i]);
-//    i++;
 //}
-//
+
+
 //// Expect: 1
 //// Expect: 2
 //// Expect: 3
@@ -26,11 +22,9 @@ var a = [1, 2];
 //list.append(ab, null);
 //list.remove(ab, 0);
 //
-//var i = 0;
-//while(i < list.count(ab))
+//for(var i = 0; i < list.count(ab); i++)
 //{
 //    print(a[i]);
-//    i++;
 //}
 //
 //// Expect: 2

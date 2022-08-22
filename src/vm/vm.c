@@ -659,7 +659,7 @@ static int run()
             case OP_BUILD_LIST:
             {
                 ObjWList* list = newWList();
-                int count = READ_BYTE();
+                uint8_t count = READ_BYTE();
 
                 push(OBJ_VAL(list));
 

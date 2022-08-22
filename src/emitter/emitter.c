@@ -384,7 +384,7 @@ static void compileExpression(Expr* expression)
             ListExpr* expr = (ListExpr*)expression;
 
             Node* processed = expr->expressions;
-            uint count = 0;
+            uint8_t count = 0;
 
             while(processed != NULL)
             {
@@ -394,7 +394,7 @@ static void compileExpression(Expr* expression)
                 processed = processed->next;
             }
 
-            emitBytes(OP_BUILD_LIST, makeConstant(NUMBER_VAL(count), line), line);
+            emitBytes(OP_BUILD_LIST, count, line);
 
             break;
         }

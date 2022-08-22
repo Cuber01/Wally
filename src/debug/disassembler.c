@@ -165,14 +165,14 @@ int disassembleInstruction(Chunk* chunk, int offset)
             return constantInstruction("OP_DEFINE_ARGUMENT", chunk, offset);
         case OP_GET_BASE:
             return constantInstruction("OP_GET_BASE", chunk, offset);
-        case OP_BUILD_LIST:
-            return constantInstruction("OP_BUILD_LIST", chunk, offset);
 
         case OP_INVOKE:
             return invokeInstruction("OP_INVOKE", chunk, offset);
 
         case OP_CALL:
             return byteInstruction("OP_CALL", chunk, offset);
+        case OP_BUILD_LIST:
+            return byteInstruction("OP_BUILD_LIST", chunk, offset);
 
         default:
             printf("Unknown opcode %d\n", instruction);
