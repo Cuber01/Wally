@@ -1,34 +1,4 @@
-//include("list");
-[1,2];
-//var a = [1, 2];
-//var b = [3, 4, 5];
-//var ab;
+var a = 1;
+a = 2;
 
-//
-//ab = list.join(a, b);
-//
-//for(var i = 0; i < list.count(ab); i++)
-//{
-//    print(a[i]);
-//}
-
-
-//// Expect: 1
-//// Expect: 2
-//// Expect: 3
-//// Expect: 4
-//// Expect: 5
-//
-//list.append(ab, null);
-//list.remove(ab, 0);
-//
-//for(var i = 0; i < list.count(ab); i++)
-//{
-//    print(a[i]);
-//}
-//
-//// Expect: 2
-//// Expect: 3
-//// Expect: 4
-//// Expect: 5
-//// Expect: null
+a++;

@@ -437,8 +437,6 @@ static int run()
                     return INTERPRET_RUNTIME_ERROR;
                 }
 
-                push(value);
-
                 break;
             }
 

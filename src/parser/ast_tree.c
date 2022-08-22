@@ -405,7 +405,7 @@ CallExpr* newCallExpr(Expr* callee, uint8_t argCount, Node* args, uint16_t line)
 
 AssignExpr* newAssignExpr(ObjString* name, Expr* value, uint16_t line)
 {
-    AssignExpr* expr = (AssignExpr*) ALLOCATE_EXPRESSION(AssignExpr, ASSIGN_EXPRESSION, true, line);
+    AssignExpr* expr = (AssignExpr*) ALLOCATE_EXPRESSION(AssignExpr, ASSIGN_EXPRESSION, false, line);
 
     expr->name = name;
     expr->value = value;
