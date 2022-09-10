@@ -202,6 +202,18 @@ void replaceIndexString(ObjString* string, uint index, char c)
     string->chars[index] = c;
 }
 
+ObjString* addStrings(ObjString* a, ObjString* b)
+{
+    uint length = a->length + b->length;
+    char* chars = ALLOCATE(char, length + 1);
+
+    memcpy(chars, a->chars, a->length);
+    memcpy(chars + a->length, b->chars, b->length);
+    chars[length] = '\0';
+
+    return takeString(chars, length);
+}
+
 static void printFunction(ObjFunction* function)
 {
     if (function->name == NULL)

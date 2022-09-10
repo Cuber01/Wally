@@ -5,6 +5,13 @@ NATIVE_FUNCTION(join)
 {
     CHECK_ARG_COUNT("join", 2);
 
+    // if strings
+    if(IS_STRING(args[0]) && IS_STRING(args[1]))
+    {
+        return OBJ_VAL(addStrings(AS_STRING(args[0]) , AS_STRING(args[1]) ) );
+    }
+
+    // else lists
     ObjWList* list1 = AS_LIST(args[0]);
     ObjWList* list2 = AS_LIST(args[1]);
 
