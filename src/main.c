@@ -78,32 +78,60 @@ static void repl()
 
 int runWally(int argc, const char* argv[])
 {
-    if (argc == 1)
+    switch(argc)
     {
-        repl();
-    }
-    else if (argc == 2)
-    {
-        if(strcmp(argv[1], "--help") == 0)
+        case 1:
         {
-            printf("Wally is a dynamically-typed interpreted programming language.\n");
-            printf("Repo: https://github.com/Cuber01/Wally\n");
-            printf("Documentation: https://github.com/Cuber01/Wally/wiki\n\n");
+            repl();
+            break;
+        }
 
-            printf("Commandline arguments:\n");
-            printf("    --help            - Display this message\n");
-            printf("    [path to file]    - Run Wally script\n");
-            printf("    [none]            - Run interactive repl\n");
-        }
-        else
+        case 2:
         {
-            runFile(argv[1]);
+            if(strcmp(argv[1], "--help") == 0)
+            {
+                printf("Wally is a dynamically-typed interpreted programming language.\n");
+                printf("Repo: https://github.com/Cuber01/Wally\n");
+                printf("Documentation: https://github.com/Cuber01/Wally/wiki\n\n");
+
+                printf("Commandline arguments:\n");
+                printf("    --help                - Display this message\n");
+                printf("    --interpret \"code\"    - Run \"code\" string\n");
+                printf("    [path to file]        - Run Wally script\n");
+                printf("    [none]                - Run interactive repl\n");
+            }
+            else
+            {
+                runFile(argv[1]);
+            }
+            break;
         }
-    }
-    else
-    {
-        fprintf(stderr, "Usage: Wally [path to file]\n");
-        exit(64);
+
+        case 3:
+        {
+            if(strcmp(argv[1], "--interpret") == 0)
+            {
+                char* source = argv[2];
+
+                int result = interpret(argv[2]);
+
+                if(result == 0) freeVM();
+
+                exit(result);
+            }
+            else
+            {
+                fprintf(stderr, "Usage: Wally [path to file]\n");
+                exit(64);
+            }
+            break;
+        }
+
+        default:
+        {
+            fprintf(stderr, "Usage: Wally [path to file]\n");
+            exit(64);
+        }
     }
 
     return 0;

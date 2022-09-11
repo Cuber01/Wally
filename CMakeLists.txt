@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21) # I guess you shouldn't touch the version
+cmake_minimum_required(VERSION 3.16.3) # I guess you shouldn't touch the version
 # Release flags: -O3 -DNDEBUG
 # Debug flags: -g
 

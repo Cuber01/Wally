@@ -9,6 +9,8 @@ There's no documentation at the moment, but you can learn the basics by looking 
 
 ## Build
 
+### Native
+
 ```bash
 cmake .
 make
@@ -17,6 +19,13 @@ make
 If it fails because of your cmake version being too old, edit this line in `CMakeLists.txt`
 ```cmake
 cmake_minimum_required(VERSION <YOUR CMAKE VERSION>)
+```
+
+### Emscripten
+
+```
+emcmake cmake .
+emmake make
 ```
 
 ## Run
