@@ -104,6 +104,12 @@ void freeObject(Obj* object)
             break;
         }
 
+        case OBJ_LIST:
+        {
+            FREE(ObjWList, object);
+            break;
+        }
+
         case OBJ_NATIVE:
             FREE(ObjNative, object);
             break;

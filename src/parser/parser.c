@@ -500,7 +500,7 @@ static Expr* string(__attribute__((unused)) bool canAssign)
 
 static Expr* interpolatedString(__attribute__((unused)) bool canAssign)
 {
-
+    return NULL;
 }
 
 static Expr* unary(__attribute__((unused)) bool canAssign)

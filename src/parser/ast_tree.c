@@ -130,6 +130,26 @@ void freeExpression(Expr* expr)
             FREE(TernaryExpr, expr);
             break;
         }
+
+        case LIST_EXPRESSION:
+        {
+            ListExpr* expression = (ListExpr*) expr;
+
+            FREE(ListExpr, expr);
+            break;
+        }
+
+        case SUBSCRIPT_EXPRESSION:
+        {
+            SubscriptExpr* expression = (SubscriptExpr*) expr;
+
+            freeExpression(expression->list);
+            freeExpression(expression->index);
+            freeExpression(expression->value);
+
+            FREE(SubscriptExpr, expr);
+            break;
+        }
     }
 }
 
