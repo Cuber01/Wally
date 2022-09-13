@@ -16,6 +16,10 @@ if(NO_OPTIMIZE)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
 endif()
 
+if(EMSCRIPTEN)
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s EXIT_RUNTIME")
+endif()
+
 include_directories(Wally PRIVATE include/ include/data_structs/ include/misc/ include/debug/
                     include/memory/ include/scanner/ include/parser include/vm/ include/emitter
                     include/std/ include/preprocessor/)

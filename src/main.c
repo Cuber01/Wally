@@ -111,8 +111,6 @@ int runWally(int argc, const char* argv[])
         {
             if(strcmp(argv[1], "--interpret") == 0)
             {
-                char* source = argv[2];
-
                 int result = interpret(argv[2]);
 
                 if(result == 0) freeVM();

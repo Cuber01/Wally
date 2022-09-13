@@ -24,7 +24,7 @@ cmake_minimum_required(VERSION <YOUR CMAKE VERSION>)
 ### Emscripten
 
 ```
-emcmake cmake .
+emcmake cmake . -DEMSCRIPTEN=1
 emmake make
 ```
 

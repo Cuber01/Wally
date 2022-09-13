@@ -29,6 +29,10 @@
 // #define DEBUG_LOG_GC             // Log all actions performed by the Garbage Collector
 // #define DEBUG_LOG_ALLOCATION     // Log all memory allocations, reallocations and frees
 
+// -------------- OTHER ------------------
+
+#define NO_COLORS                   // Replaces all colored text with default
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>

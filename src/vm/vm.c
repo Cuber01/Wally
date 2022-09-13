@@ -781,6 +781,7 @@ static int run()
 
             case OP_RETURN:
             {
+
                 ObjFunction* oldFunction = vm.currentFunction;
 
                 if(oldFunction->calledFromFunction == NULL)

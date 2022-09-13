@@ -1,6 +1,32 @@
 #ifndef WALLY_COLORS_H
 #define WALLY_COLORS_H
 
+#include "common.h"
+
+#ifdef NO_COLORS
+
+#define BLACK  ""
+#define RED    ""
+#define GREEN  ""
+#define YELLOW ""
+#define BLUE   ""
+#define PURPLE ""
+#define CYAN   ""
+#define WHITE  ""
+
+#define BOLD_BLACK  ""
+#define BOLD_RED    ""
+#define BOLD_GREEN  ""
+#define BOLD_YELLOW ""
+#define BOLD_BLUE   ""
+#define BOLD_PURPLE ""
+#define BOLD_CYAN   ""
+#define BOLD_WHITE  ""
+
+#define COLOR_CLEAR ""
+
+#else
+
 #define BLACK  "\e[0;30m"
 #define RED    "\e[0;31m"
 #define GREEN  "\e[0;32m"
@@ -20,6 +46,8 @@
 #define BOLD_WHITE  "\e[1;37m"
 
 #define COLOR_CLEAR "\e[0m"
+
+#endif
 
 void colorWriteLine(const char* colorCode, const char* format, ...);
 void colorWrite(const char* colorCode, const char* format, ...);
