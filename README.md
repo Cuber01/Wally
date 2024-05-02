@@ -1,9 +1,12 @@
 # Wally
 
-Wally is a dynamically typed programming language developed primarily for learning purposes. 
-The goal is to make a language that is usable to as high degree as possible and code something in it.
+Wally is a dynamically typed programming language styled primarily after C and featuring modern programming patterns such as OOP.
 
-There's no documentation at the moment, but you can learn the basics by looking into the `scripts/` directory.
+You can try it out now [in your browser!](https://cuber01.github.io/wally-web/)
+
+It's also possible to make [games in it.](https://github.com/Cuber01/fenko-wally)
+
+The documentation can be found at [the wiki](https://github.com/Cuber01/Wally/wiki).
 
 # Running
 
